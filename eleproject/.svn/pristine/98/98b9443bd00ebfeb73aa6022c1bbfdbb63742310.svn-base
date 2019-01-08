@@ -1,0 +1,31 @@
+package com.newhero.urbanconstruction.sysmanager.user.dao;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.codetablemaintain.unitinfo.pojo.UnitInfoDTO;
+import com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+/**
+ * User类Dao层接口
+ */
+public interface SysUserDao {
+	/**显示用户列表*/
+	public List<UserDTO> userList();
+	/**根据编号查找用户信息*/
+	public UserDTO getSysUserById(String id);
+	/**添加用户*/
+	public int insertSysUser(UserDTO user);
+	/**修改用户信息*/
+	public int updateSysUserById(UserDTO user);
+	
+	public int delSysUserById(UserDTO user);
+	
+	public int updateSysUserPwdById(UserDTO user);
+	
+	public List<UnitInfoDTO> getUnitInfoListByCode(UnitInfoDTO dto);
+	
+	public List<UserDTO> getUserList(BaseQueryVo dto);
+	
+	public List<String> getUserNameList();
+	
+}

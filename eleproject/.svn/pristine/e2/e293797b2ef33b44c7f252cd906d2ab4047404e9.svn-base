@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- namespace的值就是dao接口的完整路径，就这个demo而言namespace 就是userDao.java的完整路径-->
+<mapper namespace="com.newhero.urbanconstruction.codetablemaintain.unitinfo.dao.UnitInfoDao">
+	<resultMap id="UnitInfoResultMap" type="com.newhero.urbanconstruction.codetablemaintain.unitinfo.pojo.UnitInfoDTO">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="unitname" property="unitname" jdbcType="VARCHAR" />
+		<result column="unitcode" property="unitcode" jdbcType="VARCHAR" />
+		<result column="unitshortname" property="unitshortname" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="getUnitInfoListByKeyword" parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultMap="UnitInfoResultMap">
+  		select 
+		   id,unitcode,unitname,unitshortname,remark
+		from dm_unitinfo where isdelete=0 
+		<if test='keyword != null'>
+		and unitname like "%"#{keyword}"%"  
+		</if>
+		LIMIT #{startRow},#{pageSize}
+  	</select>
+  	<select id="getUnitInfoList" parameterType="java.lang.Integer" resultMap="UnitInfoResultMap">
+  		select 
+		   id,unitcode,unitname,unitshortname,remark
+		from dm_unitinfo where isdelete=0 
+		
+  	</select>
+  	
+  	<select id="getUnitInfoCountByKeyword" parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultType="java.lang.Integer">
+  		select 
+		   count(*)
+		from dm_unitinfo where isdelete=0  
+		<if test='keyword != null'>
+		and unitcode like "%"#{keyword}"%"  
+		</if>
+  	</select>
+	<select id="getUnitInfoById" resultMap="UnitInfoResultMap" parameterType="java.lang.Integer">
+		select
+		id,unitname,unitshortname,unitcode,remark
+		from dm_unitinfo
+		where id = #{id}
+	</select>
+	<insert id="insertUnitInfo" parameterType="com.newhero.urbanconstruction.codetablemaintain.unitinfo.pojo.UnitInfoDTO">
+		insert into dm_unitinfo (unitcode,unitname,unitshortname, remark, isdelete,operatorid)
+		values (#{unitcode},#{unitname},#{unitshortname},#{remark},0,#{operatorid})
+	</insert>
+	
+	<update id="updateUnitInfoById" parameterType="com.newhero.urbanconstruction.codetablemaintain.unitinfo.pojo.UnitInfoDTO">
+		update dm_unitinfo
+		set
+		unitname = #{unitname},
+		unitcode = #{unitcode},
+		unitshortname = #{unitshortname},
+		remark = #{remark},
+		operatorid = #{operatorid},
+		operationtime=now()
+		where id  =	#{id}
+	</update>
+	<update id="delUnitInfoId" parameterType="com.newhero.urbanconstruction.codetablemaintain.unitinfo.pojo.UnitInfoDTO">
+		update dm_unitinfo
+		set isdelete=1,operatorid=#{operatorid},operationtime=now()
+		where id  =	#{id}
+	</update>
+	
+</mapper>

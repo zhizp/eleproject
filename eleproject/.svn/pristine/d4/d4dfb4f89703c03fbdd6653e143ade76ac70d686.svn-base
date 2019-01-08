@@ -1,0 +1,339 @@
+package com.newhero.urbanconstruction.sysmanager.user.controller;
+
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.newhero.urbanconstruction.codetablemaintain.unitinfo.pojo.UnitInfoDTO;
+import com.newhero.urbanconstruction.codetablemaintain.unitinfo.service.UnitInfoService;
+import com.newhero.urbanconstruction.sysmanager.role.pojo.RoleDTO;
+import com.newhero.urbanconstruction.sysmanager.role.service.SysRoleService;
+import com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO;
+import com.newhero.urbanconstruction.sysmanager.user.service.SysUserService;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+import com.newhero.urbanconstruction.util.Constant;
+import com.newhero.urbanconstruction.util.MD5;
+import com.newhero.urbanconstruction.util.ToolsUtil;
+
+@Controller
+public class SysUserController {
+	/**
+	 * 使用@Autowired也可以，@Autowired默认按类型装配
+	 * @Resource 默认按名称装配，当找不到与名称匹配的bean才会按类型装配。
+	 */
+	@Resource 
+	private SysUserService sysUserService;
+	
+	@Resource
+	private SysRoleService sysRoleService;
+	
+	@Resource
+	private UnitInfoService unitInfoService;
+	
+	@RequestMapping("/user/userList")
+	public String userList( Model model) {
+		List<UserDTO> userList = sysUserService.userList();
+		List<RoleDTO> roleList = sysRoleService.roleList();
+		model.addAttribute("userList", userList);
+		model.addAttribute("roleList", roleList);
+		return "sys_BaseInformation/UserManagement";
+	}
+	/**
+	 * ajax根据用户ID查询用户信息
+	 * @param id
+	 * @param model
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value="/user/getSysUserInfo", method = RequestMethod.POST)
+	public UserDTO getSysUserInfo(@RequestParam(value = "id") String id ) {
+		UserDTO user = sysUserService.getSysUserById(id);
+		if(user.getUnitId()!=null && user.getUnitId()>0){
+			UnitInfoDTO unitdto = unitInfoService.getUnitInfoById(Integer.valueOf(user.getUnitId()));
+			user.setUnitName("["+unitdto.getUnitcode() + "]"+ unitdto.getUnitname());
+		}
+		return user;
+	}
+	/**
+	 * ajax根据单位codeD查询单位列表
+	 * @param id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value="/user/getUnitInfoListByCode", method = RequestMethod.POST)
+	public List<UnitInfoDTO> getUnitInfoListByCode(@RequestParam(value = "code") String code ) {
+		if(ToolsUtil.isEmpty(code)) code = null;
+		List<UnitInfoDTO> list = sysUserService.getUnitInfoListByCode(code);
+		return list;
+	}
+	/**
+	 * ajax添加或修改数据
+	 * @param user
+	 * @param response
+	 */
+	@ResponseBody
+	@RequestMapping(value="/user/saveUser", method = RequestMethod.POST)
+	public Map<String, String> saveUser(@ModelAttribute("user")UserDTO user,HttpServletResponse response,HttpServletRequest request){
+//		System.out.println("进来了"+user.getName());
+		UserDTO sessUser = (UserDTO) request.getSession().getAttribute("USER_SESSION");
+		
+		user.setOperatorid(sessUser.getId());
+		int rs;
+		if(user.getId()!=null && user.getId()>0){
+			
+			rs = sysUserService.updateSysUserById(user);
+		}else{
+			String pwd = user.getPassword();
+			user.setPassword(MD5.getMD5(pwd.getBytes()));
+			rs = sysUserService.insertSysUser(user);
+		}
+
+		Map<String, String> result = new HashMap<String, String>();
+		result.put("result", rs+"");
+		return result;
+	}
+	/**
+	 * ajax根据用户ID置用户为删除状态
+	 * @param id
+	 * @param model
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value="/user/delUsers", method = RequestMethod.POST)
+	public String delUsers(@RequestParam(value = "id") String id,HttpServletResponse response,HttpServletRequest request) {
+		com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO sessUser = (com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO)request.getSession().getAttribute("USER_SESSION");
+		int rs = 0;
+		if(ToolsUtil.isNotEmpty(id)){
+			String[] ids = id.split(",");
+			rs = sysUserService.delSysUserByIds(ids, sessUser.getId());
+		}
+		return Integer.toString(rs);
+	}
+	/**
+	 * ajax根据用户ID重置密码
+	 * @param id
+	 * @param model
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value="/user/resPwd", method = RequestMethod.POST)
+	public String resPwd(@RequestParam(value = "id") Integer id ) {
+		int rs = 0;
+		if(id !=null && id>0){
+			UserDTO user = new UserDTO();
+			user.setId(id);
+			user.setPassword(MD5.getMD5(Constant.resetPassword.getBytes()));
+			
+			rs = sysUserService.updateSysUserPwdById(user);
+		}
+		
+		return Integer.toString(rs);
+	}
+	@ResponseBody
+	@RequestMapping("/user/exportExcel")
+	public void exportExcel(HttpServletRequest request, HttpServletResponse response ) throws Exception {
+		List<UserDTO> userList = sysUserService.userList();
+		String[] titles = { "账号名称", "角色名称", "真实名称", "单位名称", "单位地址", "联系方式", "状态" };
+		try{
+			ServletOutputStream out=response.getOutputStream();
+			String filename = "北戴河城市建设资金管理用户列表.xls";// 设置下载时客户端Excel的名称
+			
+			response.setContentType("application/vnd.ms-excel");
+			String t = request.getHeader("User-Agent");
+			if (t.indexOf("Firefox") > 0) {
+				response.setHeader("Content-disposition", "attachment;filename="
+						+ new String(filename.getBytes("gb2312"), "ISO8859-1"));
+			} else {
+				response.setHeader("Content-disposition", "attachment;filename="
+						+ URLEncoder.encode(filename, "UTF-8"));
+			}
+			writeExcel(titles, userList, out);
+
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void writeExcel(String[] titles, List<UserDTO> userList, ServletOutputStream out) throws Exception {                
+        try{
+            // 第一步，创建一个workbook，对应一个Excel文件
+            HSSFWorkbook workbook = new HSSFWorkbook();
+            // 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet
+            HSSFSheet hssfSheet = workbook.createSheet("管理用户列表");
+            // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
+            HSSFRow hssfRow = hssfSheet.createRow(0);
+            // 第四步，创建单元格，并设置值表头 设置表头居中
+            HSSFCellStyle hssfCellStyle = workbook.createCellStyle();
+            //居中样式
+//            hssfCellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+
+            HSSFCell hssfCell = null;
+            for (int i = 0; i < titles.length; i++) {
+                hssfCell = hssfRow.createCell(i);//列索引从0开始
+                hssfCell.setCellValue(titles[i]);//列名1
+                hssfCell.setCellStyle(hssfCellStyle);//列居中显示                
+            }
+            
+            //"账号名称", "角色名称", "真实名称", "单位名称", "单位地址", "联系方式", "状态"
+//            SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+            if(userList != null && !userList.isEmpty()){
+                for (int i = 0; i < userList.size(); i++) {
+                    hssfRow = hssfSheet.createRow(i+1);                
+                    UserDTO user = userList.get(i);
+                    
+                    // 第六步，创建单元格，并设置值
+                    //"账号名称"
+                    String name = user.getName();
+                    if(ToolsUtil.isNotEmpty(name)){
+                    	hssfRow.createCell(0).setCellValue(name);
+                    }
+                    //"角色名称", 
+                    String roleName = user.getRoleName();
+                    if(ToolsUtil.isNotEmpty(roleName)){
+                    	hssfRow.createCell(1).setCellValue(roleName);
+                    }
+                    //"真实名称", 
+                    String username = user.getUsername();
+                    if(ToolsUtil.isNotEmpty(username)){
+                    	hssfRow.createCell(2).setCellValue(username);
+                    }
+                    //"单位名称", 
+                    String unitName = user.getUnitName();
+                    if(ToolsUtil.isNotEmpty(unitName)){
+                    	hssfRow.createCell(3).setCellValue(unitName);
+                    }
+                    //"单位地址", 
+                    String unitAddres = user.getUnitAddress();
+                    if(ToolsUtil.isNotEmpty(unitAddres)){
+                    	hssfRow.createCell(4).setCellValue(unitAddres);
+                    }
+                    //"联系方式", 
+                    String phone = user.getPhone();
+                    if(ToolsUtil.isNotEmpty(phone)){
+                    	hssfRow.createCell(5).setCellValue(phone);
+                    }
+                    //"状态"
+                    int state = Integer.parseInt(user.getState());
+                    String statename = "禁用";
+                    if(state == 1){
+                    	statename = "启用";
+                    }
+                    if(ToolsUtil.isNotEmpty(statename)){
+                    	hssfRow.createCell(6).setCellValue(statename);
+                    }
+                }
+            }
+            
+            // 第七步，将文件输出到客户端浏览器
+            try {
+                workbook.write(out);
+                out.flush();
+                out.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new Exception("导出信息失败！");
+        }    
+    }
+	
+	@RequestMapping(value = "/user/exportUser")
+	public void exportUser(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		
+		BaseQueryVo dto = new BaseQueryVo();
+		dto.setIsall(1);
+		List<UserDTO> list = sysUserService.getUserList(dto);
+		
+		
+		//设置输出头
+    	response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+    	String filename = "用户表.xls";// 设置下载时客户端Excel的名称
+    	//设置HTTP响应的头
+    	String t = request.getHeader("User-Agent");
+		if (t.indexOf("Firefox") > 0) {
+			response.setHeader("Content-disposition", "attachment;filename="
+					+ new String(filename.getBytes("gb2312"), "ISO8859-1"));
+		} else {
+			response.setHeader("Content-disposition", "attachment;filename="
+					+ URLEncoder.encode(filename, "UTF-8"));
+		}
+		
+		ServletOutputStream stream = response.getOutputStream();
+		
+		HSSFWorkbook work = new HSSFWorkbook();
+		
+		HSSFSheet sheet = work.createSheet("用户");
+		
+		HSSFRow row = sheet.createRow(0);
+		
+		HSSFCell cell1 = row.createCell(0);
+		cell1.setCellValue("序号");
+		
+		HSSFCell cell2 = row.createCell(1);
+		cell2.setCellValue("账号名称");
+		
+		HSSFCell cell3 = row.createCell(2);
+		cell3.setCellValue("角色名称");
+		
+		HSSFCell cell4 = row.createCell(3);
+		cell4.setCellValue("真实姓名");
+		
+		HSSFCell cell5 = row.createCell(4);
+		cell5.setCellValue("单位名称");
+		
+		HSSFCell cell6 = row.createCell(5);
+		cell6.setCellValue("单位地址");
+		
+		HSSFCell cell7 = row.createCell(6);
+		cell7.setCellValue("联系方式");
+		
+		HSSFCell cell8 = row.createCell(7);
+		cell8.setCellValue("状态");
+		
+		List<String> listUserName = sysUserService.getUserNameList();
+		
+		for(int i = 0; i < list.size(); i++){
+			UserDTO user = list.get(i);
+			HSSFRow row1 = sheet.createRow(i + 1);
+			row1.createCell(0).setCellValue(i + 1);
+			row1.createCell(1).setCellValue(user.getName());
+			row1.createCell(2).setCellValue(user.getRoleName());//角色名称除此获取不到
+			row1.createCell(3).setCellValue(listUserName.get(i)); //真实姓名
+			row1.createCell(4).setCellValue(user.getUnitName());//单位明后才能够除此获取不到
+			row1.createCell(5).setCellValue(user.getUnitAddress());
+			row1.createCell(6).setCellValue(user.getPhone());
+			if(user.getState().equals("1")){
+				String strState = "启用";
+				row1.createCell(7).setCellValue(strState);
+			}
+			
+		}
+		
+		work.write(stream);
+		
+		stream.flush();
+		stream.close();
+	}
+
+}

@@ -1,0 +1,276 @@
+package com.newhero.urbanconstruction.codetablemaintain.allocationmanage.controller;
+
+
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.newhero.urbanconstruction.codetablemaintain.allocationmanage.pojo.AllocationManageDTO;
+import com.newhero.urbanconstruction.codetablemaintain.allocationmanage.service.AllocationManageService;
+import com.newhero.urbanconstruction.codetablemaintain.allocationsaccount.pojo.AllocationsAccountDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectname.pojo.ProjectNameDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.service.ProjectYearService;
+import com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+import com.newhero.urbanconstruction.util.Constant;
+import com.newhero.urbanconstruction.util.Pagination;
+import com.newhero.urbanconstruction.util.ToolsUtil;
+
+import net.sf.json.JSONObject;
+
+@Controller
+@RequestMapping("allocationManageController")
+public class AllocationManageController {
+	@Resource
+	private AllocationManageService allocationManageService;
+	
+	@Resource
+	private ProjectYearService projectYearService;
+
+	public AllocationManageService getAllocationManageService() {
+		return allocationManageService;
+	}
+	
+	@RequestMapping("selectAllAllocationManageDTO")
+	public String selectAllAllocationManageDTO(String allocatid,String pn,String rowsPerPage, String keyword,HttpServletResponse response,HttpServletRequest request,Model model) throws IOException{
+		if(ToolsUtil.isEmpty(pn)){
+			pn = Constant.DEAULT_START_PAGE_NUM ;
+		}
+		if(ToolsUtil.isEmpty(rowsPerPage)){
+			rowsPerPage = Constant.DEFAULT_PAGE_SIZE ;
+		}
+		if(ToolsUtil.isEmpty(pn)) keyword = null;
+		// 分页信息
+		Pagination page = new Pagination();
+		//翻页、参数
+		BaseQueryVo dto = new BaseQueryVo();
+		dto.setAllocatid(allocatid);
+		dto.setKeyword(keyword);
+		dto.setStartRow((Integer.parseInt(pn) - 1) * Integer.parseInt(rowsPerPage));
+		dto.setPageSize(Integer.parseInt(rowsPerPage));
+		
+		int rowsCount=allocationManageService.selectCountAllocationManageDTO(dto);
+		page.setRowsCount(rowsCount);
+		page.setRowsPerPage(Integer.parseInt(rowsPerPage));
+		page.setCurrentPage(Integer.parseInt(pn));
+		page.setUrl(request.getContextPath()+"/allocationManageController/selectAllAllocationManageDTO?rowsPerPage="+rowsPerPage+"&allocatid="+allocatid);
+		List<AllocationManageDTO> allAllocationManageDTO = allocationManageService.selectAllAllocationManageDTO(dto);
+		if(allAllocationManageDTO.isEmpty()&&Integer.parseInt(pn)>1) {
+			dto.setStartRow((Integer.parseInt(pn) - 2) * Integer.parseInt(rowsPerPage));
+			allAllocationManageDTO = allocationManageService.selectAllAllocationManageDTO(dto);
+			page.setCurrentPage(Integer.parseInt(pn)-1);
+		}
+		List<ProjectNameDTO> projectNameList =allocationManageService.selectProjectNames();
+		List<ProjectYearDTO> projectYearList = projectYearService.getProjectYear();
+		model.addAttribute("keyword",keyword);
+		model.addAttribute("allAllocationManageDTO",allAllocationManageDTO);
+		model.addAttribute("page",page);
+		model.addAttribute("projectNameList",projectNameList);
+		model.addAttribute("allocatid",allocatid);
+		model.addAttribute("projectYearList", projectYearList);
+		return "dm_CodeTable/AllocationManage";
+	}
+	@RequestMapping(value = "/saveAllocationManage")
+    @ResponseBody
+    public void saveAllocationManage(HttpServletResponse response,HttpServletRequest request,AllocationManageDTO allocationManageDTO) throws Exception {
+		UserDTO sessUser = (UserDTO)request.getSession().getAttribute("USER_SESSION");
+		allocationManageDTO.setOperatorid(sessUser.getId());
+		SimpleDateFormat sim=new SimpleDateFormat("yyyy-MM-dd");
+		Date date=new Date();
+		String now=sim.format(date);
+		allocationManageDTO.setOperationtime(now);
+		allocationManageDTO.setAllocatid(1);
+		allocationManageService.insertAllocationManage(allocationManageDTO);
+		Map<String, Object> rt = new HashMap<String, Object>();
+		rt.put("success", true);
+		JSONObject object = JSONObject.fromObject(rt);
+		String res = object.toString();
+		response.getWriter().write(res);
+	}
+	
+	@RequestMapping(value = "/selectAllocationManageDTOById")
+    @ResponseBody
+	public AllocationManageDTO selectAllocationManageDTOById(String id) {
+		return allocationManageService.selectAllocationManageDTOById(Integer.parseInt(id));
+	}
+	@RequestMapping(value = "/getallocatname")
+	@ResponseBody
+	public List<AllocationManageDTO> getallocatname(@RequestParam(value = "allocationaccountname") String allocationaccountname) {
+		if(ToolsUtil.isEmpty(allocationaccountname)) allocationaccountname = null;
+		List<AllocationManageDTO> allocatList = allocationManageService.getallocatname(allocationaccountname);
+		return allocatList;
+	}
+	
+	@RequestMapping(value = "/updateAllocationManageDTO")
+    @ResponseBody
+	public void updateAllocationManageDTO(HttpServletResponse response,HttpServletRequest request,AllocationManageDTO allocationManageDTO) throws Exception  {
+		UserDTO sessUser = (UserDTO)request.getSession().getAttribute("USER_SESSION");
+		allocationManageDTO.setOperatorid(sessUser.getId());
+		SimpleDateFormat sim=new SimpleDateFormat("yyyy-MM-dd");
+		Date date=new Date();
+		String now=sim.format(date);
+		allocationManageDTO.setOperationtime(now);
+		allocationManageDTO.setAllocatid(1);
+		allocationManageService.updateAllocationManageDTO(allocationManageDTO);
+		Map<String, Object> rt = new HashMap<String, Object>();
+		rt.put("success", true);
+		JSONObject object = JSONObject.fromObject(rt);
+		String res = object.toString();
+		response.getWriter().write(res);
+	}
+	
+	@RequestMapping(value = "/deleteAllocationManageDTO")
+    @ResponseBody
+    public void deleteAllocationManageDTO(HttpServletResponse response,HttpServletRequest request,AllocationManageDTO allocationManageDTO) throws Exception   {
+		UserDTO sessUser = (UserDTO)request.getSession().getAttribute("USER_SESSION");
+		allocationManageDTO.setOperatorid(sessUser.getId());
+		SimpleDateFormat sim=new SimpleDateFormat("yyyy-MM-dd");
+		Date date=new Date();
+		String now=sim.format(date);
+		allocationManageDTO.setOperationtime(now);
+		allocationManageService.deleteAllocationManageDTO(allocationManageDTO);
+		Map<String, Object> rt = new HashMap<String, Object>();
+		rt.put("success", true);
+		JSONObject object = JSONObject.fromObject(rt);
+		String res = object.toString();
+		response.getWriter().write(res);
+	}
+	@RequestMapping(value = "/getOutData")
+	public void getOutData(HttpServletResponse response,HttpServletRequest request) throws Exception {
+		List<AllocationManageDTO> dataList = allocationManageService.getOutOfData();
+		//设置输出头
+				response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+				String filename = "上级专款信息表.xls";// 设置下载时客户端Excel的名称
+				//设置HTTP响应的头
+				String t = request.getHeader("User-Agent");
+				if (t.indexOf("Firefox") > 0) {
+					response.setHeader("Content-disposition", "attachment;filename="
+							+ new String(filename.getBytes("gb2312"), "ISO8859-1"));
+				} else {
+					response.setHeader("Content-disposition", "attachment;filename="
+							+ URLEncoder.encode(filename, "UTF-8"));
+				}
+
+				ServletOutputStream stream = response.getOutputStream();
+
+				//创建工作薄
+				HSSFWorkbook workbook = new HSSFWorkbook();
+				//创建工作标签页(sheet)
+				HSSFSheet sheet = workbook.createSheet("上级专款信息表");
+
+				//创建表头
+				HSSFRow row = sheet.createRow(0);
+
+				HSSFCell cell = row.createCell(0);
+				cell.setCellValue("序号");
+
+				HSSFCell cell2 = row.createCell(1);
+				cell2.setCellValue("编号");
+
+				HSSFCell cell3 = row.createCell(2);
+				cell3.setCellValue("拨款账户");
+
+				HSSFCell cell4 = row.createCell(3);
+				cell4.setCellValue("项目名称");
+
+				HSSFCell cell5 = row.createCell(4);
+				cell5.setCellValue("文号");
+
+				HSSFCell cell6 = row.createCell(5);
+				cell6.setCellValue("发文单位");
+
+				HSSFCell cell7 = row.createCell(6);
+				cell7.setCellValue("文件名");
+
+				HSSFCell cell8 = row.createCell(7);
+				cell8.setCellValue("金额（万元）");
+
+				HSSFCell cell9 = row.createCell(8);
+				cell9.setCellValue("资金分配部门）");
+
+				HSSFCell cell10 = row.createCell(9);
+				cell10.setCellValue("功能分类");
+
+
+				HSSFCell cell11 = row.createCell(10);
+				cell11.setCellValue("经济分类");
+
+				HSSFCell cell12 = row.createCell(11);
+				cell12.setCellValue("下达日期");
+
+				HSSFCell cell13 = row.createCell(12);
+				cell13.setCellValue("级别");
+
+				HSSFCell cell14 = row.createCell(13);
+				cell14.setCellValue("剩余额度");
+
+				for(int i = 0;i<dataList.size();i++) {
+					AllocationManageDTO dto = dataList.get(i);
+					HSSFRow newrow = sheet.createRow(i+1);
+					newrow.createCell(0).setCellValue(i+1);
+					newrow.createCell(1).setCellValue(dto.getId());
+					if(!("".equals(dto.getAccountname()))||dto.getAccountname()!=null) {
+						newrow.createCell(2).setCellValue(dto.getAccountname());
+					}
+					if(!("".equals(dto.getProjectname()))||dto.getProjectname()!=null) {
+						newrow.createCell(3).setCellValue(dto.getProjectname());
+					}
+					if(!("".equals(dto.getRefernumber()))||dto.getRefernumber()!=null) {
+						newrow.createCell(4).setCellValue(dto.getRefernumber());
+					}
+					if(!("".equals(dto.getServiceunit()))||dto.getServiceunit()!=null) {
+						newrow.createCell(5).setCellValue(dto.getServiceunit());
+					}
+					if(!("".equals(dto.getFilename()))||dto.getFilename()!=null) {
+						newrow.createCell(6).setCellValue(dto.getFilename());
+					}
+					if(dto.getPrice()!=null) {
+						newrow.createCell(7).setCellValue(Double.parseDouble(dto.getPrice().toString()));
+					}
+					if(!("".equals(dto.getCapitaldistdepart()))||dto.getCapitaldistdepart()!=null) {
+						newrow.createCell(8).setCellValue(dto.getCapitaldistdepart());
+					}
+					if(!("".equals(dto.getFunctionalcategory()))||dto.getFunctionalcategory()!=null) {
+						newrow.createCell(9).setCellValue(dto.getFunctionalcategory());
+					}
+					if(!("".equals(dto.getEconomiccategory()))||dto.getEconomiccategory()!=null) {
+						newrow.createCell(10).setCellValue(dto.getEconomiccategory());
+					}
+					if(!("".equals(dto.getArrivaldate()))||dto.getArrivaldate()!=null) {
+						newrow.createCell(11).setCellValue(dto.getArrivaldate());
+					}
+					if(!("".equals(dto.getLevel()))||dto.getLevel()!=null) {
+						newrow.createCell(12).setCellValue(dto.getLevel());
+					}
+					if(dto.getSurplusamount()!=null) {
+						newrow.createCell(13).setCellValue(Double.parseDouble(dto.getSurplusamount().toString()));
+					}
+					
+				}
+		
+				workbook.write(stream);
+				stream.flush();
+				stream.close();
+	}
+	
+}

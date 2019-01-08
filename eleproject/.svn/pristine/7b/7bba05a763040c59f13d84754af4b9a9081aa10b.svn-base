@@ -1,0 +1,11 @@
+package com.newhero.urbanconstruction.apply.service;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.apply.pojo.SegmentProjectReviewDTO;
+
+public interface SegmentProjectService {
+	public List<SegmentProjectReviewDTO> selectSegProjectBySegInfoId(String segmentinfoid);
+	public int insertSegProject(SegmentProjectReviewDTO segmentProjectDTO);
+	public int updateSegProject(SegmentProjectReviewDTO segmentProjectDTO);
+}

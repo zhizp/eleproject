@@ -1,0 +1,45 @@
+package com.newhero.urbanconstruction.apply.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import com.newhero.urbanconstruction.apply.dao.SegmentProjectDao;
+import com.newhero.urbanconstruction.apply.pojo.SegmentProjectReviewDTO;
+import com.newhero.urbanconstruction.apply.service.SegmentProjectService;
+import com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentProjectDTO;
+
+@Service("segmentProjectService")
+
+public class SegmentProjectServiceImpl implements SegmentProjectService{
+
+	@Resource
+	private SegmentProjectDao segmentProjectDao;
+	
+	@Override
+	public List<SegmentProjectReviewDTO> selectSegProjectBySegInfoId(String segmentinfoid) {
+		return segmentProjectDao.selectSegProjectBySegInfoId(segmentinfoid);
+	}
+	@Override
+	public List<SegmentProjectReviewDTO> selectSegProjectByTheSegInfoId(String segmentinfoid) {
+		return segmentProjectDao.selectSegProjectByTheSegInfoId(segmentinfoid);
+	}
+
+	@Override
+	public int insertSegProject(SegmentProjectReviewDTO segmentProjectDTO) {
+		return segmentProjectDao.insertSegProject(segmentProjectDTO);
+	}
+
+	@Override
+	public int updateSegProject(SegmentProjectReviewDTO segmentProjectDTO) {
+		return segmentProjectDao.updateSegProject(segmentProjectDTO);
+	}
+
+	@Override
+	public SegmentProjectDTO selectSegmentProjectBySegmentProjectId(int segmentprojectid) {
+		return segmentProjectDao.selectSegmentProjectBySegmentProjectId(segmentprojectid);
+	}
+
+}

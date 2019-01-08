@@ -1,0 +1,138 @@
+package com.newhero.urbanconstruction.apply.service.impl;
+
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.newhero.urbanconstruction.apply.dao.AppropriationApplyDao;
+import com.newhero.urbanconstruction.apply.pojo.AppropriationApply;
+import com.newhero.urbanconstruction.apply.pojo.SegmentProjectReviewDTO;
+import com.newhero.urbanconstruction.apply.service.AppropriationApplyService;
+import com.newhero.urbanconstruction.codetablemaintain.unitaccount.pojo.UnitAccountDTO;
+import com.newhero.urbanconstruction.codetablemaintain.unitinfo.pojo.UnitInfoDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+@Transactional
+@Service("appropriationApplyService")
+public class AppropriationApplyServiceImpl implements AppropriationApplyService{
+	@Resource
+	private AppropriationApplyDao appropriationApplyDao;
+	
+	@Override
+	public AppropriationApply getApplyDataById(int id) {
+		return appropriationApplyDao.getApplyDataById(id);
+	}
+
+	@Override
+	//插入申请拨款表信息（全部）
+	public int insertApplyData(AppropriationApply appropriationApply) {		
+		System.out.println(appropriationApply.getAppropriationContent() + " " + appropriationApply.getConstructionUnit() + " " +
+	appropriationApply.getDesignUnit() + " " + appropriationApply.getPayee() + " " + appropriationApply.getReceivableAccount()
+	+ " " + appropriationApply.getRemark() + " " + appropriationApply.getSupervisionUnit() + " " + appropriationApply.getAcceptorId()
+	+ appropriationApply.getAcceptorId() + " " + appropriationApply.getApplicationAmount() + " " + appropriationApply.getApprovalerId());
+		int i = appropriationApplyDao.insertApplyData(appropriationApply);
+		if(i > 0){
+			return (i = 1);
+		}else{
+			return i;
+		}
+	}
+
+	@Override
+	//更改申请拨款表信息的业务流程状态
+	public int updateAppropriationApplyData(AppropriationApply appropriationApply) {
+		int i = appropriationApplyDao.updateAppropriationApplyData(appropriationApply);
+		if(i > 0){
+			return (i = 1);
+		}else{
+			return i;
+		}
+	}
+	
+	@Override
+	//更改申请拨款信息表的业务流程状态
+	public int updateAppropriationApplyDataStateById(String id){
+		int i = appropriationApplyDao.updateAppropriationApplyDataStateById(id);
+		if(i > 0){
+			return (i = 1);
+		}else{
+			return i;
+		}
+	}
+
+	@Override
+	public int deleteAppropriationApplyById(AppropriationApply appropriationApply) {
+		int i = appropriationApplyDao.deleteAppropriationApplyById(appropriationApply);
+		if(i > 0){
+			return (i = 0);
+		}else{
+			return i;
+		}
+	}
+
+	@Override
+	public List<AppropriationApply> getApplyAllData(BaseQueryVo dto) {
+		return appropriationApplyDao.getApplyAllData(dto);
+	}
+	
+	@Override
+	public List<AppropriationApply> getApplyAllData1(BaseQueryVo dto) {
+		List<AppropriationApply> list=appropriationApplyDao.getApplyAllData1(dto);
+		return list;
+	}
+	
+	public int selectApplyCountByKeyword(BaseQueryVo dto) {
+		return appropriationApplyDao.selectApplyCountByKeyword(dto);
+	}
+	
+	public SegmentProjectReviewDTO selectSegmentProjectBySegmentId(String segmentinfoid) {
+		return appropriationApplyDao.selectSegmentProjectBySegmentId(segmentinfoid);
+	}
+	public int updateProjectPrceBySegmentId(SegmentProjectReviewDTO segmentProjectReviewDTO) {
+		return appropriationApplyDao.updateProjectPrceBySegmentId(segmentProjectReviewDTO);
+	}
+	public int updateReviewBySegmentId(SegmentProjectReviewDTO segmentProjectReviewDTO) {
+		return appropriationApplyDao.updateReviewBySegmentId(segmentProjectReviewDTO);
+	}
+	public int updateRemarkBySegmentId(SegmentProjectReviewDTO segmentProjectReviewDTO) {
+		return appropriationApplyDao.updateRemarkBySegmentId(segmentProjectReviewDTO);
+	}
+	public int updateApplysettlreviewamount(Map map) {
+		return appropriationApplyDao.updateApplysettlreviewamount(map);
+	}
+	
+	public List<UnitInfoDTO> getPayeeListByName(String unitname){
+		return appropriationApplyDao.getPayeeListByName(unitname);
+	}
+	public List<UnitAccountDTO> getReceivableaccount(String unitinfoid) {
+		return appropriationApplyDao.getReceivableaccount(unitinfoid);
+	}
+
+	@Override
+	public List<AppropriationApply> selectApplyBySegmentId(String segmentid) {
+		return appropriationApplyDao.selectApplyBySegmentInfoId(segmentid);
+	}
+
+	@Override
+	public List<AppropriationApply> selectApplyBySegmentProjectId(String segmentprojectid) {
+		return appropriationApplyDao.selectApplyBySegmentProjectId(segmentprojectid);
+	}
+
+	@Override
+	public int insertApplyDataNew(AppropriationApply appropriationApply) {
+		return appropriationApplyDao.insertApplyDataNew(appropriationApply);
+	}
+
+	@Override
+	public int insertApplyDataNew1(AppropriationApply appropriationApply) {
+		return appropriationApplyDao.insertApplyDataNew1(appropriationApply);
+	}
+	
+	
+}

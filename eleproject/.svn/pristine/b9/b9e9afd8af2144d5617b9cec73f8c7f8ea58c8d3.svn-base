@@ -1,0 +1,36 @@
+package com.newhero.urbanconstruction.codetablemaintain.projectyear.service;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+/**
+ * Servies 接口
+ * @author Mjj
+ */
+public interface ProjectYearService {
+	
+	
+	public int selectProjectYearCountByKeyword(BaseQueryVo dto);
+	public List<ProjectYearDTO> selectProjectYears(BaseQueryVo dto);
+	//根据id来查找
+	public ProjectYearDTO getProjectYearId(int projectYearId);
+	
+	//添加一条数据
+	public void saveProjectYear(ProjectYearDTO projectYear);
+	
+	//删除指定数据
+	public void deleteProjectYear(ProjectYearDTO projectYear);
+	
+	//修改数据
+	public void updateProjectYear(ProjectYearDTO projectYear);
+	 
+	public List<ProjectYearDTO> selectProjectYearByName(String projectYear);
+	
+	public List<ProjectYearDTO> getProjectYear();
+	public ProjectYearDTO selectProjectYearById(int id);
+	public List<ProjectYearDTO> selectProjectYearByYear(String projectYear);
+	public void updateProjectYearIsdelete(String projectYear);
+	public int selectCountConstructionUnitByProjectYear(int id);
+}

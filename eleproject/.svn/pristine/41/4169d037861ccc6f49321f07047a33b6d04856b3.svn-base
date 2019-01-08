@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- namespace的值就是dao接口的完整路径，就这个demo而言namespace 就是userDao.java的完整路径 -->
+<mapper
+	namespace="com.newhero.urbanconstruction.apply.dao.AppropriationApprovalDao">
+	<resultMap id="ApprovalResultMap"
+		type="com.newhero.urbanconstruction.apply.pojo.AppropriationApprovalDTO">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="projectname" property="projectname" jdbcType="VARCHAR" />
+		<result column="constructionUnit" property="constructionUnit"
+			jdbcType="VARCHAR" />
+		<result column="payee" property="payee" jdbcType="VARCHAR" />
+		<result column="appropriationcontent" property="appropriationcontent"
+			jdbcType="VARCHAR" />
+		<result column="contractprice" property="contractprice"
+			jdbcType="DECIMAL" />
+		<result column="settlreviewamount" property="settlreviewamount"
+			jdbcType="DECIMAL" />
+		<result column="totalappropriation" property="totalappropriation"
+			jdbcType="DECIMAL" />
+		<result column="applicationamount" property="applicationamount"
+			jdbcType="DECIMAL" />
+		<result column="state" property="state" jdbcType="INTEGER" />
+		<result column="segmentprojectid" property="segmentprojectid"
+			jdbcType="INTEGER" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="estimateamount" property="estimateamount"
+			jdbcType="DECIMAL" />
+		<result column="projectyear" property="projectyear" jdbcType="VARCHAR" />
+		<result column="approvalamount" property="approvalamount"
+			jdbcType="DECIMAL" />
+		<result column="appropriationaccount" property="appropriationaccount"
+			jdbcType="VARCHAR" />
+		<result column="applicationdate" property="applicationdate"
+			jdbcType="VARCHAR" />
+		<result column="accountname" property="accountname" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="getAppropriationApprovalListByState" parameterType="com.newhero.urbanconstruction.util.BaseQueryVo"
+		resultMap="ApprovalResultMap">
+		SELECT ap.id,py.projectyear,dc.unitshortname as constructionUnit,ap.granttime,ap.appropriationaccount,ap.approvaltime,ap.approvalamount,ap.payee,ap.appropriationcontent,ap.state, sp.contractprice,sp.settlreviewamount,
+		sp.totalappropriation,ap.applicationamount,ap.remark,pj.projectname,sp.owepayment 
+		FROM appropriationapply ap, segmentproject sp, dm_projectname pj ,dm_projectyear py ,dm_segmentinfo sg,dm_constructionunit dc
+		WHERE ap.segmentprojectid=sp.id AND sp.projectid=pj.id AND sp.segmentinfoid=sg.id AND sg.constructionid=dc.id AND pj.yearid=py.id
+		AND sp.isdelete=0 AND ap.isdelete=0 
+		and state = #{state}
+		<if test='querySelect=="0" and keyword != null'>
+		and dc.unitshortname like "%"#{keyword}"%"
+		</if>
+		<if test='querySelect=="1" and keyword != null'>
+		and ap.id like "%"#{keyword}"%"
+		</if>
+		<!-- 备注下遇到问题，默认标签<if test=""><if> 但是test内的querySelect是字符串类型且用==号来进行匹配 就只能是 <if test='querySelect == "2"'></if>
+			 需要注意到的是，匹配本来就是字符串类型  -->
+		<if test='querySelect == "2" and keyword != null'>
+			and py.projectyear like "%"#{keyword}"%"
+		</if>
+		<if test='querySelect == "3" and keyword != null'>
+			and pj.projectname like "%"#{keyword}"%"
+		</if>
+		<if test="isall == null">
+			LIMIT #{startRow},#{pageSize}
+		</if>
+	</select>
+		
+	<!-- 新增查询申请表通过id -->
+	<select id="getAppropriationApprovalListById" parameterType="java.lang.String" resultType="com.newhero.urbanconstruction.apply.pojo.AppropriationApprovalDTO">
+		select * from appropriationapply where id = #{id}
+	</select>
+	
+	<!-- 获取申请日期时间列表 -->
+	<select id="getApplicationDate" resultType="java.util.Date">
+		select
+		applicationdate
+		from appropriationapply
+		where isdelete = 0
+	</select>
+
+	<!-- 获取拨款时间列表 -->
+	<select id="getGrantDate" resultType="java.util.Date">
+		select granttime
+		from
+		appropriationapply
+		where isdelete = 0
+	</select>
+
+	<!-- 获取拨款账户列表 -->
+	<select id="getAppropriationAccount" resultType="java.lang.String">
+		select
+		appropriationaccount
+		from appropriationapply
+		where isdelete = 0
+	</select>
+
+	<select id="getAppropriationApprovalCountByState" parameterType="com.newhero.urbanconstruction.util.BaseQueryVo"
+		resultType="java.lang.Integer">
+		select
+		count(*)
+		from appropriationapply ap, segmentproject sp, dm_projectname pj where
+		ap.segmentprojectid=sp.id and sp.projectid=pj.id
+		and sp.isdelete=0 and ap.isdelete=0 and state = #{state}
+		<if test='keyword != null'>
+			<if test="querySelect=='0'">
+			and ap.constructionUnit like "%"#{keyword}"%"
+			</if>
+			<if test="querySelect=='1'">
+			and ap.id like "%"#{keyword}"%"
+			</if>
+		</if>
+	</select>
+	<select id="getAppropriationApprovalInfoById" parameterType="java.lang.Integer"
+		resultMap="ApprovalResultMap">
+		select
+		ap.id,ap.applicationdate,ap.receivableAccount,ap.receivablenumber,ap.constructionUnit,ap.payee,ap.appropriationcontent,ap.designunit,ap.operatorid,ap.supervisionunit,ap.state,sp.estimateamount,
+		sp.contractprice,sp.settlreviewamount,sp.totalappropriation,ap.applicationamount,ap.remark,pj.projectname,cu.unitname,py.projectyear
+		from appropriationapply ap, segmentproject sp, dm_projectname
+		pj,dm_constructionunit cu,dm_projectyear py
+		where ap.segmentprojectid=sp.id and sp.projectid=pj.id and
+		pj.constructionid=cu.id and pj.yearid=py.id
+		and ap.id = #{id}
+	</select>
+
+	<select id="getAppropriationApprovalById" parameterType="java.lang.Integer"
+		resultMap="ApprovalResultMap">
+		select id,state,applicationamount,segmentprojectid,approvalamount
+		from
+		appropriationapply
+		where id = #{id}
+	</select>
+	<select id="getSegmentProjectById" parameterType="java.lang.Integer"
+		resultType="com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentProjectDTO">
+		select id,totalappropriation,settlreviewamount,owepayment
+		from
+		segmentproject
+		where id = #{id}
+	</select>
+	<update id="updApprovalState"
+		parameterType="com.newhero.urbanconstruction.apply.pojo.AppropriationApprovalDTO">
+		update appropriationapply
+		set state=#{state}
+		<if test="acceptorid!=null">
+			,acceptorid=#{acceptorid},acceptortime=now()
+		</if>
+		<if test="approvalerid!=null">
+			,approvalerid=#{approvalerid}
+		</if>
+		<if test="granterid!=null">
+			,granterid=#{granterid}
+		</if>
+		where id = #{id}
+	</update>
+
+
+	<insert id="updSegmentProjectTotal"
+		parameterType="com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentProjectDTO">
+		update segmentproject
+		set totalappropriation=#{totalappropriation},owepayment=#{owepayment}
+		,operatorid=#{operatorid},operationtime=now()
+		where id = #{id}
+	</insert>
+	<update id="updateApprop"
+		parameterType="com.newhero.urbanconstruction.apply.pojo.AppropriationApply">
+		update appropriationapply
+		set approvalamount=#{approvalamount},
+		appropriationaccount=#{appropriationaccount},
+		approvalTime=#{approvalTime},
+		grantTime=#{approvalTime}
+		where id=#{id}
+	</update>
+	<!-- 审批时更新标段项目表 -->
+	<update id="updateSegmentprojectBySP"
+		parameterType="com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentProjectDTO">
+		update segmentproject
+		set owepayment=#{owepayment},
+		totalappropriation=#{totalappropriation},
+		operatorid=#{operatorid},
+		operationtime=now()
+		where id=#{id}
+	</update>
+	<update id="cacelapprop"
+		parameterType="com.newhero.urbanconstruction.apply.pojo.AppropriationApply">
+		update appropriationapply
+		set state=#{state},
+		approvalamount='0.00',
+		appropriationaccount=null,
+		approvalTime=now(),
+		grantTime=null
+		where id=#{id}
+	</update>
+	<select id="selectAccountNames" resultType="java.util.Map">
+		select id,accountName
+		from dm_allocationsaccount
+		where isdelete=0
+	</select>
+	<select id="getAccountNameBycode" parameterType="com.newhero.urbanconstruction.codetablemaintain.allocationsaccount.pojo.AllocationsAccountDTO" resultType="com.newhero.urbanconstruction.codetablemaintain.allocationsaccount.pojo.AllocationsAccountDTO">
+		select id,accountName
+		from dm_allocationsaccount
+		where isdelete=0
+		<if test="accountName!= null" >
+		and accountName like "%"#{accountName}"%"
+		</if>
+		
+	</select>
+</mapper>

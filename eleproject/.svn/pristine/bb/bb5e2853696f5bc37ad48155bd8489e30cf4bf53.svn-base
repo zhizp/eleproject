@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- namespace的值就是dao接口的完整路径，就这个demo而言namespace 就是userDao.java的完整路径-->
+<mapper namespace="com.newhero.urbanconstruction.codetablemaintain.unitaccount.dao.UnitAccountDao">
+	<resultMap id="UnitAccountResultMap" type="com.newhero.urbanconstruction.codetablemaintain.unitaccount.pojo.UnitAccountDTO">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="unitinfoid" property="unitinfoid" jdbcType="INTEGER" />
+		<result column="unitname" property="unitname" jdbcType="VARCHAR" />
+		<result column="bank" property="bank" jdbcType="VARCHAR" />
+		<result column="accountnumber" property="accountnumber" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="getUnitAccountListByKeyword" parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultMap="UnitAccountResultMap">
+  		select 
+		   ua.id,ua.unitinfoid,ui.unitname,ua.bank,ua.accountnumber,ua.remark
+		from dm_unitaccount ua left join  dm_unitinfo ui on ua.unitinfoid=ui.id where  ua.isdelete=0 
+		<if test='keyword != null'>
+		and ui.unitname like "%"#{keyword}"%"  
+		</if>
+		<if test = "isall == null">
+			LIMIT #{startRow},#{pageSize}
+		</if>
+  	</select>
+  	
+  	<select id="getUnitAccountCountByKeyword" parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultType="java.lang.Integer">
+  		select 
+		   count(*)
+		from dm_unitaccount ua left join  dm_unitinfo ui on ua.unitinfoid=ui.id where  ua.isdelete=0 
+		<if test='keyword != null'>
+		and ui.unitname like "%"#{keyword}"%"  
+		</if>
+  	</select>
+	<select id="getUnitAccountById" resultMap="UnitAccountResultMap" parameterType="java.lang.Integer">
+		select
+		id,unitinfoid,bank,accountnumber,remark
+		from dm_unitaccount
+		where id = #{id}
+	</select>
+	<insert id="insertUnitAccount" parameterType="com.newhero.urbanconstruction.codetablemaintain.unitaccount.pojo.UnitAccountDTO">
+		insert into dm_unitaccount (unitinfoid,bank,accountnumber, remark, isdelete,operatorid)
+		values (#{unitinfoid},#{bank},#{accountnumber},#{remark},0,#{operatorid})
+	</insert>
+	
+	<update id="updateUnitAccountById" parameterType="com.newhero.urbanconstruction.codetablemaintain.unitaccount.pojo.UnitAccountDTO">
+		update dm_unitaccount
+		set
+		unitinfoid = #{unitinfoid},
+		
+		bank = #{bank},
+		accountnumber = #{accountnumber},
+		remark = #{remark},
+		operatorid = #{operatorid},
+		operationtime=now()
+		where id  =	#{id}
+	</update>
+	<update id="delUnitAccountId" parameterType="com.newhero.urbanconstruction.codetablemaintain.unitaccount.pojo.UnitAccountDTO">
+		update dm_unitaccount
+		set isdelete=1,operatorid=#{operatorid},operationtime=now()
+		where id  =	#{id}
+	</update>
+	
+</mapper>

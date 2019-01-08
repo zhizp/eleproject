@@ -1,0 +1,156 @@
+package com.newhero.urbanconstruction.common.controller;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.newhero.urbanconstruction.common.pojo.ConstructionUnitCasDTO;
+import com.newhero.urbanconstruction.common.pojo.CostTypeCasDTO;
+import com.newhero.urbanconstruction.common.pojo.ProjectNameCasDTO;
+import com.newhero.urbanconstruction.common.pojo.UnitAccountCasDTO;
+import com.newhero.urbanconstruction.common.service.InfoCascadeService;
+
+/**
+ * 各层级联调用接口
+ * @author mqr
+ *
+ */
+@Controller
+@RequestMapping(value = "/infoCascade")
+public class InfoCascadeController {
+	@Resource 
+	private InfoCascadeService infoCascadeService;
+	/**
+	 * ajax根据用户年度ID查询建设单位列表
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("null")
+	@ResponseBody
+	@RequestMapping(value="/getConstUnitInfoByYearId", method = RequestMethod.POST)
+	public List<ConstructionUnitCasDTO> getConstructionUnitInfoByYearId(@RequestParam(value = "id") Integer id ) {
+		if(id == null && id == 0){
+			return null;
+		}
+		List<ConstructionUnitCasDTO> list = infoCascadeService.getConstructionUnitInfoByYearId(id);
+		return list;
+	}
+	
+	/**
+	 * ajax根据用户年度ID查询建设单位数量
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("null")
+	@ResponseBody
+	@RequestMapping(value="/getConstructionUnitNumByYearId", method = RequestMethod.POST)
+	public int getConstructionUnitNumByYearId(@RequestParam(value = "id") Integer id ) {
+		if(id == null && id == 0){
+			return 0;
+		}
+		int count = infoCascadeService.getConstructionUnitNumByYearId(id);
+		return count;
+	}
+	
+	/**
+	 * ajax根据建设单位ID查询项目名称列表
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("null")
+	@ResponseBody
+	@RequestMapping(value="/getProjectNameInfoByUnitId", method = RequestMethod.POST)
+	public List<ProjectNameCasDTO> getProjectNameInfoByUnitId(@RequestParam(value = "id") Integer id ) {
+		if(id == null && id == 0){
+			return null;
+		}
+		List<ProjectNameCasDTO> list = infoCascadeService.getProjectNameInfoByUnitId(id);
+		return list;
+	}
+	
+	/**
+	 * ajax根据建设单位ID查询项目名称数量
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("null")
+	@ResponseBody
+	@RequestMapping(value="/getProjectNameNumByUnitId", method = RequestMethod.POST)
+	public int getProjectNameNumByUnitId(@RequestParam(value = "id") Integer id ) {
+		if(id == null && id == 0){
+			return 0;
+		}
+		int count = infoCascadeService.getProjectNameNumByUnitId(id);
+		return count;
+	}
+	
+	/**
+	 * ajax根据项目名称ID查询费用类别列表
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("null")
+	@ResponseBody
+	@RequestMapping(value="/getCostTypeListByProjId", method = RequestMethod.POST)
+	public List<CostTypeCasDTO> getCostTypeListByProjId(@RequestParam(value = "id") Integer id ) {
+		if(id == null && id == 0){
+			return null;
+		}
+		List<CostTypeCasDTO> list = infoCascadeService.getCostTypeListByProjId(id);
+		return list;
+	}
+	
+	/**
+	 * ajax根据项目名称ID查询费用类别数量
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("null")
+	@ResponseBody
+	@RequestMapping(value="/getCostTypeNumByProjId", method = RequestMethod.POST)
+	public int getCostTypeNumByProjId(@RequestParam(value = "id") Integer id ) {
+		if(id == null && id == 0){
+			return 0;
+		}
+		int count = infoCascadeService.getCostTypeNumByProjId(id);
+		return count;
+	}
+	
+	/**segmentinfo
+	 * ajax根据费用类别ID查询标段信息数量
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("null")
+	@ResponseBody
+	@RequestMapping(value="/getSegmentListByCostTypeId", method = RequestMethod.POST)
+	public int getSegmentListByCostTypeId(@RequestParam(value = "id") Integer id ) {
+		if(id == null && id == 0){
+			return 0;
+		}
+		int count = infoCascadeService.getSegmentListByCostTypeId(id);
+		return count;
+	}
+	
+	/**
+	 * ajax根据单位信息ID查询单位账户列表
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("null")
+	@ResponseBody
+	@RequestMapping(value="/getUnitAccountListByUnitInfoId", method = RequestMethod.POST)
+	public List<UnitAccountCasDTO> getUnitAccountListByUnitInfoId(@RequestParam(value = "id") Integer id ) {
+		if(id == null && id == 0){
+			return null;
+		}
+		List<UnitAccountCasDTO> list = infoCascadeService.getUnitAccountListByUnitInfoId(id);
+		return list;
+	}
+}

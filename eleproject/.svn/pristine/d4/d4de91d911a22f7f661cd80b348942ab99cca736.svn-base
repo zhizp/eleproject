@@ -1,0 +1,313 @@
+package com.newhero.urbanconstruction.codetablemaintain.archivesmanage.controller;
+
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.newhero.urbanconstruction.codetablemaintain.archivesmanage.pojo.ArchivesManageDTO;
+import com.newhero.urbanconstruction.codetablemaintain.archivesmanage.service.ArchivesMnageService;
+import com.newhero.urbanconstruction.codetablemaintain.archivestype.pojo.ArchivesType;
+import com.newhero.urbanconstruction.codetablemaintain.projectname.pojo.ProjectNameDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO;
+import com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO;
+import com.newhero.urbanconstruction.sysmanager.user.service.SysUserService;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+import com.newhero.urbanconstruction.util.Constant;
+import com.newhero.urbanconstruction.util.Pagination;
+import com.newhero.urbanconstruction.util.ToolsUtil;
+
+import net.sf.json.JSONObject;
+
+@Controller
+@RequestMapping(value = "/archivesManageController")
+public class ArchivesManageController {
+	@Resource 
+	private ArchivesMnageService archivesMnageService;
+	@Resource 
+	private SysUserService sysUserService;
+	
+	public ArchivesMnageService getArchivesMnageService() {
+		return archivesMnageService;
+	}
+	public SysUserService getSysUserService() {
+		return sysUserService;
+	}
+
+
+
+	@RequestMapping(value = "/selectArchivesManage")
+	public String selectArchivesManage(String querySelect,String pn,String rowsPerPage, String keyword,HttpServletResponse response,HttpServletRequest request,Model model)throws IOException {
+		if(ToolsUtil.isEmpty(pn)){
+			pn = Constant.DEAULT_START_PAGE_NUM ;
+		}
+		if(ToolsUtil.isEmpty(rowsPerPage)){
+			rowsPerPage = Constant.DEFAULT_PAGE_SIZE ;
+		}
+		if(ToolsUtil.isEmpty(pn)) keyword = null;
+		// 分页信息
+		Pagination page = new Pagination();
+		//翻页、参数
+		BaseQueryVo dto = new BaseQueryVo();
+		dto.setQuerySelect(querySelect);
+		dto.setKeyword(keyword);
+		dto.setStartRow((Integer.parseInt(pn) - 1) * Integer.parseInt(rowsPerPage));
+		dto.setPageSize(Integer.parseInt(rowsPerPage));
+		int rowsCount =archivesMnageService.selectCountArchivesManageByKeyword(dto);
+		page.setRowsCount(rowsCount);
+		page.setRowsPerPage(Integer.parseInt(rowsPerPage));
+		page.setCurrentPage(Integer.parseInt(pn));
+		page.setUrl(request.getContextPath()+"/archivesManageController/selectArchivesManage?rowsPerPage="+rowsPerPage);
+		List<ArchivesManageDTO> allArchivesManageDTOList = archivesMnageService.getAllArchivesManageDTO(dto);
+		if(allArchivesManageDTOList.isEmpty()&&Integer.parseInt(pn)>1) {
+			dto.setStartRow((Integer.parseInt(pn) - 2) * Integer.parseInt(rowsPerPage));
+			allArchivesManageDTOList = archivesMnageService.getAllArchivesManageDTO(dto);
+			page.setCurrentPage(Integer.parseInt(pn)-1);
+		}
+		List<ArchivesType> archivesTypeList = archivesMnageService.selectArchivesType();
+		List<ProjectNameDTO> projectNameList = archivesMnageService.selectProjectNames();
+		List<ProjectYearDTO> projectYearList = archivesMnageService.selectProjectYears();
+		model.addAttribute("allArchivesManageDTOList", allArchivesManageDTOList);
+        model.addAttribute("keyword",keyword);
+		model.addAttribute("page",page);
+		model.addAttribute("querySelect", querySelect);
+		model.addAttribute("archivesTypeList",archivesTypeList);
+		model.addAttribute("projectNameList",projectNameList);
+		model.addAttribute("projectYearList",projectYearList);
+		return "dm_CodeTable/ArchivesManage";
+	}
+	
+	@RequestMapping(value = "/saveArchivesManage")
+    @ResponseBody
+	public void saveArchivesManage(HttpServletResponse response,HttpServletRequest request,ArchivesManageDTO archivesManageDTO )  throws IOException{
+		UserDTO sessUser = (UserDTO)request.getSession().getAttribute("USER_SESSION");
+		archivesManageDTO.setOperatorid(sessUser.getId());
+		SimpleDateFormat sim=new SimpleDateFormat("yyyy-MM-dd");
+		Date date=new Date();
+		String now=sim.format(date);
+		archivesManageDTO.setOperationtime(now);
+		archivesMnageService.insertArchivesManage(archivesManageDTO);
+		Map<String, Object> rt = new HashMap<String, Object>();
+		rt.put("success", true);
+		JSONObject object = JSONObject.fromObject(rt);
+		String res = object.toString();
+		response.getWriter().write(res);
+	}
+	
+	@RequestMapping(value = "/selectArchivesById")
+    @ResponseBody
+	public ArchivesManageDTO  selectArchivesById(String id) {
+		return archivesMnageService.selectArchivesManageById(Integer.parseInt(id));
+	}
+	
+	@RequestMapping(value = "/updateArchivesManage")
+    @ResponseBody
+	public void updateArchivesManage(HttpServletResponse response,HttpServletRequest request,ArchivesManageDTO archivesManageDTO )  throws IOException {
+		UserDTO sessUser = (UserDTO)request.getSession().getAttribute("USER_SESSION");
+		archivesManageDTO.setOperatorid(sessUser.getId());
+		SimpleDateFormat sim=new SimpleDateFormat("yyyy-MM-dd");
+		Date date=new Date();
+	    String now=sim.format(date);
+		archivesManageDTO.setOperationtime(now);
+		archivesMnageService.updateArchivesManage(archivesManageDTO);
+		Map<String, Object> rt = new HashMap<String, Object>();
+		rt.put("success", true);
+		JSONObject object = JSONObject.fromObject(rt);
+		String res = object.toString();
+		response.getWriter().write(res);
+	}
+	
+	@RequestMapping(value = "/deleteArchivesManage")
+    @ResponseBody
+	public void deleteArchivesManage(HttpServletResponse response,HttpServletRequest request,ArchivesManageDTO archivesManageDTO )  throws IOException {
+		UserDTO sessUser = (UserDTO)request.getSession().getAttribute("USER_SESSION");
+		archivesManageDTO.setOperatorid(sessUser.getId());
+		archivesMnageService.deleteArchivesManage(archivesManageDTO);
+		Map<String, Object> rt = new HashMap<String, Object>();
+		rt.put("success", true);
+		JSONObject object = JSONObject.fromObject(rt);
+		String res = object.toString();
+		response.getWriter().write(res);
+	}
+	
+	
+	@RequestMapping(value = "/getOutData")
+	public void getOutData(HttpServletResponse response,HttpServletRequest request) throws Exception {
+		List<ArchivesManageDTO> dataList = archivesMnageService.getOutOfData();
+		//设置输出头
+		response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+		String filename = "档案管理信息表.xls";// 设置下载时客户端Excel的名称
+		//设置HTTP响应的头
+		String t = request.getHeader("User-Agent");
+		if (t.indexOf("Firefox") > 0) {
+			response.setHeader("Content-disposition", "attachment;filename="
+					+ new String(filename.getBytes("gb2312"), "ISO8859-1"));
+		} else {
+			response.setHeader("Content-disposition", "attachment;filename="
+					+ URLEncoder.encode(filename, "UTF-8"));
+		}
+
+		ServletOutputStream stream = response.getOutputStream();
+
+		//创建工作薄
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		//创建工作标签页(sheet)
+		HSSFSheet sheet = workbook.createSheet("档案信息表");
+
+		//创建表头
+		HSSFRow row = sheet.createRow(0);
+
+		HSSFCell cell = row.createCell(0);
+		cell.setCellValue("序号");
+
+		HSSFCell cell2 = row.createCell(1);
+		cell2.setCellValue("编号");
+
+		HSSFCell cell3 = row.createCell(2);
+		cell3.setCellValue("项目年度");
+
+		HSSFCell cell4 = row.createCell(3);
+		cell4.setCellValue("项目名称");
+
+		HSSFCell cell5 = row.createCell(4);
+		cell5.setCellValue("文件日期");
+
+		HSSFCell cell6 = row.createCell(5);
+		cell6.setCellValue("收文日期");
+
+		HSSFCell cell7 = row.createCell(6);
+		cell7.setCellValue("档案标题");
+
+		HSSFCell cell8 = row.createCell(7);
+		cell8.setCellValue("文号");
+
+		HSSFCell cell9 = row.createCell(8);
+		cell9.setCellValue("类别");
+
+		HSSFCell cell10 = row.createCell(9);
+		cell10.setCellValue("档案金额（元）");
+
+
+		HSSFCell cell11 = row.createCell(10);
+		cell11.setCellValue("卷号");
+
+		HSSFCell cell12 = row.createCell(11);
+		cell12.setCellValue("附件链接");
+
+		HSSFCell cell13 = row.createCell(12);
+		cell13.setCellValue("办理情况");
+
+		HSSFCell cell14 = row.createCell(13);
+		cell14.setCellValue("经办人");
+
+		HSSFCell cell15 = row.createCell(14);
+		cell15.setCellValue("办结日期");
+
+		HSSFCell cell16 = row.createCell(15);
+		cell16.setCellValue("来文机关");
+
+		HSSFCell cell17 = row.createCell(16);
+		cell17.setCellValue("拨付日期（审批日期）");
+
+		HSSFCell cell18 = row.createCell(17);
+		cell18.setCellValue("备注");
+		
+		//创建数据行
+		for(int i = 0;i<dataList.size();i++) {
+			ArchivesManageDTO archivesManageDTO = dataList.get(i);
+			HSSFRow newrow = sheet.createRow(i+1);
+			newrow.createCell(0).setCellValue(i+1);
+			newrow.createCell(1).setCellValue(archivesManageDTO.getId());
+			if(!("".equals(archivesManageDTO.getProjectyear()))||archivesManageDTO.getProjectyear()!=null) {
+				newrow.createCell(2).setCellValue(archivesManageDTO.getProjectyear());
+			}
+
+			if(!("".equals(archivesManageDTO.getProjectname()))||archivesManageDTO.getProjectname()!=null) {
+				newrow.createCell(3).setCellValue(archivesManageDTO.getProjectname());
+			}    	
+
+			if(!("0000-00-00".equals(archivesManageDTO.getFiledate()))||archivesManageDTO.getFiledate()!="0000-00-00") {
+				newrow.createCell(4).setCellValue(archivesManageDTO.getFiledate());
+			}
+
+			if(!("".equals(archivesManageDTO.getReceiptdate()))||archivesManageDTO.getReceiptdate()!=null) {
+				newrow.createCell(5).setCellValue(archivesManageDTO.getReceiptdate());
+			}
+
+			if(!("".equals(archivesManageDTO.getArchivestitle()))||archivesManageDTO.getArchivestitle()!=null) {
+				newrow.createCell(6).setCellValue(archivesManageDTO.getArchivestitle());
+			}
+
+			if(!("".equals(archivesManageDTO.getRefernumber()))||archivesManageDTO.getRefernumber()!=null) {
+				newrow.createCell(7).setCellValue(archivesManageDTO.getRefernumber());
+			}
+
+			if(!("".equals(archivesManageDTO.getArchivestype()))||archivesManageDTO.getArchivestype()!=null) {
+				newrow.createCell(8).setCellValue(archivesManageDTO.getArchivestype());
+			}
+
+			if(archivesManageDTO.getArchivesprice()!=null) {
+				newrow.createCell(9).setCellValue(Double.parseDouble(archivesManageDTO.getArchivesprice().toString()));
+			}
+
+			if(!("".equals(archivesManageDTO.getVolumenumber()))||archivesManageDTO.getVolumenumber()!=null) {
+				newrow.createCell(10).setCellValue(archivesManageDTO.getVolumenumber());
+			}
+
+			if(!("".equals(archivesManageDTO.getAttachments()))||archivesManageDTO.getAttachments()!=null) {
+				newrow.createCell(11).setCellValue(archivesManageDTO.getAttachments());
+			}
+
+			if(!("".equals(archivesManageDTO.getHandlesituation()))||archivesManageDTO.getHandlesituation()!=null) {
+				newrow.createCell(12).setCellValue(archivesManageDTO.getHandlesituation());
+			}
+
+			if(!("".equals(archivesManageDTO.getAgent()))||archivesManageDTO.getAgent()!=null) {
+				newrow.createCell(13).setCellValue(archivesManageDTO.getAgent());
+			}
+
+			if(!("".equals(archivesManageDTO.getHandedate()))||archivesManageDTO.getHandedate()!=null) {
+				newrow.createCell(14).setCellValue(archivesManageDTO.getHandedate());
+			}
+
+			if(!("".equals(archivesManageDTO.getCivilservice()))||archivesManageDTO.getCivilservice()!=null) {
+				newrow.createCell(15).setCellValue(archivesManageDTO.getCivilservice());
+			}
+
+			if(!("".equals(archivesManageDTO.getDisbursementdate()))||archivesManageDTO.getDisbursementdate()!=null) {
+				newrow.createCell(16).setCellValue(archivesManageDTO.getDisbursementdate());
+			}
+
+			if(!("".equals(archivesManageDTO.getRemark()))||archivesManageDTO.getRemark()!=null) {
+				newrow.createCell(17).setCellValue(archivesManageDTO.getRemark());
+			}
+
+		}
+		workbook.write(stream);
+		stream.flush();
+		stream.close();
+
+	}
+
+	
+	
+	
+	
+}

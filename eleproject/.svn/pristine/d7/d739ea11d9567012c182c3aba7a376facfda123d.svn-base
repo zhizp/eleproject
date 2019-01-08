@@ -1,0 +1,93 @@
+package com.newhero.urbanconstruction.codetablemaintain.projectyear.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.transaction.Transactional;
+
+import org.springframework.stereotype.Service;
+
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.dao.ProjectYearDao;
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.service.ProjectYearService;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+/**
+ * ProjectYearService 接口实现类
+ * @author Mjj
+ */
+@Transactional
+@Service("projectYearService")
+public class ProjectYearServiceImpl implements ProjectYearService{
+	@Resource
+	private ProjectYearDao projectYearDao;
+	
+	public ProjectYearDTO getProjectYearId(int id){
+		return this.projectYearDao.selectProjectYearById(id);
+	}
+	
+	@Override
+	public void saveProjectYear(ProjectYearDTO projectYear){
+		this.projectYearDao.saveProjectYear(projectYear);
+	}
+	
+	@Override
+	public void updateProjectYear(ProjectYearDTO projectYear){
+		this.projectYearDao.updateProjectYear(projectYear);
+	}
+	
+	@Override
+	public void deleteProjectYear(ProjectYearDTO projectYear){
+		this.projectYearDao.deleteProjectYear(projectYear);
+	}
+	
+	public int selectProjectYearCountByKeyword(BaseQueryVo dto) {
+		return projectYearDao.selectProjectYearCountByKeyword(dto);
+	}
+	public List<ProjectYearDTO> selectProjectYears(BaseQueryVo dto){
+		return projectYearDao.selectProjectYears(dto);
+	}
+	
+	public List<ProjectYearDTO> selectProjectYearByName(String projectYear){
+		return projectYearDao.selectProjectYearByName(projectYear);
+	}
+
+	@Override
+	public List<ProjectYearDTO> getProjectYear() {
+		List<ProjectYearDTO> list = projectYearDao.getProjectYear();
+		return list;
+	}
+
+	@Override
+	public ProjectYearDTO selectProjectYearById(int id) {
+		return projectYearDao.selectProjectYearById(id);
+	}
+
+	@Override
+	public List<ProjectYearDTO> selectProjectYearByYear(String projectYear) {
+		
+		return projectYearDao.selectProjectYearByYear(projectYear);
+	}
+
+	@Override
+	public void updateProjectYearIsdelete(String projectYear) {
+		this.projectYearDao.updateProjectYearIsdelete(projectYear);
+	}
+
+	@Override
+	public int selectCountConstructionUnitByProjectYear(int id) {
+		
+		return projectYearDao.selectCountConstructionUnitByProjectYear(id);
+	}
+
+	@Override
+	public List<ProjectYearDTO> selectProjectYearByNameForHistory(String projectYear) {
+		return projectYearDao.selectProjectYearByNameForHistory(projectYear);
+	}
+
+	@Override
+	public void redeleteProjectYearForHistory(ProjectYearDTO projectYear) {
+		this.projectYearDao.redeleteProjectYearForHistory(projectYear);
+	}
+	
+}

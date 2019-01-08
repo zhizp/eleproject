@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.newhero.urbanconstruction.apply.dao.SegmentProjectDao">
+	
+	<select id="selectSegProjectBySegInfoId" parameterType="java.lang.String"
+		resultType="com.newhero.urbanconstruction.apply.pojo.SegmentProjectReviewDTO">
+		select * from segmentproject 
+		where isdelete = 0 and segmentinfoid = #{segmentinfoid}
+	</select>
+	
+	<insert id="insertSegProject" parameterType="com.newhero.urbanconstruction.apply.pojo.SegmentProjectReviewDTO">
+		insert into 
+		segmentproject
+		(
+			segmentinfoid,
+			projectid,
+			estimateamount,
+			contractprice,
+			barrageprice,
+			totalappropriation,
+			lappropriationratio,
+			owepayment,
+			isdelete,
+			settlreviewamount,
+			reviewnumber,
+			settlreviewinfo,
+			operatorid,
+			operationtime,
+			remark,
+			investmenttype
+		)
+		values
+		(
+			#{segmentinfoid},
+			#{projectid},
+			#{estimateamount},
+			#{contractprice},
+			#{barrageprice},
+			#{totalappropriation},
+			#{lappropriationratio},
+			#{owepayment},
+			0,	<!-- #{isdelete}, -->
+			#{settlreviewamount},
+			#{reviewnumber},
+			#{settlreviewinfo},
+			#{operatorid},
+			#{operationtime},
+			#{remark},
+			#{investmenttype}
+		)
+	</insert>
+	
+	<update id="updateSegProject" parameterType="com.newhero.urbanconstruction.apply.pojo.SegmentProjectReviewDTO">
+		update segmentproject
+		set
+			segmentinfoid = #{segmentinfoid},
+			projectid = #{projectid},
+			estimateamount = #{estimateamount},
+			contractprice = #{contractprice},
+			barrageprice = #{barrageprice},
+			totalappropriation = #{totalappropriation},
+			lappropriationratio = #{lappropriationratio},
+			owepayment = #{owepayment},
+			isdelete = 0,	<!-- #{isdelete}, -->
+			settlreviewamount = #{settlreviewamount},
+			reviewnumber = #{reviewnumber},
+			settlreviewinfo = #{settlreviewinfo},
+			operatorid = #{operatorid},
+			operationtime = #{operationtime},
+			remark = #{remark},
+			investmenttype = #{investmenttype}
+		where id = #{id} and segmentinfoid = #{segmentinfoid}
+	</update>
+</mapper>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- namespace的值就是dao接口的完整路径，就这个demo而言namespace 就是userDao.java的完整路径-->
+<mapper namespace="com.newhero.urbanconstruction.sysmanager.user.dao.SysUserDao">
+	<resultMap id="SysUserResultMap" type="com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="username" property="username" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="unitId" property="unitId" jdbcType="VARCHAR" />
+		<result column="unitAddress" property="unitAddress" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="roleId" property="roleId" jdbcType="INTEGER" />
+		<result column="roleName" property="roleName" jdbcType="VARCHAR" />
+		<result column="unitname" property="unitName" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="SysUser_Column_Info">
+		id, name, username,password, unitId,unitAddress, phone,roleId,state
+	</sql>
+	<sql id="SysUser_Column_List">
+		id, name, username,password, unitId,unitAddress, phone,roleId,state
+	</sql>
+	<select id="userList" resultMap="SysUserResultMap" >
+		select
+		u.id, u.name, u.username, u.password, u.unitId, u.unitAddress, u.phone, u.roleId, u.state,r.roleName,ui.unitname
+		from sys_user u,sys_role r,dm_unitinfo ui WHERE u.roleId=r.id and u.unitId=ui.id and u.isdelete=0
+	</select>
+	<select id="getSysUserById" resultMap="SysUserResultMap" parameterType="java.lang.String">
+		select
+		<include refid="SysUser_Column_Info" />
+		from sys_user
+		where id = #{id}
+	</select>
+	
+	<select id="getUserList" resultType="com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO" parameterType="com.newhero.urbanconstruction.util.BaseQueryVo">
+		select s_u.* , s_r.roleName, d_u.unitname
+		from sys_user s_u, sys_role s_r, dm_unitinfo d_u
+		where s_u.isdelete = 0 and s_r.id = s_u.roleId and d_u.id = s_u.unitId
+		<if test='keyword != null'>
+		and investmenttype like "%"#{keyword}"%"  
+		</if>
+		<if test = "isall == null">
+			LIMIT #{startRow},#{pageSize}
+		</if>
+	</select>
+	
+	<select id="getUserNameList" resultType="java.lang.String">
+		select username
+		from sys_user
+		where isdelete = 0
+	</select>
+	
+	
+	<insert id="insertSysUser" parameterType="com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO">
+		insert into sys_user (name, password, username,roleId,unitId,unitAddress,phone,state,isdelete,operatorid)
+		values (#{name},#{password},#{username},#{roleId},#{unitId},#{unitAddress},#{phone},#{state},0,#{operatorid})
+	</insert>
+	
+	<update id="updateSysUserById" parameterType="com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO">
+		update sys_user
+		set
+		name = #{name},
+		username = #{username},
+		roleId = #{roleId},
+		unitId = #{unitId},
+		unitAddress = #{unitAddress},
+		phone = #{phone},
+		state = #{state},
+		operatorid = #{operatorid}
+		where id  =	#{id}
+	</update>
+	<update id="delSysUserById" parameterType="com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO">
+		update sys_user
+		set isdelete=1,operatorid=#{operatorid}
+		where id  =	#{id}
+	</update>
+	
+	<update id="updateSysUserPwdById" parameterType="com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO">
+		update sys_user
+		set password  = #{password}
+		where id  =	#{id}
+	</update>
+	
+	<resultMap id="UnitResultMap" type="com.newhero.urbanconstruction.codetablemaintain.unitinfo.pojo.UnitInfoDTO">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="unitname" property="unitname" jdbcType="VARCHAR" />
+		<result column="unitcode" property="unitcode" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="getUnitInfoListByCode" parameterType="com.newhero.urbanconstruction.codetablemaintain.unitinfo.pojo.UnitInfoDTO" resultMap="UnitResultMap">
+  		select 
+		   id,unitname,unitcode
+		from dm_unitinfo where isdelete=0  
+		<if test="unitcode != null" >
+		and unitcode like #{unitcode}"%"  
+		</if>
+  	</select>
+	
+</mapper>

@@ -1,0 +1,19 @@
+package com.newhero.urbanconstruction.test.service;
+
+import com.newhero.urbanconstruction.test.pojo.User;
+/**
+ * Service层接口
+ */
+public interface UserService {
+	//根据id查找
+	public User getUserById(Integer userid);
+	
+	//添加一条数据
+	public int insert(User user);
+	
+	//删除指定数据
+	public int delete(Integer userid);
+	
+	//更新数据
+	public int update(User user) ;
+}

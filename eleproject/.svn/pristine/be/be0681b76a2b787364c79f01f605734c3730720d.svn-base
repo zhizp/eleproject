@@ -1,0 +1,215 @@
+package com.newhero.urbanconstruction.codetablemaintain.segmentinfo.controller;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.newhero.urbanconstruction.codetablemaintain.projectname.service.ProjectNameService;
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO;
+import com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentInfoDTO;
+import com.newhero.urbanconstruction.codetablemaintain.segmentinfo.service.SegmentInfoService;
+import com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+import com.newhero.urbanconstruction.util.Constant;
+import com.newhero.urbanconstruction.util.Pagination;
+import com.newhero.urbanconstruction.util.ToolsUtil;
+@Controller
+@RequestMapping(value = "/segmentinfo")
+public class SegmentInfoController {
+	@Resource 
+	private ProjectNameService projectNameService;
+	@Resource 
+	private SegmentInfoService segmentInfoService;
+	
+//	List<ProjectNameDTO> projectNameList=projectNameService.selectProjectNames();
+	@RequestMapping(value = "/segmentInfoList")
+    public String segmentInfoList(String pn,String rowsPerPage, String keyword,String querySelect, HttpServletResponse response,HttpServletRequest request, Model model) throws UnsupportedEncodingException{
+		if(ToolsUtil.isEmpty(pn)){
+			pn = Constant.DEAULT_START_PAGE_NUM;
+		}
+		if(ToolsUtil.isEmpty(rowsPerPage)){
+			rowsPerPage = Constant.DEFAULT_PAGE_SIZE ;
+		}
+		
+		// 分页信息
+		Pagination page = new Pagination();
+		//翻页、参数
+		BaseQueryVo dto = new BaseQueryVo();
+				
+		//dto.setKeyword(keyword);
+		if(keyword != null && !keyword.equals("")) {
+			dto.setKeyword(java.net.URLDecoder.decode(keyword, "UTF-8"));
+		} else {
+			dto.setKeyword(keyword);
+		}
+		
+		dto.setQuerySelect(querySelect);
+		dto.setStartRow((Integer.parseInt(pn) - 1) * Integer.parseInt(rowsPerPage));
+		dto.setPageSize(Integer.parseInt(rowsPerPage));
+		int rowsCount = segmentInfoService.getSegmentInfoCountByKeyword(dto) ;
+		
+		page.setRowsCount(rowsCount);
+		page.setRowsPerPage(Integer.parseInt(rowsPerPage));
+		page.setCurrentPage(Integer.parseInt(pn));
+		if(keyword != null && !keyword.equals("")) {
+			page.setUrl(request.getContextPath()+"/segmentinfo/segmentInfoList.do?rowsPerPage=" + rowsPerPage
+					+ "&keyword=" + java.net.URLEncoder.encode(keyword, "UTF-8"));
+		} else {
+			page.setUrl(request.getContextPath()+"/segmentinfo/segmentInfoList.do?rowsPerPage="+rowsPerPage);
+		}
+		
+		List<SegmentInfoDTO> segmentInfoList = segmentInfoService.getSegmentInfoListByKeyword(dto);
+		if(segmentInfoList.isEmpty()&&Integer.parseInt(pn)>1){
+			dto.setStartRow((Integer.parseInt(pn) - 2) * Integer.parseInt(rowsPerPage));
+			segmentInfoList = segmentInfoService.getSegmentInfoListByKeyword(dto);
+			page.setCurrentPage(Integer.parseInt(pn)-1);
+		}
+		
+		
+		List<ProjectYearDTO> projectYearList=segmentInfoService.selectUsedProjectYears();
+		model.addAttribute("projectYearList", projectYearList);
+		model.addAttribute("segmentInfoList", segmentInfoList);
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("querySelect", querySelect);
+		model.addAttribute("page",page);
+		return "segmentinfo/SegmentInfoList";
+	}
+	/**
+	 * ajax根据用户ID查询用户信息
+	 * @param id
+	 * @param model
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value="/getSegmentInfoById", method = RequestMethod.POST)
+	public SegmentInfoDTO getSegmentInfoById(@RequestParam(value = "id") String id){
+		if(ToolsUtil.isEmpty(id)) return null;
+		return segmentInfoService.getSegmentInfoById(Integer.valueOf(id));
+	}
+	
+	/**
+	 * ajax添加或修改数据
+	 * @param user
+	 * @param response
+	 */
+	@ResponseBody
+	@RequestMapping(value="/saveSegmentInfo", method = RequestMethod.POST)
+	public Map<String, String> saveSegmentInfo(@ModelAttribute("invest")SegmentInfoDTO segmentInfo,HttpServletResponse response,HttpServletRequest request){
+//		System.out.println("进来了"+user.getName());
+		UserDTO sessUser = (UserDTO)request.getSession().getAttribute("USER_SESSION");
+		
+		segmentInfo.setOperatorid(sessUser.getId());//sessUser.getId());
+		int rs;
+		if(segmentInfo.getId()!=null && segmentInfo.getId()>0){
+			
+			rs = segmentInfoService.updateSegmentInfoById(segmentInfo);
+		}else{
+//			String pwd = user.getPassword();
+//			invest.setPassword(MD5.getMD5(pwd.getBytes()));
+			rs = segmentInfoService.insertSegmentInfo(segmentInfo);
+		}
+
+		Map<String, String> result = new HashMap<String, String>();
+		result.put("result", rs+"");
+		return result;
+	}
+	
+	/**
+	 * ajax根据ID置为删除状态
+	 * @param id
+	 * @param model
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value="/delSegmentInfos", method = RequestMethod.POST)
+	public String delSegmentInfos(@RequestParam(value = "id") String id,HttpServletResponse response,HttpServletRequest request) {
+		UserDTO sessUser = (UserDTO)request.getSession().getAttribute("USER_SESSION");
+		int rs = 0;
+		if(ToolsUtil.isNotEmpty(id)){
+			String[] ids = id.split(",");
+			for (String appid : ids) {
+				int i=segmentInfoService.countApp(Integer.parseInt(appid));
+				if(i>0) {
+					rs=-10;
+					return Integer.toString(rs);
+				}
+			}
+			rs = segmentInfoService.delSegmentInfobyIds(ids, sessUser.getId());
+		}
+		return Integer.toString(rs);
+	}
+	
+	 @RequestMapping(value = "/getOutData")
+	    public void getOutData(HttpServletResponse response,HttpServletRequest request) throws Exception {
+		BaseQueryVo dto = new BaseQueryVo();
+	    dto.setIsall(1);
+	    List<SegmentInfoDTO> segmentInfoList = segmentInfoService.getSegmentInfoListByKeyword(dto);
+	    response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+    	String filename = "标段信息表.xls";// 设置下载时客户端Excel的名称
+    	//设置HTTP响应的头
+    	String t = request.getHeader("User-Agent");
+		if (t.indexOf("Firefox") > 0) {
+			response.setHeader("Content-disposition", "attachment;filename="
+					+ new String(filename.getBytes("gb2312"), "ISO8859-1"));
+		} else {
+			response.setHeader("Content-disposition", "attachment;filename="
+					+ URLEncoder.encode(filename, "UTF-8"));
+		}
+
+    	ServletOutputStream stream = response.getOutputStream();
+
+    	//创建工作薄
+    	HSSFWorkbook workbook = new HSSFWorkbook();
+    	//创建工作标签页(sheet)
+    	HSSFSheet sheet = workbook.createSheet("标段信息表");
+
+    	//创建表头
+    	HSSFRow row = sheet.createRow(0);
+
+    	HSSFCell cell = row.createCell(0);
+    	cell.setCellValue("序号");
+
+    	HSSFCell cell2 = row.createCell(1);
+    	cell2.setCellValue("编号");
+
+
+    	HSSFCell cell3 = row.createCell(2);
+    	cell3.setCellValue("标段名称");
+
+
+    	HSSFCell cell4 = row.createCell(3);
+    	cell4.setCellValue("备注");
+    	//创建数据行
+    	for(int i = 0;i<segmentInfoList.size();i++) {
+    		SegmentInfoDTO segmentInfoDTO=segmentInfoList.get(i);
+    		HSSFRow newrow = sheet.createRow(i+1);
+        	newrow.createCell(0).setCellValue(i+1);
+        	newrow.createCell(1).setCellValue(segmentInfoDTO.getId());
+        	newrow.createCell(2).setCellValue(segmentInfoDTO.getSegmentname());
+        	newrow.createCell(3).setCellValue(segmentInfoDTO.getRemark());
+    	}
+    	workbook.write(stream);
+
+    	stream.close();
+		 
+	 }
+}

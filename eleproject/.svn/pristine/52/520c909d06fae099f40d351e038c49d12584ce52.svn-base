@@ -1,0 +1,526 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%> 
+<jsp:include page="/include/public.jsp"></jsp:include>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>项目名称</title>
+		<meta name="keywords" content="" />
+		<meta name="description" content="" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link href="${ctx}/views/assets/css/bootstrap.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace-rtl.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace-skins.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/public.css" />
+		<script src="${ctx}/views/assets/js/ace-extra.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery-2.0.3.min.js"></script>
+		<script src="${ctx}/views/assets/js/bootstrap.min.js"></script>
+		<script src="${ctx}/views/assets/js/typeahead-bs2.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery-ui-1.10.3.custom.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.ui.touch-punch.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.slimscroll.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.easy-pie-chart.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.sparkline.min.js"></script>
+		<script src="${ctx}/views/assets/js/ace-elements.min.js"></script>
+		<script src="${ctx}/views/assets/js/ace.min.js"></script>
+		
+		
+        <script type="text/javascript">
+            $(document).ready(function(){
+                var height = $(window).height()-89; 
+                var width = $(window).width()-189;
+                $("#indexImg").css("width",width);
+                $("#indexImg").css("height",height);
+                
+                //项目年度级联建设单位
+                $("#AddyearId").click(function(){
+                		$.ajax({
+	                        url:"${ctx}/infoCascade/getConstUnitInfoByYearId",
+	                        data:{id:$("#AddyearId").val()},
+	                        type:'post',
+	                        dataType:"json",
+	                        success:function (data) {
+	                            	$("#AddconstId").empty();
+		                            if (data.length != 0) {
+			                             for (var i in data){
+			                                 var id = data[i].id;
+			                                 var name = data[i].unitname;
+			                                 var str = "<option value=" + id + ">" + name + "</option>";
+			                                 $("#AddconstId").append(str);
+			                            }
+		                           }else{
+		                        	   var allconst = " <option value='-1'>该年度下暂无建设单位</option>";
+			                           $("#AddconstId").append(allconst);
+		                           }
+	                        }
+	               }) 
+	               
+	           })
+                $("#updateyearId").click(function(){
+	               	$.ajax({
+	                        url:"${ctx}/infoCascade/getConstUnitInfoByYearId",
+	                        data:{id:$("#updateyearId").val()},
+	                        type:'post',
+	                        dataType:"json",
+	                        success:function (data) {
+	                            	$("#updateconstId").empty();
+		                            if (data.length != 0) {
+			                             for (var i in data){
+			                                 var id = data[i].id;
+			                                 var name = data[i].unitname;
+			                                 var str = "<option value=" + id + ">" + name + "</option>";
+			                                 $("#updateconstId").append(str);
+			                            }
+		                           }else{
+		                        	   var allconst = " <option value='-1'>该年度下暂无建设单位</option>";
+			                           $("#updateconstId").append(allconst);
+		                           }
+	                        }
+	               }) 
+                })
+            	
+            })
+            
+            
+            
+                function saveProjectName(){
+                	var yearId=$("#AddyearId").val().trim();
+                	var constructionid=$("#AddconstId").val().trim();
+                	var projectname=$("#Addprojectname").val().trim();
+                	var investmenttypeid=$("#Addinvestmenttypeid").val().trim();
+                	var remark=$("#Addremark").val().trim(); 
+                	if(projectname==""){
+                		alert("项目名称不能为空！");
+                		return false;
+                	}
+                	$.ajax({
+                        url:  "${ctx}/projectNameController/saveProjectName",
+                        type: "post",
+                        data:{'yearId':yearId,'constructionid':constructionid,'projectname':projectname,'investmenttypeid':investmenttypeid,'remark':remark},
+                        async: false,
+                        dataType: "json",
+                        success: function (data) {
+                        	alert("保存成功！");
+                        	window.close();
+                        	location.reload();
+                        },
+                        error:function(data){
+                        	alert("保存失败！");
+                        }
+                
+            		})
+                }
+            function openupdata(){
+
+            	$("#openupdata").attr('data-target','');
+            	var constnum =0;
+            	var constid="";
+            	$("input[name='selprojectId']").each(function () {
+            		if ($(this).is(':checked')) {
+            			constnum+= 1;
+            			constid=$(this).val();
+            		} 
+            	});
+            	if(constnum >1){
+            		alert("请只选一个！");
+            		return false;
+            	}
+            	if(constnum <1){
+            		alert("请选一个项目信息！");
+            		return false;
+            	}
+            	
+            	$("#openupdata").attr('data-target',"#updateModal");
+               	$.ajax({
+                       url:  '${ctx}/projectNameController/selectProjectNameById',
+                       type: 'POST',
+                       data:{'id':constid},
+                       async: false,
+                       dataType: 'json',
+                       success: function (data) {
+							$("#updateid").val(data.id);
+							var key=$("#data.yearId").val();
+						     $("#updateyearId option[value='"+key+"']").attr("selected","selected"); 
+							$("#updateyearId").val(data.yearId);
+							
+							var key=$("#data.constructionid").val();
+						     $("#updateconstId option[value='"+key+"']").attr("selected","selected"); 
+							$("#updateconstId").val(data.constructionid);
+							
+							var key=$("#data.investmenttypeid").val();
+						     $("#updateinvestmenttypeid option[value='"+key+"']").attr("selected","selected"); 
+							$("#updateinvestmenttypeid").val(data.investmenttypeid);
+							
+							$("#updateprojectname").val(data.projectname);
+							$("#updateremark").val(data.remark);
+                       }
+           		});
+            	
+            }
+            	
+            function updateProjectName(){
+            	 var id=$("#updateid").val().trim();
+            	var yearId=$("#updateyearId").val().trim();
+            	var constructionid=$("#updateconstId").val().trim();
+            	var projectname=$("#updateprojectname").val().trim();
+            	var investmenttypeid=$("#updateinvestmenttypeid").val().trim();
+            	var remark=$("#updateremark").val().trim(); 
+            	if(projectname==""){
+            		alert("项目名称不能为空！");
+            		return false;
+            	}
+               	$.ajax({
+                       url:  '${ctx}/projectNameController/updateProjectName',
+                       type: 'POST',
+                       data:{'id':id,'yearId':yearId,'constructionid':constructionid,'projectname':projectname,'investmenttypeid':investmenttypeid,'remark':remark},
+                       async: false,
+                       dataType: 'json',
+                       success: function (data) {
+                       	alert("更新成功！");
+                       	$("input[name='selprojectId']").attr('checked',false);
+                       	window.close();
+                       	location.reload();
+                       },
+                       error:function(data){
+                       	alert("更新失败！");
+                       }
+               
+           		}); 
+            }
+            function opendelete(){
+
+            	$("#opendelete").attr('data-target','');
+            	var constnum =0;
+            	var constid="";
+            	$("input[name='selprojectId']").each(function () {
+            		if ($(this).is(':checked')) {
+            			constnum+= 1;
+            			constid=$(this).val();
+            		} 
+            	});
+            	if(constnum >1){
+            		alert("只能选一个项目信息进行删除！");
+            		return false;
+            	}
+            	if(constnum <1){
+            		alert("请选一个项目信息！");
+            		return false;
+            	}
+            	$("#opendelete").attr('data-target',"#DelModal");
+            }
+            
+            function deleteProjectName(){
+            	var constid="";
+            	$("input[name='selprojectId']").each(function () {
+            		if ($(this).is(':checked')) {
+            			constid +=$(this).val()+',';
+            		} 
+            	});
+            	constid=constid.substring(0,constid.length-1);
+            	if(constid.length==0){
+            		alert('请选择您要删除的项目名称！');
+            		return false;
+            	}
+              	$.ajax({
+                      url: '${ctx}/projectNameController/deleteProjectName',
+                      type: 'POST',
+                      data:{'id':constid},
+                      async: false,
+                      dataType: 'json',
+                      success: function (data) {
+                    	if(data.del){
+                    		alert("该项目下已包含工程费用，不可删除！");
+                    		return false;
+                    	}
+                      	alert("删除成功！");
+                       	$("input[name='selprojectId']").attr('checked',false);
+                      	window.close();
+                      	location.reload();
+                      },
+                      error:function(data){
+                      	alert("删除失败！");
+                      }
+              
+          		});
+            }
+            
+            function selectProjectNameByName(){
+            	var keyword=$("#keyword").val();
+            	var url="${ctx}/projectNameController/selectProjectNames?keyword="+encodeURI(encodeURI(keyword));
+            	window.location.href=url;
+            }
+            
+            function changeTheBackQueryUrl() {
+            	var urlBackQuery = '${page.url}';
+            	var tempStr = urlBackQuery.split('keyword=')[1];
+            	urlBackQuery = urlBackQuery.split('keyword=')[0] + 'keyword=' +  encodeURI(encodeURI(tempStr));
+            }
+            
+            function chgPageRows(){
+            	parent.mainFrame.location.href="${ctx}/projectNameController/selectProjectNames?rowsPerPage="+$("#pagerows").val();
+            }
+            function getOutData(){
+    			var url="${ctx}/projectNameController/getOutData";
+               	window.location.href=url;           	
+            } 
+        </script>
+        
+        <style>
+			.breadcrumbs {
+			    position: relative;
+			    border-bottom: 1px solid #e5e5e5;
+			    background-color: #f5f5f5;
+			    min-height: 41px;
+			    line-height: 40px;
+			    padding: 0 12px 0 0;
+			    display: block;
+			}
+		</style>
+        
+	</head>
+
+	<body>
+
+		<div class="main-container" id="main-container">
+			<script type="text/javascript">
+				try{ace.settings.check('main-container' , 'fixed')}catch(e){}
+			</script>
+
+			<div class="main-container-inner">
+				<a class="menu-toggler" id="menu-toggler" href="#">
+					<span class="menu-text"></span>
+				</a>
+
+
+				<div class="main-content">
+					<div class="breadcrumbs" id="breadcrumbs">
+						<script type="text/javascript">
+							try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+						</script>
+
+						<ul class="breadcrumb">
+							<li>
+								<i class="icon-home home-icon"></i>
+								<a href="${ctx}/views/maincontent.jsp">首页</a>
+							</li>
+							<li class="active">项目名称</li>
+						</ul><!-- .breadcrumb -->
+					</div>
+
+					<div class="page-content">
+						<div class="page-header">
+							<button class="btn btn-minier btn-success" data-toggle="modal" id="openadd" data-target="#AddModal"><i class="icon-plus"></i> 新增</button>
+                            <button class="btn btn-minier btn-info" data-toggle="modal" id="openupdata" onClick="openupdata();" ><i class="icon-edit"></i> 修改</button>
+                            <button class="btn btn-minier btn-danger" id="opendelete" data-toggle="modal" onclick="opendelete();"><i class="icon-trash"></i> 删除</button>
+                            <button class="btn btn-minier btn-warning" onclick="getOutData();"><i class="icon-download-alt"></i> 导出</button> 
+                            <select style="height: 22px;padding: 0px;position: relative;top:2px;left:15px;">
+                            	<option>项目名称</option>
+                            </select>
+                            <select style="height: 22px;padding: 0px;position: relative;top:2px;left:15px;">
+                            	<option>包含</option>
+                            </select>
+                            <input type="text" id="keyword" name="keyword" style="position:relative;left:20px;height:22px;top:2px;border:0;border-bottom:1px #ccc solid; font-size:12px;" />
+                            <button type="submit" onClick="selectProjectNameByName()" style="border:0; background:none;padding:0;margin:0;left: 15px;border-bottom: 1px #ccc solid;top: 3px;position: relative;"><i class="icon-search" style="position:relative;"></i></button>
+						</div><!-- /.page-header -->
+
+						<div class="row">
+							<div class="table-responsive">
+                                <table id="sample-table-2" class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="center">
+                                                <label>
+                                                    <!-- <input type="checkbox" class="ace" />
+                                                    <span class="lbl"></span> -->
+                                                </label>
+                                            </th>
+                                            <th>序号</th>
+                                            <th>编号</th>
+                                            <th>项目名称</th>
+                                            <th>投资分类</th>
+                                            <th>备注</th>
+                                            <!-- <th class="center">操作</th> -->
+                                            
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                   <c:forEach var="list" items="${projectNameList}" varStatus="status">  
+                                        <tr>
+                                            <td class="center">
+                                                <label>
+                                                    <input type="checkbox" name="selprojectId"  value="${list.id}" class="ace" />
+                                                    <span class="lbl"></span>
+                                                </label>
+                                            </td>
+
+                                            <td>
+                                                 ${ (page.currentPage-1)*page.rowsPerPage+status.index + 1}
+                                            </td>
+                                            <td>${list.id}</td>
+                                            <td>${list.projectname}</td>
+                                            <td>${list.investmenttypeid}</td>
+                                            <td>${list.remark}</td>
+                                           <!--  <td class="center">
+                                                <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
+                                                    <a class="green" href="#">
+                                                        <i class="icon-pencil bigger-130"></i>
+                                                    </a>
+
+                                                    <a class="red" href="#">
+                                                        <i class="icon-trash bigger-130"></i>
+                                                    </a>
+                                                </div>                                                
+                                            </td> -->
+                                        </tr>
+                                        </c:forEach>
+                                        <tr>
+                                        	<td colspan="10">
+                                        		<div style="float:left; line-height: 33px;">
+                                            	每页显示
+                                                <select size="1" id="pagerows" style="padding:0" onchange="chgPageRows();">
+                                                    <option value="10" <c:if test='${page.rowsPerPage==10}'>selected="selected"</c:if> >10</option>
+                                                    <option value="20" <c:if test='${page.rowsPerPage==20}'>selected="selected"</c:if> >20</option>
+                                                    <option value="50" <c:if test='${page.rowsPerPage==50}'>selected="selected"</c:if> >50</option>
+                                                </select>
+                                                	条数据，共${page.rowsCount}条数据
+                                                </div>
+                                                <ul class="pagination" style="float:right; margin:0; padding:0">
+                                                    ${page.pagination}
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.col -->
+						</div><!-- /.row -->
+					</div><!-- /.page-content -->
+				</div><!-- /.main-content -->
+
+			</div><!-- /.main-container-inner -->
+
+		</div><!-- /.main-container -->
+
+		<!-- basic scripts -->
+		<!--AddModal-->
+        
+        <div class="modal fade" id="AddModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:400px; margin:0 auto;margin-top:100px;">
+                <div class="modal-content">
+                    <div class="modal-header" style="background:#555555;padding:5px;">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color:#fff; font-size:18px;">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel" style="font-size:12px; color:#fff;">新增项目名称</h4>
+                    </div>
+                    <div class="modal-body">
+                    	<div style="width:280px; text-align:right; margin:0 auto">
+                            <span>项目年度：</span>
+                            <select id="AddyearId" name="yearId" style="width:200px;" style="height: 22px;padding: 0px;position: relative;top:2px;left:15px;">
+                            <c:forEach items="${projectYearList}" var="year">
+                            	<option value="${year.id}">${year.projectyear}</option>
+                            </c:forEach>
+                            </select><p></p>
+                            <span>建设单位：</span>
+                            <select id="AddconstId" name="constId" style="width:200px;" style="height: 22px;padding: 0px;position: relative;top:2px;left:15px;">
+                           	<c:forEach items="${constructionsList}" var="constList">
+                           		<option value="${constList.id}">${constList.unitname}</option>
+                            </c:forEach>
+                            </select><p></p>
+                            <span>投资分类：</span>
+                            <select id="Addinvestmenttypeid" name="investmenttypeid" style="width:200px;" style="height: 22px;padding: 0px;position: relative;top:2px;left:15px;">
+                            <c:forEach items="${InvestmentsList}" var="investment">
+                            	<option value="${investment.id}">${investment.investmenttype}</option>
+                            </c:forEach>
+                            </select><p></p>
+                            <span>项目名称：</span><input type="text" id="Addprojectname" name="projectname" style="width:200px;" /><p></p>
+                            <span>备注：</span><input type="text" id="Addremark" name="remark" style="width:200px;" />
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="text-align:center">
+                    	<button type="button" class="btn btn-xs btn-primary" onClick="saveProjectName();">保存</button>
+                        <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">关闭</button>
+                        
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+        <!--Information-->
+        <!--updateModal-->
+        
+        <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:400px; margin:0 auto;margin-top:100px;">
+                <div class="modal-content">
+                    <div class="modal-header" style="background:#555555;padding:5px;">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color:#fff; font-size:18px;">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel" style="font-size:12px; color:#fff;">修改项目名称</h4>
+                    </div>
+                    <div class="modal-body">
+                    	<div style="width:280px; text-align:right; margin:0 auto">
+                    		<input type="hidden" id="updateid" name="id" style="width:200px;" />
+                            <span>项目年度：</span>
+                            <select id="updateyearId" name="yearId" style="width:200px;" style="height: 22px;padding: 0px;position: relative;top:2px;left:15px;">
+                            <c:forEach items="${projectYearList}" var="year">
+                            	<option value="${year.id}">${year.projectyear}</option>
+                            </c:forEach>
+                            </select><p></p>
+                            <span>建设单位：</span>
+                            <select id="updateconstId" name="constId" style="width:200px;" style="height: 22px;padding: 0px;position: relative;top:2px;left:15px;">
+                           	<c:forEach items="${constructionsList}" var="constList">
+                          		<option value="${constList.id}">${constList.unitname}</option>
+                            </c:forEach>
+                            </select><p></p>
+                            <span>项目名称：</span><input type="text" id="updateprojectname" name="projectname" style="width:200px;" /><p></p>
+                            <span>投资分类：</span>
+                            <select id="updateinvestmenttypeid" name="investmenttypeid" style="width:200px;" style="height: 22px;padding: 0px;position: relative;top:2px;left:15px;">
+                            <c:forEach items="${InvestmentsList}" var="investment">
+                            	<option value="${investment.id}">${investment.investmenttype}</option>
+                            </c:forEach>
+                            </select><p></p>
+                            <span>备注：</span><input type="text" id="updateremark" name="remark" style="width:200px;" />
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="text-align:center">
+                    	<button type="button" class="btn btn-xs btn-primary" onClick="updateProjectName()">保存</button>
+                        <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">关闭</button>
+                        
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+        <!--Information-->
+        
+        <!--DelModal-->
+        
+        <div class="modal fade" id="DelModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:400px; margin:0 auto;margin-top:100px;">
+                <div class="modal-content">
+                    <div class="modal-header" style="background:#555555;padding:5px;">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color:#fff; font-size:18px;">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel" style="font-size:12px; color:#fff;">删除当前选中信息</h4>
+                    </div>
+                    <div class="modal-body">
+                    	<div style="width:330px;; text-align:center; margin:0 auto">
+                        	<div style="float:left;width:50px;height:50px;border:2px solid #F8BB86;border-radius:50%;border-radius:50%;padding:0;box-sizing:content-box;animation: pulseWarning 1s infinite alternate;position:relative;">
+                            	<span style="position:absolute;width:3px;height:30px;left:50%;top:6px;-webkit-border-radius:2px;border-radius:2px;margin-left:-2px;background-color:#F8BB86;">
+                                </span>
+                                <span style="position:absolute;width:7px;height:7px;-webkit-border-radius:50%;border-radius:50%;margin-left:-3px;left:48.6%;bottom:4px;background-color:#F8BB86;">
+                                </span>
+                            </div>
+                            <div style="line-height:50px;">
+                            	<p>数据删除后将无法恢复，是否确认删除？</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="text-align:center; margin:0;">
+                    	<button class="btn btn-minier btn-danger" onClick="deleteProjectName()">确认删除</button>
+                        <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">取消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+</body>
+</html>
+

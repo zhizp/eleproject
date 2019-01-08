@@ -1,0 +1,60 @@
+package com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo;
+
+import java.util.Date;
+
+/**
+ * 项目年度实体类
+ * 对应数据表dm_projectyear
+ * author:zzp
+ */
+public class ProjectYearDTO {
+
+	private Integer id;
+	private String projectYear;
+	private String remark;
+	private Integer isdelete;
+	private Integer operatorid;
+	private Date operationtime;
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public String getProjectYear() {
+		return projectYear;
+	}
+	public void setProjectYear(String projectYear) {
+		this.projectYear = projectYear;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public Integer getIsdelete() {
+		return isdelete;
+	}
+	public void setIsdelete(Integer isdelete) {
+		this.isdelete = isdelete;
+	}
+	public Integer getOperatorid() {
+		return operatorid;
+	}
+	public void setOperatorid(Integer operatorid) {
+		this.operatorid = operatorid;
+	}
+	public Date getOperationtime() {
+		return operationtime;
+	}
+	public void setOperationtime(Date operationtime) {
+		this.operationtime = operationtime;
+	}
+	
+	
+	
+	
+	
+	
+}

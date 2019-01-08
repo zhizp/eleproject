@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- namespace的值就是dao接口的完整路径，就这个demo而言namespace 就是userDao.java的完整路径-->
+<mapper namespace="com.newhero.urbanconstruction.codetablemaintain.constructionunit.dao.ConstructionDao">
+	<resultMap id="BaseResultMap" type="com.newhero.urbanconstruction.codetablemaintain.constructionunit.pojo.ConstructionunitDTO">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="yearId" property="yearId" jdbcType="INTEGER" />
+		<result column="unitname" property="unitName" jdbcType="VARCHAR" />
+		<result column="unitshortname" property="unitShortName" jdbcType="VARCHAR" />
+		<result column="briefinfo" property="briefInfo" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="isdelete" property="isdelete" jdbcType="INTEGER" />
+		<result column="operatorid" property="operatorid" jdbcType="INTEGER" />
+		<result column="operationtime" property="operationtime" jdbcType="DATE" />
+	</resultMap>
+	
+	<select id="selectConstructionCountByKeyword"  parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultType="java.lang.Integer">
+	select 
+		   count(*)
+		from dm_constructionunit where isdelete=0  
+		<if test='keyword != null'>
+		and unitname like "%"#{keyword}"%"  
+		</if>
+	</select>
+	<select id="selectConstructions" parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultMap="BaseResultMap" >
+		select t.id,(select projectyear from dm_projectyear where id=t.yearId) as yearId,t.unitname,t.unitshortname,t.briefinfo,t.remark,t.isdelete,t.operatorid,t.operationtime from dm_constructionunit t where t.isdelete=0
+		<if test='keyword != null'>
+		 and unitname like "%"#{keyword}"%"  
+		</if>
+		<if test='isall==null'>
+		LIMIT #{startRow},#{pageSize}
+		</if>
+	</select>
+	<select id="selectProjectYears" resultType="java.util.HashMap" >
+		select id,projectyear from dm_projectyear where isdelete=0  order by id desc
+	</select>
+	<select id="selectConstructionByName" resultType="java.util.HashMap" parameterType="java.lang.String">
+		select t.id,(select projectyear from dm_projectyear where id=t.yearId) as yearId,t.unitname,t.unitshortname,t.briefinfo,t.remark,t.isdelete,t.operatorid,t.operationtime from dm_constructionunit t where t.isdelete=0
+		 and unitname   like "%"#{unitname}"%"   
+	</select>
+	<select id="selectConstructionById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select t.id,t.yearId,t.unitname,t.unitshortname,t.briefinfo,t.remark,t.isdelete,t.operatorid,t.operationtime from dm_constructionunit t
+		where t.id=#{id} and t.isdelete=0
+	</select>
+	
+	<select id="saveConstruction" parameterType="com.newhero.urbanconstruction.codetablemaintain.constructionunit.pojo.ConstructionunitDTO" >
+		insert into dm_constructionunit
+		(yearId,unitname,unitshortname,briefinfo,remark,operatorid)
+		values(#{yearId},#{unitName},#{unitShortName},#{briefInfo},#{remark},#{operatorid});
+	</select>
+	
+	<update id="updateConstruction" parameterType="com.newhero.urbanconstruction.codetablemaintain.constructionunit.pojo.ConstructionunitDTO">
+	update dm_constructionunit
+	set 
+	yearId=#{yearId},
+	unitname=#{unitName},
+	unitshortname=#{unitShortName},
+	briefinfo=#{briefInfo},
+	remark=#{remark},
+	operatorid=#{operatorid},
+	operationtime=utc_timestamp() 
+	where id=#{id}
+	</update>
+	
+	<update id="deleteConstruction">
+	update dm_constructionunit 
+	set isdelete=1,
+	operatorid=#{operatorid},
+	operationtime=utc_timestamp()
+	where id=#{id}
+	</update>
+	
+	<select id="selectCountProjectNameByConstructionId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select 
+		   count(*)
+		from dm_projectname where isdelete=0  
+		and constructionid = #{id}
+	</select>
+	
+</mapper>

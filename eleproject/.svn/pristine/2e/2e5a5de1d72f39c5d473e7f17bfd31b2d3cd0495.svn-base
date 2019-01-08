@@ -1,0 +1,27 @@
+package com.newhero.urbanconstruction.codetablemaintain.segmentinfo.service;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO;
+import com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentInfoDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+public interface SegmentInfoService {
+
+	public int getSegmentInfoCountByKeyword(BaseQueryVo dto);
+	
+    public List<SegmentInfoDTO> getSegmentInfoListByKeyword(BaseQueryVo dto);
+	
+	
+	public SegmentInfoDTO getSegmentInfoById(Integer id);
+	
+	public int updateSegmentInfoById(SegmentInfoDTO unit);
+	
+	public int insertSegmentInfo(SegmentInfoDTO unit);
+	
+	public int delSegmentInfobyIds(String[]  ids, int userid);
+	
+	public List<ProjectYearDTO> selectUsedProjectYears();
+	
+	public int countApp(int id);
+}

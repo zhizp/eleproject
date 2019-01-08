@@ -1,0 +1,131 @@
+package com.newhero.urbanconstruction.apply.pojo;
+
+import java.util.Date;
+
+public class SegmentProjectReviewDTO {
+	private Integer id;                  
+    private Integer segmentinfoid;       
+    private Integer projectid;       
+    private Double estimateamount ; //概算金额     
+    private Double contractprice ;  //合同中标价     
+    private Double barrageprice  ;   //拦标价格    
+    private Double totalappropriation  ; 
+    private Double lappropriationratio;  
+    private Double owepayment ;          
+    private Integer isdelete ;           
+    private Double settlreviewamount ;   //结算评审金额
+    private String reviewnumber ;        
+    private String settlreviewinfo ;     
+    private Integer operatorid ;         
+    private Date operationtime ;       
+    private String remark ;
+    private String investmenttype ;
+    
+	public String getInvestmenttype() {
+		return investmenttype;
+	}
+	public void setInvestmenttype(String investmenttype) {
+		this.investmenttype = investmenttype;
+	}
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public Integer getSegmentinfoid() {
+		return segmentinfoid;
+	}
+	public void setSegmentinfoid(Integer segmentinfoid) {
+		this.segmentinfoid = segmentinfoid;
+	}
+	public Double getEstimateamount() {
+		return estimateamount;
+	}
+	public void setEstimateamount(Double estimateamount) {
+		this.estimateamount = estimateamount;
+	}
+	public Double getContractprice() {
+		return contractprice;
+	}
+	public void setContractprice(Double contractprice) {
+		this.contractprice = contractprice;
+	}
+	public Double getBarrageprice() {
+		return barrageprice;
+	}
+	public void setBarrageprice(Double barrageprice) {
+		this.barrageprice = barrageprice;
+	}
+	public Double getTotalappropriation() {
+		return totalappropriation;
+	}
+	public void setTotalappropriation(Double totalappropriation) {
+		this.totalappropriation = totalappropriation;
+	}
+	public Double getLappropriationratio() {
+		return lappropriationratio;
+	}
+	public void setLappropriationratio(Double lappropriationratio) {
+		this.lappropriationratio = lappropriationratio;
+	}
+	public Double getOwepayment() {
+		return owepayment;
+	}
+	public void setOwepayment(Double owepayment) {
+		this.owepayment = owepayment;
+	}
+	public Integer getIsdelete() {
+		return isdelete;
+	}
+	public void setIsdelete(Integer isdelete) {
+		this.isdelete = isdelete;
+	}
+	public Double getSettlreviewamount() {
+		return settlreviewamount;
+	}
+	public void setSettlreviewamount(Double settlreviewamount) {
+		this.settlreviewamount = settlreviewamount;
+	}
+	public String getReviewnumber() {
+		return reviewnumber;
+	}
+	public void setReviewnumber(String reviewnumber) {
+		this.reviewnumber = reviewnumber;
+	}
+	public String getSettlreviewinfo() {
+		return settlreviewinfo;
+	}
+	public void setSettlreviewinfo(String settlreviewinfo) {
+		this.settlreviewinfo = settlreviewinfo;
+	}
+	public Integer getOperatorid() {
+		return operatorid;
+	}
+	public void setOperatorid(Integer operatorid) {
+		this.operatorid = operatorid;
+	}
+	public Date getOperationtime() {
+		return operationtime;
+	}
+	public void setOperationtime(Date operationtime) {
+		this.operationtime = operationtime;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public Integer getProjectid() {
+		return projectid;
+	}
+	public void setProjectid(Integer projectid) {
+		this.projectid = projectid;
+	}              
+	
+	
+	
+	
+	
+}

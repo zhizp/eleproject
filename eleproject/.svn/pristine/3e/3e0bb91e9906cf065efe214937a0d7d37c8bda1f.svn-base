@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newhero.urbanconstruction.codetablemaintain.projectname.dao.ProjectNameDao">
+
+	<resultMap id="BaseResultMap" type="com.newhero.urbanconstruction.codetablemaintain.projectname.pojo.ProjectNameDTO">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<id column="yearId" property="yearId" jdbcType="INTEGER" />
+		<id column="constructionid" property="constructionid" jdbcType="INTEGER" />
+		<result column="projectname" property="projectname" jdbcType="VARCHAR" />
+		<result column="investmenttypeid" property="investmenttypeid" jdbcType="INTEGER" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="isdelete" property="isdelete" jdbcType="INTEGER" />
+		<result column="operatorid" property="operatorid" jdbcType="INTEGER" />
+		<result column="operationtime" property="operationtime" jdbcType="DATE" />
+	</resultMap>
+	
+	<sql id="ProjectName_List">
+		id,  yearId,constructionid,projectname, investmenttypeid,remark,isdelete,operatorid,operationtime
+	</sql>
+	<!--(select investmenttype from dm_investmenttype where id=t.investmenttypeid)as  -->
+	<select id="selectProjectNameCountByKeyword"  parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultType="java.lang.Integer">
+	select 
+		   count(*)
+		from dm_projectname where isdelete=0  
+		<if test='keyword != null'>
+		and projectname like "%"#{keyword}"%"  
+		</if>
+	</select>
+	<select id="selectProjectNames"  parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultType="java.util.Map" >
+		select
+		t.id,  t.yearId,t.constructionid,t.projectname,(select investmenttype from dm_investmenttype where id=t.investmenttypeid)as investmenttypeid,t.remark,t.isdelete,t.operatorid,t.operationtime
+		from dm_projectname t
+		where isdelete=0
+		<if test='keyword != null'>
+		and projectname like "%"#{keyword}"%"  
+		</if>
+		<if test='isall==null'>
+		LIMIT #{startRow},#{pageSize}
+		</if>
+		
+	</select>
+	<select id="selectProjectYears" resultType="java.util.Map" >
+		select
+		id,projectyear
+		from dm_projectyear
+		where isdelete=0  order by id desc
+	</select>
+	
+	<select id="selectInvestments" resultType="java.util.Map" >
+		select
+		id,investmenttype
+		from dm_investmenttype
+		where isdelete=0
+	</select>
+	
+	<select id="selectconstructions" resultType="java.util.Map" >
+		select
+		id,unitname
+		from dm_constructionunit
+		where isdelete=0
+	</select>
+	
+	<select id="selectProjectNameByName" resultType="java.util.Map" parameterType="String">
+		select
+		<include refid="ProjectName_List" />
+		from dm_projectname
+		where isdelete=0 and projectname like "%"#{projectname}"%"  
+	</select>
+	
+	<select id="selectProjectNameById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="ProjectName_List" />
+		from dm_projectname
+		where id = #{id} and isdelete=0
+	</select>
+	
+	<insert id="saveProjectName" parameterType="com.newhero.urbanconstruction.codetablemaintain.projectname.pojo.ProjectNameDTO">
+		insert into dm_projectname (yearId, constructionid,projectname,investmenttypeid,remark,operatorid)
+		values (#{yearId},#{constructionid},#{projectname},#{investmenttypeid},#{remark},#{operatorid})
+	</insert>
+	
+	<update id="updateProjectName" parameterType="com.newhero.urbanconstruction.codetablemaintain.projectname.pojo.ProjectNameDTO">
+		update dm_projectname
+		set 
+		yearId  = #{yearId},
+		constructionid = #{constructionid},
+		projectname=#{projectname},
+		investmenttypeid=#{investmenttypeid},
+		remark=#{remark},
+		operatorid=#{operatorid},
+		operationtime=utc_timestamp() 
+		where id  =	#{id}
+	</update>
+	
+	<update id="deleteProjectName" parameterType="java.lang.Integer">
+		update dm_projectname
+		set isdelete=1,
+		operatorid=#{operatorid},
+		operationtime=utc_timestamp() 
+		where id = #{id}
+	</update>
+	<select id="selectProjectNameCountFromCostType" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select
+		count(*)
+		from dm_costtype
+		where projectnameid = #{projectnameid} and isdelete=0
+	</select>
+</mapper>

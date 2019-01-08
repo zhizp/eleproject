@@ -1,0 +1,28 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    <jsp:include page="${ctx}/include/public.jsp"></jsp:include>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>北戴河城市建设资金管理系统</title>
+<script src="${ctx}/views/assets/js/jquery-2.0.3.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                var height = $(window).height(); 
+                var width = $(window).width()+17;
+                $("#indexImg").css("width",width);
+                $("#indexImg").css("height",height);
+            });
+        </script>
+</head>
+<body style="padding:0;margin:0;"  onload="Response.setHeader('P3P','CP=CAO PSA OUR');">
+
+
+		<div class="main-content" id="main-content">
+			<div id="page-content" class="page-content" style="padding:0; overflow:hidden;">
+                  	<img src="${ctx}/views/assets/images/index.jpg" id="indexImg" />
+                  </div> <!-- /.page-content -->
+		</div>
+</body>
+</html>

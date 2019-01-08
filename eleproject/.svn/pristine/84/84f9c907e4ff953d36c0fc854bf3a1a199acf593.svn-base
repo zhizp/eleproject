@@ -1,0 +1,11 @@
+package com.newhero.urbanconstruction.importhistorydata.dao;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.importhistorydata.pojo.ImportdataDTO;
+
+public interface HistorydataDao {
+
+	public List<ImportdataDTO> selectAllHistoryData();
+	public int updateImportData(ImportdataDTO importdataDTO) ;
+}

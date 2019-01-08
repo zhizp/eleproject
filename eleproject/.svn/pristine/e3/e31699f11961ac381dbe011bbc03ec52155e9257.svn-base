@@ -1,0 +1,446 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%> 
+<jsp:include page="/include/public.jsp"></jsp:include>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>用户管理</title>
+		<meta name="keywords" content="" />
+		<meta name="description" content="" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link href="${ctx}/views/assets/css/bootstrap.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace-rtl.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace-skins.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/public.css" />
+		<script src="${ctx}/views/assets/js/ace-extra.min.js"></script>
+        <script src="${ctx}/views/assets/js/jquery-2.0.3.min.js"></script>
+		<script src="${ctx}/views/assets/js/bootstrap.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery-ui-1.10.3.custom.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.ui.touch-punch.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.slimscroll.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.easy-pie-chart.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.sparkline.min.js"></script>
+		<script src="${ctx}/views/assets/js/ace-elements.min.js"></script>
+		<script src="${ctx}/views/assets/js/ace.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.mobile.custom.min.js"></script>
+		<script src="${ctx}/views/assets/js/typeahead-bs2.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.serializeJSON.js"></script>
+		
+        <script type="text/javascript">
+        
+        function addUser(){
+        	$("#uppass").show();
+        	$("#id").val("");
+            $("#name").val("");
+            $("#password").val("");
+            $("#username").val("");
+            $("#roleId").val("");
+             $("#unitId").val("");
+	         $("#unitName").val("");
+            $("#unitAddress").val("");
+            $("#phone").val("");
+            $("#coding").empty();
+            $("#myModalLabel").html("新增用户信息");
+        	$("#AddModal").show();
+        }
+        
+        function updUser(){
+        $("#openupdata").attr('data-target','');
+        	var usernum =0;
+        	var userid="";
+        	$("input[name='selUserId']").each(function () { if ($(this).is(':checked')) { usernum+= 1;userid=$(this).val();} });
+        	if(usernum >1){
+        		alert("请只选一个！");
+        		return false;
+        	}
+        	if(usernum <1){
+        		alert("请选一个用户信息！");
+        		return false;
+        	}
+        	//alert(userid);
+        	$("#coding").empty();
+        	$.ajax({
+            url:  '${ctx}/user/getSysUserInfo.do',
+	            type: 'POST',
+	            data: {"id": userid },
+	            async: false,
+	            dataType: 'json',
+	            success: function (data) {
+	            	//alert(data.password+'');
+	                $("#id").val(userid);
+	                $("#name").val(data.name);
+	                //$("#password").val(data.password);
+	                $("#username").val(data.username);
+	                $("#roleId").val(data.roleId);
+	                $("#unitId").val(data.unitId);
+	                $("#unitName").val(data.unitName);
+	                $("#unitAddress").val(data.unitAddress);
+	                $("#phone").val(data.phone);
+	                $("#state").val(data.state);
+	                $("#uppass").hide();
+	                $("#myModalLabel").html("修改用户信息");
+	                $("#openupdata").attr('data-target',"#AddModal");
+	                //$("#AddModal").show();
+	            }
+	        });
+        }
+        function saveUser(){
+        	 
+            if(!validateUser()){
+             	return false;
+            }
+        	
+	        $.ajax({
+	            url:  '${ctx}/user/saveUser.do',
+	            type: 'POST',
+	            data: { id:$("#id").val(),
+			            name:$("#name").val(),
+			            password:$("#password").val(),
+			            username:$("#username").val(),
+			            roleId:$("#roleId").val(),
+			            unitId:$("#unitId").val(),
+			            unitAddress:$("#unitAddress").val(),
+			            phone:$("#phone").val(),
+			            state:$("#state").val()},
+	            async: false,
+	            dataType: 'json',
+	            success:function(data) {
+	            
+	                if (data.result=="1") {
+	                    alert("成功");
+	                    $("#AddModal").hide();
+	                    location.reload();
+	                } else {
+	                    alert("失败");
+	                }
+	            }
+	        });
+        }
+        function opendeleteModal(){
+
+        	$("#opendelete").attr('data-target','');
+        	var constnum =0;
+        	var constid="";
+        	$("input[name='selUserId']").each(function () {
+        		if ($(this).is(':checked')) {
+        			constnum+= 1;
+        			constid=$(this).val();
+        		} 
+        	});
+        	
+        	if(constnum <1){
+        		alert("请选一个用户信息！");
+        		return false;
+        	}
+        	$("#opendelete").attr('data-target',"#DelModal");
+        }
+        function delUser(){
+        	var usernum =0;
+        	var userid="";
+        	$("input[name='selUserId']").each(function () { if ($(this).is(':checked')) { usernum+= 1;userid=userid+","+$(this).val();} });
+        	if(usernum <1){
+        		alert("请最少选一个用户信息！");
+        		return false;
+        	}
+        	
+        		userid = userid.substring(1);
+        		$.ajax({
+	            url:  '${ctx}/user/delUsers.do',
+	            type: 'POST',
+	            data: { id:userid},
+	            async: false,
+	            dataType: 'json',
+	            success:function(data) {
+	            
+	                if (data!="0") {
+	                    alert("删除成功");
+	                    location.reload();
+	                } else {
+	                    alert("删除失败");
+	                }
+	            }
+	            });
+        }
+        function resPwd(id,name){
+        	if(confirm("你确定要重置"+name+"的密码？")){
+        	$.ajax({
+	            url:  '${ctx}/user/resPwd.do',
+	            type: 'POST',
+	            data: {id:id},
+	            async: false,
+	            dataType: 'json',
+	            success:function(data) {
+	            
+	                if (data!="0") {
+	                    alert("重置密码成功");
+	                    location.reload();
+	                } else {
+	                    alert("重置密码失败");
+	                }
+	            }
+        	
+        	   });
+        	}
+        }
+        function chgUnitName(){
+        	$("#unitId").val("");
+        	var unitName = $("#unitName").val();
+        	
+        	$("#coding").empty();
+        	
+        	$.ajax({
+	            url:  '${ctx}/user/getUnitInfoListByCode',
+	            type: 'POST',
+	            data: {code:unitName},
+	            async: false,
+	            dataType: 'json',
+	            success:function(data) {
+	            
+		            if (data.length != 0) {
+		            
+	            		for (var o in data){
+	                        var id = data[o].id;
+	                        var code = data[o].unitcode;
+	                        var name = '['+data[o].unitcode+']'+data[o].unitname;
+	                        var str = "<li style='border-bottom:1px #d2d2d2 dashed;' onClick='clkCode(\""+id+"\",\""+name+"\");'>" + name + "</li>";
+	                        $("#coding").append(str);
+	                        $("#coding").show();
+	                    }
+	            	
+	            	}
+	            }
+        	
+        	   });
+        	
+        }
+        function clkCode(id, name){
+        	$("#unitId").val(id);
+        	$("#unitName").val(name);
+        	$("#coding").hide();
+        }
+        function validateUser(){
+        	var id = $("#id").val();
+        	var name = $("#name").val();
+        	var password = $("#password").val();
+        	var username = $("#username").val();
+        	var roleId = $("#roleId").val();
+        	var unitId = $("#unitId").val();
+        	var unitAddress = $("#unitAddress").val();
+        	var phone = $("#phone").val();
+        	var state = $("#state").val();
+        	
+            var reg = /^[0-9A-Za-z]+$/;
+            var nameVal = $.trim(name); 
+            if (nameVal == '' || (nameVal.length < 3) || nameVal.length >40 || !reg.test(nameVal)) {
+    			alert("用户名称非空，长度3位以上,40位以下，只能由数字和字母组成！");
+    			return false;
+   			} 
+            if(id == '' && $.trim(id).length==0){
+            	var passwordVal = $.trim(password); 
+	            if (passwordVal == '' || passwordVal.length < 6 || passwordVal.length >40 || !reg.test(passwordVal)) {
+	    			alert("密码非空，长度6位以上,40位以下，只能由数字和字母组成！");
+	    			return false;
+	   			} 
+            }
+   			
+   			var usernameVal = $.trim(username); 
+   			var regName = /[~#^$@%&!*()<>:;'"{}【】  ]/;
+            if (usernameVal == '' || usernameVal.length < 2 || usernameVal.length >40 || regName.test(usernameVal)) {
+    			alert("真实名称非空，长度2位以上,40位以下，不包含特殊字符！");
+    			return false;
+   			}
+   			
+            if (roleId == null || roleId =='') {
+    			alert("请选择用户角色！");
+    			return false;
+   			} 
+            
+   			if(unitId==''){
+   			    alert("请填写一个单位名称！");
+    			return false;
+   			}
+   			var unitAddressVal = $.trim(unitAddress); 
+            if (unitAddressVal == '' || (unitAddressVal.length < 2) || unitAddressVal.length >100 || regName.test(unitAddressVal)) {
+    			alert("单位地址非空，长度2字以上,100字以下，不包含特殊字符！");
+    			return false;
+   			} 
+   			var phoneVal = $.trim(phone); 
+            if (phoneVal == '' || phoneVal.length < 8 || phoneVal.length >20 ) {
+    			alert("联系方式非空，长度8字以上,100字以下，不包含特殊字符！");
+    			return false;
+   			}
+   			return true;
+        }
+        
+        //导出用户Excel表
+        exportUser = function(){
+        	//alert("run to here.");
+        	window.location.href = "${ctx}/user/exportUser";
+        }
+        
+        </script>
+        
+        <style>
+			.breadcrumbs {
+			    position: relative;
+			    border-bottom: 1px solid #e5e5e5;
+			    background-color: #f5f5f5;
+			    min-height: 41px;
+			    line-height: 40px;
+			    padding: 0 12px 0 0;
+			    display: block;
+			}
+		</style>
+        
+	</head>
+
+	<body style="background-color:#fff !important;">
+		
+					<div class="breadcrumbs" id="breadcrumbs">
+						<script type="text/javascript">
+							try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+						</script>
+
+						<ul class="breadcrumb">
+							<li>
+								<i class="icon-home home-icon"></i>
+								<a href="${ctx}/views/maincontent.jsp">首页</a>
+							</li>
+							<li class="active">用户管理</li>
+						</ul><!-- .breadcrumb -->
+					</div>
+
+					<div class="page-content">
+						<div class="page-header">
+							<button class="btn btn-minier btn-success" data-toggle="modal" data-target="#AddModal" onClick="addUser();"><i class="icon-plus"></i> 新增</button>
+                            <button class="btn btn-minier btn-info" onClick="updUser();" id="openupdata" data-toggle="modal"><i class="icon-edit"></i> 修改</button>
+                            <button class="btn btn-minier btn-danger"  id="opendelete" data-toggle="modal" onclick="opendeleteModal();"><i class="icon-trash"></i> 删除</button>
+                            <button class="btn btn-minier btn-warning" onclick="exportUser()"><i class="icon-download-alt"></i> 导出</button>
+						</div><!-- /.page-header -->
+
+						<div class="row">
+							<div class="table-responsive">
+                            	<table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>序号</th>
+                                            <th>帐号名称</th>
+                                            <th>角色名称</th>
+                                            <th>真实姓名</th>
+                                            <th>单位名称</th>
+                                            <th>单位地址</th>
+                                            <th>联系方式</th>
+                                            <th style="text-align:center">状态</th>
+                                            <th style="text-align:center">操作</th>
+                                        </tr>
+                                    </thead>
+                                    	<tbody>
+                                    		<c:set var="rownum" value="1"/>
+                                    		<c:forEach var="user" items="${userList}">
+                                    		<tr>
+                                            	<td><input type="checkbox" name="selUserId" value="${user.id}"/></td>
+                                                <td>${rownum }</td>
+                                                <td>${user.name}</td>
+                                                <td>${user.roleName}</td>
+                                                <td>${user.username}</td>
+                                                <td>${user.unitName}</td>
+                                                <td>${user.unitAddress}&nbsp;</td>
+                                                <td>${user.phone}</td>
+                                                <td <c:if test="${user.state==0}" >style="color:#C00;"</c:if><c:if test="${user.state==1}" >style="color:#060;"</c:if> align="center">
+                                                     <c:if test="${user.state==0}" >禁用</c:if>
+                                                     <c:if test="${user.state==1}" >启用</c:if>&nbsp;
+                                                </td>
+                                                <td align="center"><span><a href="javascript:void(0);" onClick="resPwd('${user.id}','${user.name}');">重置密码</a></span></td>
+                                            </tr> 
+                                            <c:set var="rownum" value="${rownum+1 }"/>
+	    									</c:forEach>
+                                        	
+                                        </tbody>
+                                    </table>
+                            </div>
+                            <!-- /.col -->
+						</div><!-- /.row -->
+					</div><!-- /.page-content -->
+				</div><!-- /.main-content -->
+			</div><!-- /#ace-settings-container -->
+			
+		</div><!-- /.main-container -->
+        
+        <div class="modal fade" id="AddModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:400px; margin:0 auto;margin-top:50px;">
+                <div class="modal-content">
+                    <div class="modal-header" style="background:#555555;padding:5px;">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color:#fff; font-size:18px;">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel" style="font-size:12px; color:#fff;">新增/修改系统用户</h4>
+                    </div>
+                    <div class="modal-body" style="overflow:hidden;padding-bottom:0;">
+                    	<div style="width:290px;  text-align:right; margin:0 auto">
+                            <span>用户名：</span><input type="text" id="name" name="name" style="width:200px;" value="" /><p></p>
+                            <div id="uppass"><span>用户密码：</span><input id="password" name="password" type="password" style="width:200px;" value="" /><p></p></div>
+                            <span>用户角色：</span>
+                            <select style="width:200px;" id="roleId" name="roleId" >
+                            	<c:forEach var="role" items="${roleList}">
+                            	<option value="${role.id}">${role.roleName }</option>
+                            	</c:forEach>
+                            	
+                            </select><p></p>
+                            <span>真实姓名：</span><input type="text" id="username" name="username" style="width:200px;" value="" /><p></p>
+                            <span>单位名称：</span><input type="hidden" id="unitId" name="unitId" style="width:200px;" value="" />
+                            <input type="text" id="unitName" name="unitName" onkeyup="chgUnitName();" style="width:200px;" value="" />
+                            <p></p>
+                            <ul id="coding" style="width:200px;position:absolute;z-index:1200;background:#fff;top:174px;left:99px;border:1px #d2d2d2 solid;text-align:left;padding:5px;max-height:119px;overflow:auto;display:none">
+                            </ul>
+                            <span>单位地址：</span><input type="text" id="unitAddress" name="unitAddress" style="width:200px;" value=""/><p></p>
+                            <span>联系方式：</span><input type="text" id="phone" name="phone" style="width:200px;" value="" /><p></p>
+                            <span>状态：</span>
+                            <select style="width:200px;" id="state" name="state" >
+                            	<option value="1" style="color:#060;">启用</option>
+                                <option value="0" style="color:#C00;">停用</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="text-align:center">
+                    	<input type="hidden" id="id" name="id" value=""/>
+                    	<button type="button" class="btn btn-xs btn-primary" onClick="saveUser();">保存</button>
+                        <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">关闭</button>
+                        
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+		<!--DelModal-->
+        
+        <div class="modal fade" id="DelModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:400px; margin:0 auto;margin-top:100px;">
+                <div class="modal-content">
+                    <div class="modal-header" style="background:#555555;padding:5px;">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color:#fff; font-size:18px;">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel" style="font-size:12px; color:#fff;">删除当前选中信息</h4>
+                    </div>
+                    <div class="modal-body">
+                    	<div style="width:330px;; text-align:center; margin:0 auto">
+                        	<div style="float:left;width:50px;height:50px;border:2px solid #F8BB86;border-radius:50%;border-radius:50%;padding:0;box-sizing:content-box;animation: pulseWarning 1s infinite alternate;position:relative;">
+                            	<span style="position:absolute;width:3px;height:30px;left:50%;top:6px;-webkit-border-radius:2px;border-radius:2px;margin-left:-2px;background-color:#F8BB86;">
+                                </span>
+                                <span style="position:absolute;width:7px;height:7px;-webkit-border-radius:50%;border-radius:50%;margin-left:-3px;left:48.6%;bottom:4px;background-color:#F8BB86;">
+                                </span>
+                            </div>
+                            <div style="line-height:50px;">
+                            	<p>数据删除后将无法恢复，是否确认删除？</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="text-align:center; margin:0;">
+                    	<button class="btn btn-minier btn-danger" onClick="delUser()">确认删除</button>
+                        <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">取消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+</html>
+

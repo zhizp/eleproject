@@ -1,0 +1,140 @@
+package com.newhero.urbanconstruction.apply.pojo;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+public class SegmentProjectReviewDTO {
+	private Integer id;                  
+    private Integer segmentinfoid;       
+    private Integer projectid;       
+    private BigDecimal estimateamount ; //概算金额     
+    private BigDecimal contractprice ;  //合同中标价     
+    private BigDecimal barrageprice  ;   //拦标价格    
+    private BigDecimal totalappropriation  ; 
+    private Double lappropriationratio;  
+    private BigDecimal owepayment ;          
+    private Integer isdelete ;           
+    private BigDecimal settlreviewamount ;   //结算评审金额
+    private String reviewnumber ;        
+    private String settlreviewinfo ;     
+    private Integer operatorid ;         
+    private Date operationtime ;       
+    private String remark ;
+    private String investmenttype ;
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public Integer getSegmentinfoid() {
+		return segmentinfoid;
+	}
+	public void setSegmentinfoid(Integer segmentinfoid) {
+		this.segmentinfoid = segmentinfoid;
+	}
+	public Integer getProjectid() {
+		return projectid;
+	}
+	public void setProjectid(Integer projectid) {
+		this.projectid = projectid;
+	}
+	public BigDecimal getEstimateamount() {
+		return estimateamount;
+	}
+	public void setEstimateamount(BigDecimal estimateamount) {
+		this.estimateamount = estimateamount;
+	}
+	public BigDecimal getContractprice() {
+		return contractprice;
+	}
+	public void setContractprice(BigDecimal contractprice) {
+		this.contractprice = contractprice;
+	}
+	public BigDecimal getBarrageprice() {
+		return barrageprice;
+	}
+	public void setBarrageprice(BigDecimal barrageprice) {
+		this.barrageprice = barrageprice;
+	}
+	public BigDecimal getTotalappropriation() {
+		return totalappropriation;
+	}
+	public void setTotalappropriation(BigDecimal totalappropriation) {
+		this.totalappropriation = totalappropriation;
+	}
+	public Double getLappropriationratio() {
+		return lappropriationratio;
+	}
+	public void setLappropriationratio(Double lappropriationratio) {
+		this.lappropriationratio = lappropriationratio;
+	}
+	public BigDecimal getOwepayment() {
+		if(this.settlreviewamount!=null && this.settlreviewamount.compareTo(BigDecimal.ZERO)!=0) {
+			owepayment=this.settlreviewamount.subtract(this.totalappropriation);
+		}else if(this.contractprice!=null && this.contractprice.compareTo(BigDecimal.ZERO)!=0){
+			owepayment=this.contractprice.subtract(this.totalappropriation);
+		}else if(this.barrageprice!=null && this.barrageprice.compareTo(BigDecimal.ZERO)!=0){
+			owepayment=this.barrageprice.subtract(this.totalappropriation);
+		}else {
+			owepayment=BigDecimal.ZERO;
+		}
+		return owepayment;
+	}
+	public void setOwepayment(BigDecimal owepayment) {
+		this.owepayment = owepayment;
+	}
+	public Integer getIsdelete() {
+		return isdelete;
+	}
+	public void setIsdelete(Integer isdelete) {
+		this.isdelete = isdelete;
+	}
+	public BigDecimal getSettlreviewamount() {
+		return settlreviewamount;
+	}
+	public void setSettlreviewamount(BigDecimal settlreviewamount) {
+		this.settlreviewamount = settlreviewamount;
+	}
+	public String getReviewnumber() {
+		return reviewnumber;
+	}
+	public void setReviewnumber(String reviewnumber) {
+		this.reviewnumber = reviewnumber;
+	}
+	public String getSettlreviewinfo() {
+		return settlreviewinfo;
+	}
+	public void setSettlreviewinfo(String settlreviewinfo) {
+		this.settlreviewinfo = settlreviewinfo;
+	}
+	public Integer getOperatorid() {
+		return operatorid;
+	}
+	public void setOperatorid(Integer operatorid) {
+		this.operatorid = operatorid;
+	}
+	public Date getOperationtime() {
+		return operationtime;
+	}
+	public void setOperationtime(Date operationtime) {
+		this.operationtime = operationtime;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public String getInvestmenttype() {
+		return investmenttype;
+	}
+	public void setInvestmenttype(String investmenttype) {
+		this.investmenttype = investmenttype;
+	}
+    
+	
+	
+	
+	
+}

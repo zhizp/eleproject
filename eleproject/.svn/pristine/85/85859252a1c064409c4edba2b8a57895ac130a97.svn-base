@@ -1,0 +1,19 @@
+package com.newhero.urbanconstruction.common.pojo;
+
+public class SegmentInfoCasDTO {
+	private Integer id;
+	private String segmentname;
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public String getSegmentname() {
+		return segmentname;
+	}
+	public void setSegmentname(String segmentname) {
+		this.segmentname = segmentname;
+	}
+	
+}

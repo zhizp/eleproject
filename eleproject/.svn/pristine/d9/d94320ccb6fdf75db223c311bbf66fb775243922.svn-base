@@ -1,0 +1,10 @@
+#sample-table-2 td,th
+	{
+   		white-space: nowrap;
+	}
+#sample-table-2 th{
+	min-width: 80px !important;
+}
+#sample-table-2 th:first-child{
+	width:30px !important;
+}

@@ -1,0 +1,69 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%> 
+<jsp:include page="/include/public.jsp"></jsp:include>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%-- <%
+String username = session.getAttribute("user.username");%>
+ --%>
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>北戴河城市建设资金管理系统</title>
+		<meta name="keywords" content="" />
+		<meta name="description" content="" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link href="${ctx}/views/assets/css/bootstrap.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace-rtl.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace-skins.min.css" />
+		<script src="${ctx}/views/assets/js/ace-extra.min.js"></script>
+        <script src="${ctx}/views/assets/js/jquery-2.0.3.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery-ui-1.10.3.custom.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.ui.touch-punch.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.slimscroll.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.easy-pie-chart.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.sparkline.min.js"></script>
+		<script src="${ctx}/views/assets/js/ace-elements.min.js"></script>
+		<script src="${ctx}/views/assets/js/ace.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.mobile.custom.min.js"></script>
+		<script src="${ctx}/views/assets/js/bootstrap.min.js"></script>
+		<script src="${ctx}/views/assets/js/typeahead-bs2.min.js"></script>
+	</head>
+	<body onload="Response.setHeader('P3P','CP=CAO PSA OUR');">
+
+
+<div class="navbar navbar-default" id="navbar">
+			<div class="navbar-container" id="navbar-container">
+				<div class="navbar-header pull-left">
+					<a href="#" class="navbar-brand">
+						<small>
+							<i class="icon-leaf"></i>
+							北戴河城市建设资金管理系统
+						</small>
+					</a><!-- /.brand -->
+				</div><!-- /.navbar-header -->
+
+				<div class="navbar-header pull-right" role="navigation" style="margin-right:50px  !important">
+					<ul class="nav ace-nav">
+						<li class="light-blue">
+							<span>
+								<img class="nav-user-photo" src="${ctx}/views/assets/avatars/user.jpg" alt="Jason's Photo" />
+								<span class="user-info">
+									<small>欢迎光临</small>
+										${user.username }	
+								</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									<i class="icon-off" style="cursor:pointer " title="退出" target="_parent" onclick="javascript:window.parent.location.href='${ctx}/loginAction/logout'"></i>
+							</span>
+						</li>
+					</ul><!-- /.ace-nav -->
+				</div><!-- /.navbar-header -->
+			</div><!-- /.container -->
+		</div>
+		
+		
+</body>
+</html>
+			        

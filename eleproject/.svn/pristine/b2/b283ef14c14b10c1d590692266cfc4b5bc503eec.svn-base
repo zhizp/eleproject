@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- namespace的值就是dao接口的完整路径，就这个demo而言namespace 就是userDao.java的完整路径-->
+<mapper namespace="com.newhero.urbanconstruction.sysmanager.role.dao.SysRoleDao">
+	<resultMap id="SysRoleResultMap" type="com.newhero.urbanconstruction.sysmanager.role.pojo.RoleDTO">
+		<id column="id" property="id" jdbcType="VARCHAR" />
+		<result column="roleName" property="roleName" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="SysRole_Column_List">
+		id, roleName
+	</sql>
+	<select id="roleList" resultMap="SysRoleResultMap" >
+		select
+		<include refid="SysRole_Column_List" />
+		from sys_role
+	</select>
+	
+	
+	
+</mapper>

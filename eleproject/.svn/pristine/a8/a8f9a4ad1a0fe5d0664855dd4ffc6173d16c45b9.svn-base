@@ -1,0 +1,52 @@
+package com.newhero.urbanconstruction.codetablemaintain.allocationsaccount.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.transaction.Transactional;
+
+import org.springframework.stereotype.Service;
+
+import com.newhero.urbanconstruction.codetablemaintain.allocationsaccount.dao.AllocationsAccountDao;
+import com.newhero.urbanconstruction.codetablemaintain.allocationsaccount.pojo.AllocationsAccountDTO;
+import com.newhero.urbanconstruction.codetablemaintain.allocationsaccount.service.AllocationsAccountService;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+@Transactional
+@Service("allocationsAccountService")
+public class AllocationsAccountServiceImpl implements AllocationsAccountService {
+	@Resource
+	private AllocationsAccountDao  allocationsAccountDao;
+	
+	public List<AllocationsAccountDTO> selectAllocationsAccounts(BaseQueryVo dto) {
+		
+		return this.allocationsAccountDao.selectAllocationsAccounts(dto);
+	}
+
+	@Override
+	public int selectAllocationsAccountCountByKeyword(BaseQueryVo dto) {
+		
+		return this.allocationsAccountDao.selectAllocationsAccountCountByKeyword(dto);
+	}
+
+	@Override
+	public void deleteAllocationsAccountCount(AllocationsAccountDTO allocationsAccount) {
+		this.allocationsAccountDao.deleteAllocationsAccountCount(allocationsAccount);
+	}
+
+	@Override
+	public void updateAllocationsAccount(AllocationsAccountDTO allocationsAccountDTO) {
+		this.allocationsAccountDao.updateAllocationsAccount(allocationsAccountDTO);
+	}
+
+	@Override
+	public void saveAllocationsAccount(AllocationsAccountDTO allocationsAccountDTO) {
+		this.allocationsAccountDao.saveAllocationsAccount(allocationsAccountDTO);
+		
+	}
+
+	@Override
+	public AllocationsAccountDTO selectAllocationsAccountById(int id) {
+		return this.allocationsAccountDao.selectAllocationsAccountById(id);
+	}
+
+}

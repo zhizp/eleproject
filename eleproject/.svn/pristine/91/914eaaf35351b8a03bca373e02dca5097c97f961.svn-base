@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- namespace的值就是dao接口的完整路径，就这个demo而言namespace 就是userDao.java的完整路径-->
+<mapper namespace="com.newhero.urbanconstruction.codetablemaintain.segmentinfo.dao.SegmentInfoDao">
+	<resultMap id="SegmentInfoResultMap" type="com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentInfoDTO">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="yearid" property="yearid" jdbcType="INTEGER" />
+		<result column="constructionid" property="constructionid" jdbcType="INTEGER" />
+		<result column="projectnameid" property="projectnameid" jdbcType="INTEGER" />
+		<result column="costtypeid" property="costtypeid" jdbcType="INTEGER" />
+		<result column="segmentname" property="segmentname" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="getSegmentInfoListByKeyword" parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultMap="SegmentInfoResultMap">
+  		select 
+		   id,segmentname,remark
+		from dm_segmentinfo where isdelete=0 
+		<if test='keyword != null'>
+		and segmentname like "%"#{keyword}"%"  
+		</if>
+		<if test='isall==null'>
+		LIMIT #{startRow},#{pageSize}
+		</if>
+		
+  	</select>
+  	
+  	<select id="getSegmentInfoCountByKeyword" parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultType="java.lang.Integer">
+  		select 
+		   count(*)
+		from dm_segmentinfo where isdelete=0  
+		<if test='keyword != null'>
+		and segmentname like "%"#{keyword}"%"  
+		</if>
+  	</select>
+	<select id="getSegmentInfoById" resultMap="SegmentInfoResultMap" parameterType="java.lang.Integer">
+		select
+		id,yearid,constructionid,projectnameid,costtypeid,segmentname,remark
+		from dm_segmentinfo
+		where id = #{id}
+	</select>
+	<insert id="insertSegmentInfo" useGeneratedKeys="true" keyProperty="id" parameterType="com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentInfoDTO">
+		insert into dm_segmentinfo (yearid,constructionid,projectnameid,costtypeid,segmentname, remark, isdelete,operatorid,operationtime)
+		values (#{yearid},#{constructionid},#{projectnameid},#{costtypeid},#{segmentname},#{remark},0,#{operatorid},now())
+	</insert>
+	<insert id="insertSegmentProject" parameterType="com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentProjectDTO">
+		insert into segmentproject (segmentinfoid, isdelete,operatorid,operationtime,estimateamount,contractprice,barrageprice,totalappropriation,lappropriationratio,owepayment,settlreviewamount,projectid,investmenttype)
+		values (#{segmentinfoid},0,#{operatorid},now(),#{estimateamount},#{contractprice},#{barrageprice},#{totalappropriation},#{lappropriationratio},#{owepayment},#{settlreviewamount},#{projectid},#{investmenttype})
+	</insert>
+	<update id="updateSegmentInfoById" parameterType="com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentInfoDTO">
+		update dm_segmentinfo
+		set
+		yearid = #{yearid},
+		constructionid = #{constructionid},
+		projectnameid = #{projectnameid},
+		costtypeid = #{costtypeid},
+		segmentname = #{segmentname},
+		remark = #{remark},
+		operatorid = #{operatorid},
+		operationtime=now()
+		where id  =	#{id}
+	</update>
+	<update id="delSegmentInfoId" parameterType="com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentInfoDTO">
+		update dm_segmentinfo
+		set isdelete=1,operatorid=#{operatorid},operationtime=now()
+		where id  =	#{id}
+	</update>
+	
+	<resultMap id="ProjectYearCasResultMap" type="com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="projectyear" property="projectYear" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="selectUsedProjectYears" resultMap="ProjectYearCasResultMap" >
+		select
+		id,projectyear
+		from dm_projectyear
+		where isdelete=0 order by id desc
+	</select>
+	<select id="countApp" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+	SELECT COUNT(1) FROM segmentproject s
+	INNER JOIN appropriationapply a
+	ON s.`id`=a.`segmentprojectid`
+	WHERE s.`segmentinfoid` = #{id}
+	</select>
+	
+	<select id="getSegmentInfoByName" resultType="com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentInfoDTO" parameterType="java.lang.String">
+		select * from dm_segmentinfo
+		where segmentname = #{segmentName}
+	</select>
+	
+	<!-- selectSegmentInfoByDifferentYearidUnitIdProjectNameIdCosttypeid -->
+	<select id="selectSegmentInfoByDifferentYearidUnitIdProjectNameIdCosttypeid" parameterType="java.lang.String"
+	 	resultType="com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentInfoDTO">
+	 	select
+		*
+		from dm_segmentinfo ds
+		where ds.isdelete=0 
+		and (select id from dm_projectyear where isdelete = 0 and projectyear = #{projectyear}) = ds.yearid
+		and (select dc.id from dm_constructionunit dc where dc.isdelete = 0 and dc.unitname = #{unitname}
+			   and (select id from dm_projectyear where isdelete = 0 and projectyear = #{projectyear}) = dc.yearId) = ds.constructionid
+		and (select dp.id from dm_projectname dp where dp.isdelete = 0 and dp.projectname = #{projectname}
+				 and (select dcc.id from dm_constructionunit dcc where dcc.isdelete = 0 and dcc.unitname = #{unitname}
+							and (select id from dm_projectyear where isdelete = 0 and projectyear = #{projectyear}) = dcc.yearId) = ds.constructionid
+			   and (select id from dm_projectyear where isdelete = 0 and projectyear = #{projectyear}) = dp.yearid) = ds.projectnameid
+		and (select dc.id from dm_costtype dc where dc.isdelete = 0 and dc.costtype = #{costtype}
+				 and (select dp.id from dm_projectname dp where dp.isdelete = 0 and dp.projectname = #{projectname}
+							and (select dcu.id from dm_constructionunit dcu where dcu.isdelete = 0 and dcu.unitname = #{unitname}
+									 and (select id from dm_projectyear where isdelete = 0 and projectyear = #{projectyear}) = dcu.yearId) = dp.constructionid)
+							= dc.projectnameid) = ds.costtypeid
+		and ds.segmentname like "%"#{segmentname}"%"
+	</select>
+	
+</mapper>

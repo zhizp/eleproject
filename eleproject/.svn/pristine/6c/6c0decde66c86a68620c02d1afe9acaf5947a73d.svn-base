@@ -1,0 +1,161 @@
+package com.newhero.urbanconstruction.util;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.Map;
+
+import javax.print.Doc;
+import javax.print.DocFlavor;
+import javax.print.DocPrintJob;
+import javax.print.PrintException;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.ServiceUI;
+import javax.print.SimpleDoc;
+import javax.print.attribute.DocAttributeSet;
+import javax.print.attribute.HashDocAttributeSet;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.jacob.activeX.ActiveXComponent;
+import com.jacob.com.ComThread;
+import com.jacob.com.Dispatch;
+import com.jacob.com.Variant;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+
+public class WordUtils {
+	//配置信息,代码本身写的还是很可读的,就不过多注解了  
+	private static Configuration configuration = null;  
+	//这里注意的是利用WordUtils的类加载器动态获得模板文件的位置  
+	// private static final String templateFolder = WordUtils.class.getClassLoader().getResource("../../").getPath() + "WEB-INF/templetes/";  
+//	private static final String templateFolder = "H:/我的项目/lm/lm/web/src/main/webapp/WEB-INF/templates";  
+	static {  
+	    configuration = new Configuration();  
+	    configuration.setDefaultEncoding("utf-8");  
+//	    try {  
+//	        configuration.setDirectoryForTemplateLoading(new File(templateFolder));  
+//	    } catch (IOException e) {  
+//	        e.printStackTrace();  
+//	    }  
+	  
+	}
+	private WordUtils(){
+	    throw new AssertionError(); 
+	}
+
+	public static  boolean exportMillCertificateWord(HttpServletRequest request, HttpServletResponse response, Map map, String title, String ftlFile) throws IOException, PrintException {
+		boolean result=true;
+		String templateFolder= request.getServletContext().getRealPath("/templates/");
+		configuration.setDirectoryForTemplateLoading(new File(templateFolder));  
+	    Template freemarkerTemplate = configuration.getTemplate(ftlFile);  
+	    File file = null;  
+	    InputStream fin = null;  
+	    ServletOutputStream out = null;  
+	    try {  
+	        // 调用工具类的createDoc方法生成Word文档  
+	        file = createDoc(map,freemarkerTemplate,templateFolder);  
+//	        fin = new FileInputStream(file);  
+//
+//	        response.setCharacterEncoding("utf-8");  
+//	        response.setContentType("application/msword");  
+//	        // 设置浏览器以下载的方式处理该文件名  
+//	        String fileName = title+".doc";  
+//	        response.setHeader("Content-Disposition", "attachment;filename="  
+//	                .concat(String.valueOf(URLEncoder.encode(fileName, "UTF-8"))));
+//	        response.setHeader("Pragma", "No-cache"); 
+//	        out = response.getOutputStream();
+//	        byte[] buffer = new byte[512];  // 缓冲区  
+//	        int bytesToRead = -1;
+//	        // 通过循环将读入的Word文件的内容输出到浏览器中  
+//	        while((bytesToRead = fin.read(buffer)) != -1){  
+//	            out.write(buffer, 0, bytesToRead);  
+//	        } 
+//	        out.flush();  
+	        if(file.getPath() !=null && !"".equals(file.getPath())) {
+	        	if(!printFile(file.getPath())) {
+		        	result=false;
+		        }
+	        }else {
+	        	result=false;
+	        }
+	        
+	    } finally {  
+	        if(fin != null) fin.close();  
+	        if(out != null) out.close();  
+//	        if(file != null) file.delete(); // 删除临时文件  
+	    } 
+	    return result;
+	}  
+
+	private static File createDoc(Map<?, ?> dataMap, Template template, String templateFolder){
+	    String name =  "appropapproval.doc";  
+	    File f = new File(templateFolder+"\\"+name);  
+	    Template t = template;  
+	    try {  
+	        // 这个地方不能使用FileWriter因为需要指定编码类型否则生成的Word文档会因为有无法识别的编码而无法打开  
+	        Writer w = new OutputStreamWriter(new FileOutputStream(f), "utf-8");  
+	        t.process(dataMap, w);
+	        w.close();  
+	    } catch (Exception ex){
+	        ex.printStackTrace();  
+	        throw new RuntimeException(ex);  
+	    }  
+	    return f;  
+	}
+	
+	/* 打印指定的文件 */
+	private static boolean printFile(String filepath)
+
+	{
+		
+		System.out.println("开始打印");
+		boolean result=true;
+		//初始化COM线程
+        ComThread.InitSTA();
+         
+        //使用Jacob创建 ActiveX部件对象：
+        ActiveXComponent word=new ActiveXComponent("Word.Application");
+         
+        //打开Word文档
+        Dispatch doc=null;
+        Dispatch.put(word, "Visible", new Variant(false));// 这里Visible是控制文档打开后是可见还是不可见，若是静默打印，那么第三个参数就设为false
+        Dispatch docs=word.getProperty("Documents").toDispatch();
+        doc=Dispatch.call(docs, "Open", filepath).toDispatch();
+        try {
+//           Dispatch.call(doc, "PrintOut");//打印
+           System.out.println("完成打印");
+        } catch (Exception e) {
+            e.printStackTrace();
+            result=false;
+            System.out.println("word打印失败");
+        }finally{
+            try {
+                if(doc!=null){
+                    //关闭文档
+                    Dispatch.call(doc, "Close",new Variant(0));
+                }else {
+                	result=false;
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+                result=false;
+            }
+            word.invoke("Quit", new Variant[] {});//关闭进程
+            //释放资源
+            ComThread.Release();
+        }
+        return result;
+	}
+	
+}

@@ -1,0 +1,119 @@
+package com.newhero.urbanconstruction.sysmanager.user.pojo;
+
+import java.util.Date;
+
+/**
+ * 用户实体类
+ * 对应数据表sys_user
+ * author:zzp
+ */
+public class UserDTO {
+
+	private Integer id;
+	private String name;//登录名
+	private String username;//用户名
+	private String password;
+	private Integer unitId;
+	private String unitName;
+	private String unitAddress;
+	private String phone;
+	private int operatorid;
+	private String state;
+	/**
+	 * 角色ID
+	 */
+	private String roleId;
+	private String roleName;//角色名称
+
+	private Integer isdelete;
+	private Date operationtime;
+	
+	
+	public Integer getIsdelete() {
+		return isdelete;
+	}
+	public void setIsdelete(Integer isdelete) {
+		this.isdelete = isdelete;
+	}
+	public Date getOperationtime() {
+		return operationtime;
+	}
+	public void setOperationtime(Date operationtime) {
+		this.operationtime = operationtime;
+	}
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public Integer getUnitId() {
+		return unitId;
+	}
+	public void setUnitId(Integer unitId) {
+		this.unitId = unitId;
+	}
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	public String getState() {
+		return state;
+	}
+	public void setState(String state) {
+		this.state = state;
+	}
+	public String getRoleId() {
+		return roleId;
+	}
+	public void setRoleId(String roleId) {
+		this.roleId = roleId;
+	}
+	public String getUnitAddress() {
+		return unitAddress;
+	}
+	public void setUnitAddress(String unitAddress) {
+		this.unitAddress = unitAddress;
+	}
+	public String getRoleName() {
+		return roleName;
+	}
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
+	public String getUnitName() {
+		return unitName;
+	}
+	public void setUnitName(String unitName) {
+		this.unitName = unitName;
+	}
+	public int getOperatorid() {
+		return operatorid;
+	}
+	public void setOperatorid(int operatorid) {
+		this.operatorid = operatorid;
+	}
+	
+	
+	
+}

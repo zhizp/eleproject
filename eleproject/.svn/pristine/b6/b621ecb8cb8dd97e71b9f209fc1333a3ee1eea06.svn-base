@@ -1,0 +1,1425 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%> 
+<jsp:include page="/include/public.jsp"></jsp:include>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>申请拨款</title>
+		<meta name="keywords" content="" />
+		<meta name="description" content="" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<!-- basic styles -->
+		<link rel="stylesheet" href="${ctx}/views/assets/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace-rtl.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace-skins.min.css" />
+		<script src="${ctx}/views/assets/js/jquery-2.0.3.min.js"></script>
+		<link rel="stylesheet" href="${ctx}/views/assets/ZTree/zTreeStyle.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/public.css" />
+		<script src="${ctx}/views/assets/ZTree/jquery.ztree.core-3.5.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.mobile.custom.min.js"></script>
+		<script src="${ctx}/views/assets/js/bootstrap.min.js"></script>
+		<script src="${ctx}/views/assets/js/typeahead-bs2.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.ui.touch-punch.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.slimscroll.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.easy-pie-chart.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.sparkline.min.js"></script>
+		<script src="${ctx}/views/assets/js/flot/jquery.flot.min.js"></script>
+		<script src="${ctx}/views/assets/js/flot/jquery.flot.pie.min.js"></script>
+		<script src="${ctx}/views/assets/js/flot/jquery.flot.resize.min.js"></script>
+		<script src="${ctx}/views/assets/js/ace-elements.min.js"></script>
+		<script src="${ctx}/views/assets/js/ace.min.js"></script>
+		<script src="${ctx}/views/assets/js/ace-extra.min.js"></script>
+		<script type="text/javascript">
+		function chgPageRows(){
+        	parent.mainFrame.location.href="${ctx}/appropriationApplyController/showBootstraptableOfApplyData?rowsPerPage="+$("#pagerows").val()+"&keyword="+$("#segmentinfoid").val();
+        }
+		function decimal(num,v){
+		var vv = Math.pow(10,v);
+		return Math.round(num*vv)/vv;
+		}
+		$(document).ready(function(){
+			$.fn.zTree.init($("#treeDemo"), setting);
+		});
+		 function formatDateTime(date) {
+            var y = date.getFullYear();
+            var m = date.getMonth() + 1;
+            m = m < 10 ? ('0' + m) : m;
+            var d = date.getDate();
+            d = d < 10 ? ('0' + d) : d;
+            var h = date.getHours();
+            h=h < 10 ? ('0' + h) : h;
+            var minute = date.getMinutes();
+            minute = minute < 10 ? ('0' + minute) : minute;
+            var second=date.getSeconds();
+            second=second < 10 ? ('0' + second) : second;
+            return y + '-' + m + '-' + d +' '+h+':'+minute+':'+second;
+		}
+		 function formatDate(date) {
+			   var y = date.getFullYear();
+			    var m = date.getMonth() + 1;
+			    m = m < 10 ? '0' + m : m;
+			    var d = date.getDate();
+			    d = d < 10 ? ('0' + d) : d;
+			    return y + '-' + m + '-' + d;//这里可以写格式
+			    //输出：2017-10-9
+			}
+		 function openSaveModal(){
+			 $("#openSave").attr('data-target','');
+			 var segmentinfoid = $("#segmentinfoid").val().trim();
+			 if(segmentinfoid.length==0){
+				alert('请选择标段再进行申请');
+				return false;
+			} 
+	    	$("#openSave").attr('data-target',"#AddModal");
+		 }
+		function saveApply(){
+			var segmentinfoid = $("#segmentinfoid").val().trim();
+			var constructionunit = $("#Addconstructionunit").val().trim();
+			var designunit = $("#Adddesignunit").val().trim();
+			var supervisionunit = $("#Addsupervisionunit").val().trim();
+			var payee = $("#Addpayee").val().trim();
+			var receivableaccount = $("#Addreceivableaccount").val().trim();
+			var receivablenumber = $("#Addreceivablenumber").val().trim();
+			var appropriationcontent = $("#Addappropriationcontent").val().trim();
+			var applicationDate = $("#AddapplyDate").val().trim();
+			var applicationamount = $("#Addapplicationamount").val().trim();
+			var remark = $("#Addremark").val().trim();
+			let date5 = new Date(applicationDate);//直接用 new Date(时间戳) 格式转化获得时间
+			applicationDate=formatDate(date5);//直接调用上方的方法
+			if(payee.length==0 ){
+				alert('收款单位不能为空！');
+				return false;
+			}
+			if(receivableaccount.length==0 ){
+				alert('收款账户不能为空！');
+				return false;
+			}
+			if(applicationamount.length==0 ){
+				alert('申请金额不能为空！');
+				return false;
+			}
+			if(applicationDate=='NaN-NaN-NaN'){
+				alert('申请日期不能为空！');
+				return false;
+			}
+			var patrn = /^\d+(\.\d+)?$/;
+            if (!patrn.exec(applicationamount)) {
+                alert("请输入正确的金额！");
+                return false;
+            }
+
+			/*'applicationDate': applicationDate,  */
+			$.ajax({
+				url:"${ctx}/appropriationApplyController/addApplyData",
+				type:"post",
+				data:{
+					  'segmentinfoId': segmentinfoid,
+					  'constructionUnit': constructionunit,
+					  'designUnit': designunit,
+					  'supervisionUnit': supervisionunit,
+					  'payee': payee,
+					  'applicationAmount': applicationamount,
+					  'appropriationContent': appropriationcontent,
+					  'receivableAccount': receivableaccount,
+					  'receivablenumber': receivablenumber,
+					  'remark': remark,
+					  'applicationDate': applicationDate
+					},
+
+				dataType:"json",
+				success:function(data){
+					if(data.success){
+						alert("保存成功！");
+						window.close();
+	                	location.reload();
+					}else{
+						alert("保存失败！");
+					}
+					
+				},
+				error:function(){
+					alert("保存申请拨款信息失败！");
+				}
+			});
+		}
+		
+    function openupdata(){
+
+    	$("#openupdata").attr('data-target','');
+    	var constnum =0;
+    	var applytId="";
+    	$("input[name='selapplytId']").each(function () {
+    		if ($(this).is(':checked')) {
+    			constnum+= 1;
+    			applytId=$(this).val();
+    		} 
+    	});
+    	if(constnum >1){
+    		alert("请只选一个！");
+    		return false;
+    	}
+    	if(constnum <1){
+    		alert("请选一个拨款申请！");
+    		return false;
+    	}
+    	$("#openupdata").attr('data-target',"#updateModal");
+       	$.ajax({
+               url:  "${ctx}/appropriationApplyController/getApplyDataById",
+               type: 'post',
+               data:{'id':applytId},
+               async: false,
+               dataType: 'json',
+               success: function (data) {
+            	   $("#updateid").val(data.id);
+					$("#updateconstructionunit").val(data.constructionUnit);
+					$("#updatedesignunit").val(data.designUnit);
+					$("#updatesupervisionunit").val(data.supervisionUnit);
+					$("#updatepayee").val(data.payee);
+					$("#updatereceivableaccount").val(data.receivableAccount);
+					$("#updatereceivablenumber").val(data.receivablenumber);
+					$("#updateappropriationcontent").val(data.appropriationContent);
+					$("#updateapplyDate").val(data.applicationDate);
+					$("#updateapplicationamount").val(data.applicationAmount);
+					$("#updateremark").val(data.remark);
+               }
+   		});
+    	
+    }
+    	
+    function updateApply(){
+    	var id = $("#updateid").val().trim();
+    	var constructionunit = $("#updateconstructionunit").val().trim();
+		var designunit = $("#updatedesignunit").val().trim();
+		var supervisionunit = $("#updatesupervisionunit").val().trim();
+		var payee = $("#updatepayee").val().trim();
+		var receivableaccount = $("#updatereceivableaccount").val().trim();
+		var receivablenumber = $("#updatereceivablenumber").val().trim();
+		var appropriationcontent = $("#updateappropriationcontent").val().trim();
+		var applicationDate = $("#updateapplyDate").val().trim();
+		var applicationAmount = $("#updateapplicationamount").val().trim();
+		var remark = $("#updateremark").val().trim();
+		if(payee.length==0 ){
+			alert('收款单位不能为空！');
+			return false;
+		}
+		if(receivableaccount.length==0 ){
+			alert('收款账户不能为空！');
+			return false;
+		}
+		if(applicationAmount.length==0 ){
+			alert('申请金额不能为空！');
+			return false;
+		}
+		let date5 = new Date(applicationDate);//直接用 new Date(时间戳) 格式转化获得时间
+		applicationDate=formatDate(date5);//直接调用上方的方法
+		if(applicationDate=='NaN-NaN-NaN'){
+			alert('申请日期不能为空！');
+			return false;
+		}
+		$.ajax({
+               url:  "${ctx}/appropriationApplyController/updateApplyData",
+               type: 'POST',
+               data:{
+            	   'id': id,
+            	   'constructionUnit': constructionunit,
+            	   'designUnit': designunit,
+            	   'supervisionUnit': supervisionunit,
+            	   'payee': payee,
+            	   'receivableAccount': receivableaccount,
+            	   'receivablenumber': receivablenumber,
+            	   'appropriationContent': appropriationcontent,
+            	   'applicationDate':applicationDate,
+            	   'applicationAmount': applicationAmount,
+            	   'remark': remark
+            	 },
+               async: false,
+               dataType: 'json',
+               success: function (data) {
+               	alert("更新成功！");
+               	$("input[name='selapplytId']").attr('checked',false);
+               	window.close();
+               	location.reload();
+               },
+               error:function(data){
+               	alert("更新失败！");
+               }
+       
+   		});
+    }
+    
+    function opendeleteModal(){
+
+    	$("#opendelete").attr('data-target','');
+    	var constnum =0;
+    	var constid="";
+    	var state="";
+    	$("input[name='selapplytId']").each(function () {
+    		if ($(this).is(':checked')) {
+    			constnum+= 1;
+    			constid+=$(this).val()+',';
+    			state=$(this).prev().val();
+    		} 
+    	});
+    	if(state=='2' || state=='3'){
+    		alert('已审批或已拨款的申请不可删除！');
+    		return false;
+    	}
+    	constid=constid.substring(0,constid.length-1);
+    	if(constnum <1){
+    		alert("请选择一个拨款申请进行删除！");
+    		return false;
+    	}
+    	if(constid.indexOf(',')!=-1){
+    		alert('只能选一个申请进行删除！');
+    		return false;
+    	}
+    	$("#opendelete").attr('data-target',"#DelModal");
+    }
+    function deleteApply(){
+    	var constid="";
+    	$("input[name='selapplytId']").each(function () {
+    		if ($(this).is(':checked')) {
+    			constid +=$(this).val()+',';
+    		} 
+    	});
+    	constid=constid.substring(0,constid.length-1);
+    	if(constid.indexOf(',')!=-1){
+    		alert('只能选一个申请进行删除！');
+	    	return false;
+    	}
+    	if(constid.length==0){
+    		alert("请选择一个拨款申请进行删除！");
+    		return false;
+    	}
+      	$.ajax({
+              url:  '${ctx}/appropriationApplyController/deleteApplyData',
+              type: 'POST',
+              data:{'id':constid},
+              async: false,
+              dataType: 'json',
+              success: function (data) {
+              	alert("删除成功！");
+              	$("input[name='selapplytId']").attr('checked',false);
+              	window.close();
+              	location.reload();
+              },
+              error:function(data){
+              	alert("删除失败！");
+              }
+      
+  		});
+    }
+    
+    function selectApply(){
+    	var segmentinfoid =$("#segmentinfoid").val().trim();
+	    $.ajax({
+	    	url:"${ctx}/appropriationApplyController/selectSegmentProjectBySegmentId",
+	        type: 'POST',
+	        data:{'segmentinfoid':segmentinfoid
+				},
+	        async: false,
+	        dataType: 'json',
+	        success: function (data) {
+	        	$("#segmentinfoid").val(data.segmentinfoid);
+				$("#investmenttype").val(data.investmenttype);
+				$("#barrageprice").val(data.barrageprice);
+				$("#estimateamount").val(data.estimateamount);
+				$("#contractprice").val(data.contractprice);
+				$("#settlreviewamount").val(data.settlreviewamount);
+				$("#reviewnumber").val(data.reviewnumber);
+				$("#settlreviewinfo").val(data.settlreviewinfo);
+				$("#remark").val(data.remark);
+	        },
+	        error:function(data){
+	        	alert("更新失败！");
+	        }
+	
+		});
+    }
+    
+    function selectApplyByName(){
+    	var projectYear=$("#projectYear").val();
+    	var url="${ctx}/appropriationApplyController/selectProjectYearByName?projectYear="+projectYear;
+    	window.location.href=url;
+    }
+    
+    function updateProjectPrceBySegmentId(){
+    	var estimateamount = $("#estimateamount").val().trim();
+		var contractprice = $("#contractprice").val().trim();
+		var barrageprice = $("#barrageprice").val().trim();
+		var segmentinfoid = $("#segmentinfoid").val().trim();
+       	$.ajax({
+               url:  "${ctx}/appropriationApplyController/updateProjectPrceBySegmentId",
+               type: 'POST',
+               data:{'segmentinfoid':segmentinfoid,'estimateamount':estimateamount,'contractprice':contractprice,'barrageprice':barrageprice
+				},
+               async: false,
+               dataType: 'json',
+               success: function (data) {
+               	alert("更新成功！");
+               	location.reload();
+               },
+               error:function(data){
+               	alert("更新失败！");
+               }
+       
+   		});
+    }
+    function updateReviewBySegmentId(){
+    	var settlreviewamount = $("#settlreviewamount").val().trim();
+		var reviewnumber = $("#reviewnumber").val().trim();
+		var settlreviewinfo = $("#settlreviewinfo").val().trim();
+		var segmentinfoid = $("#segmentinfoid").val().trim();
+       	$.ajax({
+               url:  "${ctx}/appropriationApplyController/updateReviewBySegmentId",
+               type: 'POST',
+               data:{'segmentinfoid':segmentinfoid,'settlreviewamount':settlreviewamount,'reviewnumber':reviewnumber,'settlreviewinfo':settlreviewinfo
+				},
+               async: false,
+               dataType: 'json',
+               success: function (data) {
+               	alert("更新成功！");
+               	location.reload();
+               },
+               error:function(data){
+               	alert("更新失败！");
+               }
+       
+   		});
+    }
+    function updateRemarkBySegmentId(){
+    	var remark = $("#remark").val().trim();
+		var segmentinfoid = $("#segmentinfoid").val().trim();
+       	$.ajax({
+               url:  "${ctx}/appropriationApplyController/updateRemarkBySegmentId",
+               type: 'POST',
+               data:{'segmentinfoid':segmentinfoid,'remark':remark},
+               async: false,
+               dataType: 'json',
+               success: function (data) {
+               	alert("更新成功！");
+               	location.reload();
+               },
+               error:function(data){
+               	alert("更新失败！");
+               }
+       
+   		});
+    }
+    function chgPayee(){
+    	$("#unitId").val("");
+    	var payee = $("#Addpayee").val();
+    	$("#unitnamelist").empty();
+    	
+    	$.ajax({
+            url:  '${ctx}/appropriationApplyController/getPayeeListByName',
+            type: 'POST',
+            data: {unitname:payee},
+            async: false,
+            dataType: 'json',
+            success:function(data) {
+           		var list=data;
+           		for (var o in list){
+                       var id = list[o].id;
+                       var name = list[o].unitname;
+                       var str = "<li style='border-bottom:1px #d2d2d2 dashed;' onClick='clkCode(\""+id+"\",\""+name+"\");'>" + name + "</li>";
+                       $("#unitnamelist").append(str);
+                       $("#unitnamelist").show();
+                   }
+            },
+	    	error:function(){
+	        	alert('获取数据失败');	
+	    	}
+    	   });
+    	
+    }
+    
+    function clkCode(id, name){
+    	$("#unitId").val(id);
+    	$("#Addpayee").val(name);
+    	$("#unitnamelist").hide();
+    	$("#Addreceivableaccount").val('');
+    	$("#Addreceivablenumber").val('');
+    	$("#unitaccountlist").empty();
+    	$.ajax({
+            url:  '${ctx}/appropriationApplyController/getReceivableaccount',
+            type: 'POST',
+            data: {unitinfoid:id},
+            async: false,
+            dataType: 'json',
+            success:function(data) {
+            	var list=data;
+           		for (var o in list){
+                       var id = list[o].id;
+                       var bank = list[o].bank;
+                       var accountnumber = list[o].accountnumber;
+                       var str = "<li style='border-bottom:1px #d2d2d2 dashed;' onClick='clkAccount(\""+data.id+"\",\""+bank+"\",\""+accountnumber+"\");'>" + bank + "</li>";
+                       $("#unitaccountlist").append(str);
+                       $("#unitaccountlist").show();
+                   }
+            }
+    	   });
+    }
+    function clkAccount(id,bank,accountnumber){
+    	$("#unitaccountId").val(id);
+   	    $("#Addreceivableaccount").val(bank);
+        $("#Addreceivablenumber").val(accountnumber);
+    	$("#unitaccountlist").hide();
+    }
+    function chgupdatePayee(){
+    	$("#updateunitId").val("");
+    	var payee = $("#updatepayee").val();
+    	$("#updateunitaccountlist").empty();
+    	$.ajax({
+            url:  '${ctx}/appropriationApplyController/getPayeeListByName',
+            type: 'POST',
+            data: {unitname:payee},
+            async: false,
+            dataType: 'json',
+            success:function(data) {
+           		var list=data;
+           		for (var o in list){
+                       var id = list[o].id;
+                       var name = list[o].unitname;
+                       var str = "<li style='border-bottom:1px #d2d2d2 dashed;' onClick='upclkCode(\""+id+"\",\""+name+"\");'>" + name + "</li>";
+                       $("#updateunitaccountlist").append(str);
+                       $("#updateunitaccountlist").show();
+                   }
+            },
+	    	error:function(){
+	        	alert('获取数据失败');	
+	    	}
+    	   });
+    	
+    }
+    function upclkCode(id, name){
+    	$("#updateunitId").val(id);
+    	$("#updatepayee").val(name);
+    	$("#updateunitaccountlist").hide();
+    	$("#updatereceivableaccount").val('');
+    	$("#updatereceivablenumber").val('');
+    	$("#updateunitaccountlist").empty();
+    	$.ajax({
+            url:  '${ctx}/appropriationApplyController/getReceivableaccount',
+            type: 'POST',
+            data: {unitinfoid:id},
+            async: false,
+            dataType: 'json',
+            success:function(data) {
+            	var list=data;
+           		for (var o in list){
+                       var id = list[o].id;
+                       var bank = list[o].bank;
+                       var accountnumber = list[o].accountnumber;
+                       var str = "<li style='border-bottom:1px #d2d2d2 dashed;' onClick='upclkAccount(\""+data.id+"\",\""+bank+"\",\""+accountnumber+"\");'>" + bank + "</li>";
+                       $("#updateunitaccountlist").append(str);
+                       $("#updateunitaccountlist").show();
+                   }
+            }
+    	   });
+    }
+    function upclkAccount(id,bank,accountnumber){
+    	$("#unitaccountId").val(id);
+   	    $("#updatereceivableaccount").val(bank);
+        $("#updatereceivablenumber").val(accountnumber);
+    	$("#updateunitaccountlist").hide();
+    }
+		</script>
+		<script type="text/javascript">
+		
+		//ZTree
+		var setting = {
+		async:{
+			enable:true,
+			type:"post",
+			url:"${ctx}/projectYearController/getProjectYear",
+			contentType:"application/x-www-form-urlencoded",
+			autoParam:["id"]/*,
+			dataFilter:filter*/
+		},
+		 data:{
+			simpleData:{
+				enable:true,
+				idKey:"id",
+				rootId:0
+			},
+			key:{
+				name:"projectYear"
+			}
+		},
+		view:{
+			showLine: true,
+            showIcon: true,
+            selectedMulti: false,
+			dblClickExpand:false 
+		},
+		
+		/* $.ajax({
+			url:"${ctx}/infoCascade",
+			type:"post",
+			data:{},
+			dataType:"json",
+			success:function(){},
+			error:function(){}
+		}); */
+		callback:{
+			onClick : function(event, treeId, treeNode, clickFlag){			//展开树相关操作
+				functionToSon1(event, treeId, treeNode, clickFlag);
+				//functionToSon2(event, treeId, treeNode, clickFlag);
+				//likeOnClick();
+			},
+            beforeAsync : function(event, treeId, treeNode, clickFlag){
+            	
+            },
+            /* onMouseDown:function(event, treeId, treeNode, clickFlag){
+            	functionToSon2(event, treeId, treeNode, clickFlag);
+            }, */
+	        //捕获异步加载出现异常错误的事件回调函数 和 成功的回调函数  与上连接
+	         onAsyncSuccess : function(){}
+	        } 
+		}; //end setting
+		
+		//var runOne = true;
+		var treeNodeAddArray = new Array("id", "projectYear", "shortunitname");//定义全局
+		var treeNodeAddArray1 = new Array("id", "projectYear", "shortunitname");//定义全局
+		var treeNodeAddArray2 = new Array("id", "projectYear", "shortunitname");//定义全局
+		var treeNodeAddArrayArray = new Array("id", "projectYear", "shortunitname");
+		var treeNodeAddArraySecond = new Array("signOfClicked");
+		var treeNodeOfClicked= new Array("id", "projectYear", "shortunitname");
+		var treeNodeWarehouse = new Array();
+		//treeNodeWarehouse[0] = ("0", "0", "kuaiyaozhale!");
+		var treeNodeAdd = new Array();
+		var time = new Array();
+		var iWarehouseTimer = 0;
+		var switchTrueOrFalse = true;
+		function functionToSon1(event, treeId, treeNode, clickFlag){
+			var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+			if(treeNode.id){
+				var yearId = treeNode.id;//获取年度id
+				var nodes = treeObj.getNodes();
+				for(var i in nodes){
+					treeObj.removeChildNodes(nodes[i]);
+				} 
+				
+			}else{
+				return functionToSon2(event, treeId, treeNode, clickFlag);//var yearId = 0;
+			}
+				//alert(yearId);//yearID获取没有错误
+					//var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+					/*nodes = treeObj.getNodeByParam("yearId", treeNode.id, null);
+					id = nodes.yearId;
+					alert("nodes.yearId: " + nodes.yearId); */
+					$.ajax({
+						url:"${ctx}/mykyzlController/getConstUnitInfoByYearIds",//根据项目年度的id查询建设单位list
+						type:"post",
+						data:{"yearId":yearId},//传回yearId
+						dataType:"json",
+						async:false,
+						success:function(data){//返回的list数据
+							//treeNodeAddArray1级间不重复加载界限  treeNodeAddArray当前级重复点击不重复加载界限  treeNodeAddArray2中间转换数据容器							
+							/* for(var save in data){
+								var changeNodes = new Array();
+								changeNodes[save] = {unitId:data[save].id, projectYear:data[save].unitname}; //注意不同级别之间的属性的更改
+								treeNodeAddArray1[save] = changeNodes[save];
+							} *///进入就保存原有数据 为了级间点击事件的重复加载界限
+							if (data.length != 0) {
+								
+								/* var node = {"id":0, "projectYear":"0"};
+								treeObj.addNodes(treeNode, node);*/
+								
+								 for (var o in data){
+				                        var id = data[o].id;
+				                        var name1 = data[o].unitshortname;
+				               			treeNodeAdd[o] = {unitId:id, projectYear:name1};
+				               			
+				               			//if((treeNodeAddArray[o].projectYear != treeNodeAdd[o].projectYear)
+				               					//&& (treeNodeAdd[o].projectYear != treeNodeAddArray2[o].projectYear)
+				               					//|| (treeNodeAddArray2 == null)
+				               					//|| (treeNodeWarehouse == null)
+								 //){	// 先根据赎罪判断有没有数据 
+				               				/* for(var toEnd in treeNodeOfClicked){
+				               					if(treeNodeOfClicked[toEnd].projectYear != treeNodeAdd[o].projectYear){
+				               						alert("no same.");
+				               					}
+				               				} */
+				               				//alert("run to here 1!");
+				               				//if(treeNodeWarehouse != null){
+				               					//alert("run to here 2!");
+				               					//var switchTrueOrFalse = true;
+				               	 /* tiaochuxunhuan:while(switchTrueOrFalse ==  true){
+				               						for(var oNum in treeNodeWarehouse){
+					               						alert("run to here 3!");
+						               					if(treeNodeAdd[o].projectYear != treeNodeWarehouse[oNum].projectYear){
+						               						//treeObj.addNodes(treeNode, treeNodeAdd[o]);
+						               						switchTrueOrFalse = true;
+						               					}else{
+						               						continue tiaochuxunhuan;//while false goto 
+						               					}
+						               					// if(!switchTrueOrFalse){
+						               					//	treeObj.addNodes(treeNode, treeNodeAdd[o]);
+						               					//} 
+						               				}
+				               					 } */
+				               					 
+				               					 /* if(!(function(){
+				               						for(var oNum in treeNodeWarehouse){
+				               							if(treeNodeAdd[o].projectYear == treeNodeWarehouse[oNum].projectYear){
+				               								switchTrueOrFalse = false;
+				               								return switchTrueOrFalse;
+				               							}
+				               						} 
+				               					 })){
+				               						 break;//treeObj.addNodes(treeNode, treeNodeAdd[o]);
+				               					 }else{
+				               						 treeObj.addNodes(treeNode, treeNodeAdd[o]);
+				               					 } */
+				               					 
+				               					//if(switchTrueOrFalse){
+				               					//	treeObj.addNodes(treeNode, treeNodeAdd[o]);
+				               					//}else{}
+				               				//}
+				               				//else{
+				               				//	treeObj.addNodes(treeNode, treeNodeAdd[o]);
+				               				//}
+				               				
+				               				
+				               				treeObj.addNodes(treeNode, treeNodeAdd[o]);
+			  		               		    treeNodeAddArray[o] = treeNodeAdd[o];//将已经添加的节点数据添加进入数组
+			  		               		    
+			  		               		    //treeNodeOfClicked[o].signOfClicked = "1";
+			  		               		    //alert(treeNodeOfClicked);
+			  		               		    
+			  		               		    //加入仓库
+			  		               		    //treeNodeWarehouse[iWarehouseTimer] = treeNodeAdd[o];
+			  		               		    //iWarehouseTimer++;
+				               			//}
+				                    }
+								 
+								 //console.log(treeNodeAdd[1]);
+								 //treeNodeAddArraySecond = treeNodeAdd[1];
+								 
+							} 
+							//treeNodeAddArray2 = treeNodeAddArray1;
+							
+						 $.ajax({
+							 success:function(data){
+								 //var node = [{"id":data.id, "projectYear":data.unitname, "click":functionToSon2(event, treeId, treeNode, clickFlag)}];
+									//node.click = functionToSon2(event, treeId, treeNode, clickFlag);
+									/* if(node){
+									    //触发默认数据的click事件
+									   $("#"+node.tId+"_a").click(function(){alert(123)});//触发ztree点击事件
+									} */
+									functionToSon2(event, treeId, treeNode, clickFlag);
+							 },
+							 error:function(){
+							 }
+						 });
+							//functionToSon2(event, treeId, treeNode, clickFlag);
+						},
+						error:function(count){}
+					});
+			//functionToSon2(event, treeId, treeNode, clickFlag);
+		 };
+		 
+		  var treeNodeAddArrayProject = new Array("id", "projectYear");
+		  var treeNodeAddProject = new Array();
+		  function functionToSon2(event, treeId, treeNode, clickFlag){
+			 // alert("2");
+			var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+			//var id = treeObj1.getSelectedNodes().id;
+			if(treeNode.unitId){
+				var id = treeNode.unitId;
+				var nodes = treeObj.getSelectedNodes();
+				for(var i in nodes){
+					treeObj.removeChildNodes(nodes[i]);
+				}
+			}else{
+				return functionToSon3(event, treeId, treeNode, clickFlag);//var id = 0;
+			}
+			//alert("unit id: " + id);
+			//alert(id);
+			//console.log(treeNode);
+			$.ajax({
+				url:"${ctx}/mykyzlController/getProjectNameInfoByUnitId1",
+				type:"post",
+				data:{"unitId":id},
+				dataType:"json",
+				async:false,
+				success:function(data){
+					/* if(data.length != 0){
+						alert("data.length: " + data.length);
+					}else 
+					if(data.length == 0){
+						alert("data.length is 0.");
+					} */
+					if(data.length != 0) {
+
+						
+						
+	                     for (var o in data){
+	                        var id = data[o].id;
+	                        //alert("id: " + id);
+	                        var name1 = data[o].projectname;
+	               			treeNodeAddProject[o] = {projectId:id, projectYear:name1};
+	               			//if(treeNodeAddArrayProject[o].projectYear != treeNodeAddProject[o].projectYear){	//先根据赎罪判断有没有数据 
+	               				treeObj.addNodes(treeNode, treeNodeAddProject[o]);
+  		               		    treeNodeAddArrayProject[o] = treeNodeAddProject[o];//将已经添加的节点数据添加进入数组
+  		               		    //console.log("get nodes length: " + treeObj.getSelectedNodes().length);
+	               			//}
+	                    }
+					} 
+				},
+				error:function(){}
+			});
+			
+			functionToSon3(event, treeId, treeNode, clickFlag);
+		 }
+		  
+		  function functionToSon3(event, treeId, treeNode, clickFlag){
+				 // alert("2");
+				var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+				//var id = treeObj1.getSelectedNodes().id;
+				if(treeNode.projectId){
+					var id = treeNode.projectId;
+					var nodes = treeObj.getSelectedNodes();
+					for(var i in nodes){
+						treeObj.removeChildNodes(nodes[i]);
+					}
+				}else{
+					return functionToSon4(event, treeId, treeNode, clickFlag);//var id = 0;
+				}
+				
+				//alert("treeNode's id: " + treeNode.projectYear + " " + id);
+				//alert(id);
+				//console.log(treeNode);
+				$.ajax({
+					url:"${ctx}/mykyzlController/getCostTypeListByProjId1",
+					type:"post",
+					data:{"projectId":id},
+					dataType:"json",
+					success:function(data){
+						/* if(data.length != 0){
+							alert("data.length: " + data.length);
+						}else 
+						if(data.length == 0){
+							alert("data.length is 0.");
+						} */
+						if(data.length != 0) {
+							
+							
+							
+		                     for (var o in data){
+		                        var id = data[o].id;
+		                        //alert("id: " + id);
+		                        var name1 = data[o].costtype;
+		               			treeNodeAdd[o] = {costId:data[o].id, projectYear:name1};
+		               			//if(treeNodeAddArray[o].projectYear != treeNodeAdd[o].projectYear){	//先根据赎罪判断有没有数据 
+		               				//console.log(treeNodeAddArray[o]);
+		               				//treeNode1 = treeObj.getSelectedNodes();
+		               				treeObj.addNodes(treeNode, treeNodeAdd[o]);
+	  		               		    treeNodeAddArray[o] = treeNodeAdd[o];//将已经添加的节点数据添加进入数组
+	  		               		    //console.log("get nodes length: " + treeObj.getSelectedNodes().length);
+		               			//}
+		                    }
+						} 
+						functionToSon4(event, treeId, treeNode, clickFlag);
+					},
+					error:function(){}
+				});
+			 };
+		  function functionToSon4(event, treeId, treeNode, clickFlag){
+			  var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+			  if(treeNode.costId){
+				  var costId = treeNode.costId;
+				  var nodes = treeObj.getSelectedNodes();
+				  for(var i in nodes){
+					  treeObj.removeChildNodes(nodes[i]);
+				  }
+			  }else{
+				  var costId = 0;
+			  }
+				
+				//alert(yearId);//yearID获取没有错误
+					//var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+					$.ajax({
+						url:"${ctx}/mykyzlController/getSegmentNumByCostTypeId1",//根据项目年度的id查询建设单位list
+						type:"post",
+						data:{"costId":costId},//传回yearId
+						dataType:"json",
+						success:function(data){//返回的list数据
+							if (data.length != 0) {
+								 for (var o in data){
+				                        var id = data[o].id;
+				                        var name1 = data[o].segmentname;
+				               			treeNodeAdd[o] = {segmentId:data[o].id, projectYear:name1};
+				               			//if(treeNodeAddArray[o].projectYear != treeNodeAdd[o].projectYear){	//先根据赎罪判断有没有数据 
+				               				treeObj.addNodes(treeNode, treeNodeAdd[o]);
+			  		               		    treeNodeAddArray[o] = treeNodeAdd[o];//将已经添加的节点数据添加进入数组
+			  		               		    //treeNodeAddArrayArray[o] = treeNodeAdd[o];
+				               			//}
+				                    }
+							} 
+						
+							//获取第五层标段id,查询标段项目表中的项目、评审信息
+							var segmentinfoid =treeNode.segmentId;
+							$('#segmentinfoid').val(segmentinfoid);
+							/*  $.ajax({
+							    	url:"${ctx}/appropriationApplyController/showBootstraptableOfApplyData",
+							        type: 'POST',
+							        data:{
+							        	'rowsPerPage':$("#pagerows").val(),
+							        	'keyword':segmentinfoid
+							        },
+							        async: false,
+							        dataType: 'json',
+							        success: function (data) {
+							        	
+							        }
+							});  */
+							 $.ajax({
+							    	url:"${ctx}/appropriationApplyController/selectSegmentProjectBySegmentId",
+							        type: 'POST',
+							        data:{'segmentinfoid':segmentinfoid,
+							        	'rowsPerPage':$("#pagerows").val()
+										},
+							        async: false,
+							        dataType: 'json',
+							        success: function (data1) {
+							        	$("#segmentinfoid").val(data1.segmentinfoid);
+										$("#investmenttype").val(data1.investmenttype);
+										$("#barrageprice").val(data1.barrageprice);
+										$("#estimateamount").val(data1.estimateamount);
+										$("#contractprice").val(data1.contractprice);
+										$("#settlreviewamount").val(data1.settlreviewamount);
+										$("#reviewnumber").val(data1.reviewnumber);
+										$("#settlreviewinfo").val(data1.settlreviewinfo);
+										$("#remark").val(data1.remark);
+										$("#owepayment").val(data1.owepayment);
+										$("#totalappropriation").val(data1.totalappropriation);
+										$("#lappropriationratio").val("");
+										if(data1.totalappropriation!=0){
+											var totalappropriation=0;
+											if(data1.settlreviewamount!=0){
+												totalappropriation=decimal((data1.totalappropriation)/(data1.settlreviewamount) * 100,3);
+											}else if(data1.contractprice !=0){
+												totalappropriation=decimal((data1.totalappropriation)/(data1.contractprice) * 100,3);
+											}else if(data1.barrageprice !=0){
+												totalappropriation=decimal((data1.totalappropriation)/(data1.barrageprice) * 100,3);
+											}
+											if(totalappropriation!=0){
+												$("#lappropriationratio").val(totalappropriation +'%');
+											}
+										}
+										$("#applybyprojid").empty();
+										//alert(segmentinfoid);
+										$.ajax({
+										    	url:"${ctx}/appropriationApplyController/showBootstraptableOfApplyData1",
+										        type: 'POST',
+										        data:{'keyword':segmentinfoid},
+										        async: false,
+										        dataType: 'json',
+										        success: function (data2) {
+										        	
+										        	if (data2.length != 0) {
+										        		var trnum = 0;
+	            										for (var o2 in data2){
+	            											trnum += 1;
+	                        								var applyid = data2[o2].id;
+	                        								var applicationDate = data2[o2].applicationDate;
+	                        								var applicationAmount = data2[o2].applicationAmount;
+	                        								var payee = data2[o2].payee;
+	                        								var approvalamount = data2[o2].approvalamount;
+	                        								var appropriationaccount = data2[o2].appropriationaccount;
+	                        								var grantTime = data2[o2].grantTime;
+	                        								var state = data2[o2].state;
+	                        								//<fmt:formatNumber type='number' value='' pattern='#######0.0000' maxIntegerDigits='8' maxFractionDigits='4'/>
+	                        								var str = "<tr><td class='center'><label>"+
+	                        										  "<input type='hidden' id='listState' value='"+state+"'/>"+
+	                        								          "<input type='checkbox' name='selapplytId' value='"+applyid+"' class='ace' />"+
+	                        								          "<span class='lbl'></span></label></td><td>"+trnum+"</td>"+
+	                        								          "<td id='listId'>"+applyid+"</td>"+
+	                        								          "<td id='listApplicationDate'>"+(applicationDate==undefined?'':applicationDate)+"</td>"+
+	                        								          "<td id='listApplicationAmount'>"+(applicationAmount==undefined?'':applicationAmount)+"</td>"+
+	                        								          "<td id='listPayee'>"+payee+"</td>"+
+	                        								          "<td id='listApprovalamount'>"+(approvalamount==undefined || approvalamount==0 ?'':approvalamount)+"</td>"+
+	                        								          "<td id='listAppropriationaccount'>"+(appropriationaccount==undefined?'':appropriationaccount)+"</td>"+
+	                        								          "<td id='listGrantTime'>"+(state=='3'?(grantTime==undefined?'':grantTime):'' )+"</td>"+
+	                        								          "<td id='' align='left' style='color:#C00;'>"+ (state=='0'?'未受理':(state=='1'?'已受理，未审批':(state=='2'?'已审批，未拨款':'已拨款')))+"</td></tr>";
+	                        						
+	                        								$("#applybyprojid").append(str);
+	                        							}
+	                        						}
+										        }
+											}); 
+							        	}
+								}); 
+					},
+		 });
+		  }
+		  function likeOnClick(){
+			  var tree=$.fn.zTree.getZTreeObj("treeDemo");
+			  var sel=tree.getNodeByParam('id','${topicId}');
+			  $("#"+sel.tId+"_a").click(function(){
+				  alert("test likeClick.");
+			  }); // 点击节点
+			  $("#"+sel.tId+"_check").click(); // 点击单选框
+		  }
+		  
+		$(document).ready(function(){
+			$.fn.zTree.init($("#treeDemo"), setting);
+		});
+		
+		//导出申请拨款Excel表
+        exportApply = function(){
+        	window.location.href = "${ctx}/appropriationApplyController/exportApply";
+        }
+		
+        function saveArchivesManage(){
+			var yearid = $("#Addyearid").val().trim();
+			var projectid = $("#Addprojectid").val().trim();
+			var filedate = $("#Addfiledate").val().trim();
+			var receiptdate = $("#Addreceiptdate").val().trim();
+			var archivestitle = $("#Addarchivestitle").val().trim();
+			var refernumber = $("#Addrefernumber").val().trim();
+			var archivestypeid = $("#Addarchivestypeid").val().trim();
+			var archivesprice = $("#Addarchivesprice").val().trim();
+			var volumenumber = $("#Addvolumenumber").val().trim();
+			var attachments = $("#Addattachments").val().trim();
+			var handlesituation = $("#Addhandlesituation").val().trim();
+			var agent = $("#Addagent").val().trim();
+			var handedate = $("#Addhandedate").val().trim();
+			var civilservice = $("#Addcivilservice").val().trim();
+			var disbursementdate = $("#Adddisbursementdate").val().trim();
+			var remark = $("#Addremark").val().trim();
+			$.ajax({
+				url:"${ctx}/archivesManageController/saveArchivesManage",
+				type:"post",
+				data:{
+						"yearid" : yearid,
+						"projectid" : projectid,
+						"filedate" : filedate,
+						"receiptdate" : receiptdate,
+						"archivestitle" : archivestitle,
+						"refernumber" : refernumber,
+						"archivestypeid" : archivestypeid,
+						"archivesprice" : archivesprice,
+						"volumenumber" : volumenumber,
+						"attachments" : attachments,
+						"handlesituation" : handlesituation,
+						"agent" : agent,
+						"handedate" : handedate,
+						"civilservice" : civilservice,
+						"disbursementdate" : disbursementdate,
+						"remark" : remark
+					},
+					dataType : "json",
+					cache : false,
+					success : function() {
+						alert("保存成功！");
+						window.close();
+						location.reload();
+					},
+					error : function() {
+						alert("保存档案失败！");
+					}
+				});
+			}
+		
+		</script>
+		
+		<style>
+			.breadcrumbs {
+			    position: relative;
+			    border-bottom: 1px solid #e5e5e5;
+			    background-color: #f5f5f5;
+			    min-height: 41px;
+			    line-height: 40px;
+			    padding: 0 12px 0 0;
+			    display: block;
+			}
+		</style>
+		
+	</head>
+
+	<body>
+
+		<div class="main-container" id="main-container">
+			<script type="text/javascript">
+				try{ace.settings.check('main-container' , 'fixed')}catch(e){}
+			</script>
+
+			<div class="main-container-inner">
+				<a class="menu-toggler" id="menu-toggler" href="#">
+					<span class="menu-text"></span>
+				</a>
+				<div class="main-content">
+					<div class="breadcrumbs" id="breadcrumbs">
+						<script type="text/javascript">
+							try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+						</script>
+
+						<ul class="breadcrumb">
+							<li>
+								<i class="icon-home home-icon"></i>
+								<a href="${ctx}/views/maincontent.jsp">首页</a>
+							</li>
+							<li class="active">申请拨款</li>
+						</ul><!-- .breadcrumb -->
+					</div>
+
+					<div class="page-content">
+						<div class="page-header">
+							<button class="btn btn-minier btn-success" data-toggle="modal" id="openSave" onClick="openSaveModal()"><i class="icon-file-alt"></i> 申请拨款</button>
+                            <button class="btn btn-minier btn-info" id="openupdata" onClick="openupdata()"data-toggle="modal" ><i class="icon-edit"></i> 修改申请</button>
+                            <button class="btn btn-minier btn-danger"  id="opendelete" data-toggle="modal" onclick="opendeleteModal();"><i class="icon-trash"></i> 删除申请单</button>
+                            <!-- <button class="btn btn-minier btn-yellow" onClick="selectApply()"><i class="icon-print"></i> 打印申请表</button> -->
+                            <button class="btn btn-minier btn-yellow" onClick="exportApply()"><i class="icon-print"></i> 导出申请表</button>
+							<button class="btn btn-minier btn-success"data-toggle="modal" data-target="#AddArchivesModal" id="insrtArchivesManage"><i class="icon-plus"></i> 添加档案</button>
+						</div><!-- /.page-header -->
+						<div style="background:#e8ecef;width:20%;height:500px;float:left;overflow: auto;">
+                        	<div class="zTreeDemoBackground left">
+								<ul id="treeDemo" class="ztree"></ul>
+							</div>  	
+                        </div>
+                      <div style="width:78%; float:right">
+                        <!-- <div class="row" style="float:left; margin:0 0 0 20px;overflow: hidden;border: 1px #ccc dashed;"> -->
+						<div class="row" style="background:#f0f0f0;height:100px;border:1px #999 dashed;position: relative;">
+                        	<div class="col-xs-12" style="padding-left:0;">
+                            	<div style="width:25px;height:98px;float:left;display:block;line-height:20px;text-align:center;background:#cacaca;padding-top:8px;">
+                                	项目信息
+                                </div>
+                            	<div style="float:left; margin:10px 0 0 10px;">
+                                    <span>投资分类：</span>
+                                   <!--  <select disabled="disabled" id="" name="" style="width:150px;font-size:12px;padding:0px;height:20px;margin-right:20px;">
+                                        <option  name="investmenttype"></option>
+                                    </select> -->
+                                    <input type="text"  id="investmenttype" name="investmenttype" disabled="disabled" style="width:150px;height:20px;" />
+                                   <input type="hidden" id="segmentinfoid" name="segmentinfoid" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <span>合同中标价格：</span>
+                                    <input type="text"  id="contractprice" name="contractprice"  placeholder="元" style="width:150px;height:20px;" />
+                                    <p></p>
+                                    <span style="color:#aaaaaa;">欠拨金额：</span>
+                                    <input type="text" id="owepayment" name="owepayment" style="width:150px;height:20px;margin-right:20px;"disabled="disabled" />
+                                    <span style="color:#aaaaaa;">累计拨款金额：</span>
+                                    <input type="text"  id="totalappropriation" name="totalappropriation" style="width:150px;height:20px;margin-right:20px;"disabled="disabled" />
+                                    <span style="color:#aaaaaa;">累计拨款比例：</span>
+                                    <input type="text"  id="lappropriationratio" name="lappropriationratio" style="width:150px;height:20px;" disabled="disabled"/>
+                                    
+                                    <p></p>
+                                    <span>拦标价格：</span>
+                                    <input type="text" id="barrageprice" name="barrageprice"  placeholder="元" style="width:150px;height:20px;margin-right:20px;" />
+                                     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;概算金额：</span>
+                                    <input type="text"  id="estimateamount" name="estimateamount"  placeholder="元" style="width:150px;height:20px;margin-right:20px;" />
+                                    <button class="btn btn-minier btn-info" onclick="updateProjectPrceBySegmentId()">保存</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="background:#f0f0f0;height:100px;border:1px #999 dashed;position: relative;">
+                        	<div class="col-xs-12" style="padding-left:0;">
+                            	<div style="width:25px;height:98px;float:left;display:block;line-height:20px;text-align:center;background:#cacaca;padding-top:8px;">
+                                	评审信息
+                                </div>
+                            	<div style="float:left; margin:30px 0 0 10px;">
+                                    <span>结算评审金额：</span>
+                                    <input type="text" id="settlreviewamount" name="settlreviewamount" style="width:173px;height:20px;margin-right:20px;" />
+                                    <span>评审文号：</span>
+                                    <input type="text" id="reviewnumber" name="reviewnumber" style="width:173px;height:20px;margin-right:20px;" />
+                                    <p></p>
+                                    <span>结算评审信息：</span>
+                                    <input type="text" id="settlreviewinfo" name="settlreviewinfo" style="width:440px;height:20px;margin-right:20px;" />
+                                	<button class="btn btn-minier btn-info" onClick="updateReviewBySegmentId()" >保存</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="background:#f0f0f0;height:98px;border:1px #999 dashed;position:relative;border-top:0;border-bottom:0;">
+                        	<div class="col-xs-12" style="padding-left:0;" >
+                                <div style="width:25px;height:98px;float:left;display:block;line-height:20px;text-align:center;background:#cacaca;padding-top:8px;">
+                                	备注信息
+                                </div>
+                                <div style="float:left; margin:10px 0 0 10px;">
+                                	<textarea name="txt" id="remark" name="remark"  clos="250" rows="3" warp="virtual" style="max-height:83px; max-width:520px;"></textarea>
+                                <button class="btn btn-minier btn-info" style="margin-top:54px;" onClick="updateRemarkBySegmentId()">保存</button>
+                                </div>
+                            </div>
+                        </div>
+						<div class="row">
+							<div class="table-responsive">
+                            	<div class="tabbable">
+                                    <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab4" style="height:41px;">
+                                        <li class="active">
+                                            <a data-toggle="tab" href="#home4">拨款申请明细记录</a>
+                                        </li>
+
+                                    </ul>
+
+                                    <div class="tab-content">
+                                        <div id="home4" class="tab-pane active">
+                                            <table id="sample-table-2" class="table table-striped table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="center">
+                                                            <label>
+                                                              <!--   <input type="checkbox" class="ace" />
+                                                                <span class="lbl"></span> -->
+                                                            </label>
+                                                        </th>
+                                                        <th>序号</th>
+                                                        <th>编号</th>
+                                                        <th>申请日期</th>
+                                                        <th>申请金额(元)</th>
+                                                        <th>收款单位</th>
+                                                        <th>审批金额(元)</th>
+                                                        <th>拨款账户</th>
+                                                        <th>拨款日期</th>
+                                                        <th align="center">状态</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="applybyprojid">
+                                                <c:forEach var="list" items="${applylist}" varStatus="status">  
+                                                    <tr>
+                                                        
+                                                        <td class="center">
+                                                            <label>
+                                                            	<input type="hidden" id="listState" value="${list.state }"/>
+                                                                <input type="checkbox" name="selapplytId"   value="${list.id}" class="ace" />
+                                                                <span class="lbl"></span>
+                                                            </label>
+                                                        </td>
+                                                        <td> ${ (page.currentPage-1)*page.rowsPerPage+status.index + 1}</td>
+                                                        <td id="listId">${list.id }</td>
+                                                        <td id="listApplicationDate">${list.applicationDate }</td>
+                                                        <td id="listApplicationAmount">${list.applicationAmount}
+                                                        <%-- <fmt:formatNumber type="number" value="${list.applicationAmount / 10000 + list.applicationAmount % 10000 / 10000}" pattern="######0.000000" maxIntegerDigits="7" maxFractionDigits="6"/>
+                                                         --%></td>
+                                                        <td id="listPayee">${list.payee }</td>
+                                                        <td id="listApprovalamount">${list.approvalamount=='0.00'?'':list.approvalamount * 10000 }
+                                                        	<%-- <fmt:formatNumber type="number" value="${list.approvalamount}" pattern="######0.000000" maxIntegerDigits="7" maxFractionDigits="6"/>
+                                                         --%></td>
+                                                        <td id="listAppropriationaccount">${list.appropriationaccount }</td>
+                                                        <td id="listGrantTime">${list.state=='3'?list.grantTime:'' }</td>
+                                                        <td id=""  align="left" style="color:#C00;"> ${list.state=='0'?'未受理':(list.state=='1'?'已受理，未审批':(list.state=='2'?'已审批，未拨款':'已拨款')) }
+                                                        </td>
+                                                    </tr>
+                                                    </c:forEach>
+                                                    <tr>
+                                                        <td colspan="10">
+                                                        <div style="float:left; line-height: 33px;">
+			                                            	每页显示
+			                                                <select size="1" id="pagerows" style="padding:0" onchange="chgPageRows();">
+			                                                    <option value="10" <c:if test='${page.rowsPerPage==10}'>selected="selected"</c:if> >10</option>
+			                                                    <option value="20" <c:if test='${page.rowsPerPage==20}'>selected="selected"</c:if> >20</option>
+			                                                    <option value="50" <c:if test='${page.rowsPerPage==50}'>selected="selected"</c:if> >50</option>
+			                                                </select>
+			                                                	条数据，共${page.rowsCount}条数据
+			                                                </div>
+			                                                <ul class="pagination" style="float:right; margin:0; padding:0">
+			                                                    ${page.pagination}
+			                                                </ul>
+			                                            </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <!-- /.col -->
+						</div><!-- /.row -->
+					  </div>
+					</div><!-- /.page-content -->
+				</div><!-- /.main-content -->
+
+			</div><!-- /.main-container-inner -->
+
+		</div><!-- /.main-container -->
+
+		<!-- basic scripts -->
+		<!--AddModal-->
+        
+        <div class="modal fade" id="AddModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:400px; margin:0 auto;margin-top:50px;">
+                <div class="modal-content">
+                    <div class="modal-header" style="background:#555555;padding:5px;">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color:#fff; font-size:18px;">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel" style="font-size:12px; color:#fff;">申请拨款</h4>
+                    </div>
+                    <div class="modal-body">
+                    	<div style="width:290px;  text-align:right; margin:0 auto">
+                            <span>施工单位：</span>
+                           <input type="text" id="Addconstructionunit" name="constructionunit"  style="width:200px;" /><p></p>
+                            <p></p>
+                            <span>设计单位：</span>
+                           <input type="text" id="Adddesignunit" name="designunit" style="width:200px;" /><p></p>
+                            <p></p>
+                            <span>监理单位：</span>
+                           <input type="text" id="Addsupervisionunit" name="supervisionunit" style="width:200px;" /><p></p>
+                            <p></p>
+                            <span style="color:#C00;">*</span>
+                            <span>收款单位：</span><input type="hidden" id="unitId" name="unitId" style="width:200px;" value="" />
+                            <input type="text" id="Addpayee" name="payee" onkeyup="chgPayee();" style="width:200px;" /><p></p>
+                            <p></p>
+                            <ul id="unitnamelist" style="width:200px;position:absolute;z-index:1200;background:#fff;top:164px;left:109px;border:1px #d2d2d2 solid;text-align:left;padding:5px;max-height:119px;overflow:auto;display:none">
+                            </ul>
+                            <span style="color:#C00;">*</span>
+                            <span>收款账户：</span><input type="hidden" id="unitaccountId" name="unitaccountId" style="width:200px;" value="" />
+                            <input type="text" id="Addreceivableaccount" name="receivableaccount" style="width:200px;" /><p></p>
+                            <ul id="unitaccountlist" style="width:200px;position:absolute;z-index:1200;background:#fff;top:164px;left:109px;border:1px #d2d2d2 solid;text-align:left;padding:5px;max-height:119px;overflow:auto;display:none">
+                            </ul>
+                            <input type="text" id="Addreceivablenumber" name="receivablenumber" style="width:200px;" /><p></p>
+                            <p></p>
+                            <span>拨款内容：</span><input type="text" id="Addappropriationcontent" name="appropriationcontent" style="width:200px;" /><p></p>
+                            <span style="color:#C00;">*</span><span>申请日期：</span><input id="AddapplyDate" name="applicationDate"type="date" style="width:200px;" /><p></p> 
+                            <span style="color:#C00;">*</span><span>申请金额：</span><input type="text" id="Addapplicationamount" name="applicationamount" placeholder="元" style="width:200px;" /><span></span><p></p>
+                            <span>备注：</span><input type="text" id="Addremark" name="remark" style="width:200px;" />
+                            
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="text-align:center">
+                    	<button type="button" onClick="saveApply()" class="btn btn-xs btn-primary">保存</button>
+                        <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">关闭</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+		
+		<!--updateModal-->
+        
+        <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:400px; margin:0 auto;margin-top:50px;">
+                <div class="modal-content">
+                    <div class="modal-header" style="background:#555555;padding:5px;">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color:#fff; font-size:18px;">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel" style="font-size:12px; color:#fff;">修改拨款申请</h4>
+                    </div>
+                    <div class="modal-body">
+                    	<div style="width:290px;  text-align:right; margin:0 auto">
+                    		<input type="hidden" id="updateid" name="id"  style="width:200px;" />
+                            <span>施工单位：</span>
+                           	<input type="text" id="updateconstructionunit" name="constructionUnit"  style="width:200px;" /><p></p>
+                            <p></p>
+                            <span>设计单位：</span>
+                           <input type="text" id="updatedesignunit" name="designUnit" style="width:200px;" /><p></p>
+                            <p></p>
+                            <span>监理单位：</span>
+                           <input type="text" id="updatesupervisionunit" name="supervisionUnit" style="width:200px;" /><p></p>
+                            <p></p>
+                            <span style="color:#C00;">*</span>
+                            <span>收款单位：</span><input type="hidden" id="updateunitId" name="unitId" style="width:200px;" value="" />
+                            <input type="text" id="updatepayee" name="payee" onkeyup="chgupdatePayee();" style="width:200px;" /><p></p>
+                            <p></p>
+                            <span style="color:#C00;">*</span>
+                            <span>收款账户：</span>
+                            <input type="text" id="updatereceivableaccount" name="receivableAccount" style="width:200px;" /><p></p>
+                            <ul id="updateunitaccountlist" style="width:200px;position:absolute;z-index:1200;background:#fff;top:164px;left:109px;border:1px #d2d2d2 solid;text-align:left;padding:5px;max-height:119px;overflow:auto;display:none">
+                            </ul>
+                            <input type="text" id="updatereceivablenumber" name="receivablenumber" style="width:200px;" />
+                            <p></p>
+                            <span>拨款内容：</span><input type="text" id="updateappropriationcontent" name="appropriationContent" style="width:200px;" /><p></p>
+                            <span style="color:#C00;">*</span><span>申请日期：</span><input id="updateapplyDate" name="applicationDate" type="date" style="width:200px;" /><p></p> 
+                            <span style="color:#C00;">*</span><span>申请金额：</span><input type="text" id="updateapplicationamount" name="applicationAmount" placeholder="元" style="width:200px;" /><p></p>
+                            <span>备注：</span><input type="text" id="updateremark" name="remark" style="width:200px;" />
+                            
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="text-align:center">
+                    	<button type="button" onClick="updateApply()" class="btn btn-xs btn-primary">保存</button>
+                        <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">关闭</button>
+                        
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+		<!--DelModal-->
+        
+        <div class="modal fade" id="DelModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:400px; margin:0 auto;margin-top:100px;">
+                <div class="modal-content">
+                    <div class="modal-header" style="background:#555555;padding:5px;">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color:#fff; font-size:18px;">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel" style="font-size:12px; color:#fff;">删除当前选中信息</h4>
+                    </div>
+                    <div class="modal-body">
+                    	<div style="width:330px;  text-align:center; margin:0 auto">
+                        	<div style="float:left;width:50px;height:50px;border:2px solid #F8BB86;border-radius:50%;border-radius:50%;padding:0;box-sizing:content-box;animation: pulseWarning 1s infinite alternate;position:relative;">
+                            	<span style="position:absolute;width:3px;height:30px;left:50%;top:6px;-webkit-border-radius:2px;border-radius:2px;margin-left:-2px;background-color:#F8BB86;">
+                                </span>
+                                <span style="position:absolute;width:7px;height:7px;-webkit-border-radius:50%;border-radius:50%;margin-left:-3px;left:48.6%;bottom:4px;background-color:#F8BB86;">
+                                </span>
+                            </div>
+                            <div style="line-height:50px;">
+                            	<p>数据删除后将无法恢复，是否确认删除？</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="text-align:center; margin:0;">
+                    	<button class="btn btn-minier btn-danger" onClick="deleteApply()">确认删除</button>
+                        <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">取消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+         <div class="modal fade" id="AddArchivesModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:400px; margin:0 auto;margin-top:100px;">
+                <div class="modal-content">
+                    <div class="modal-header" style="background:#555555;padding:5px;">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color:#fff; font-size:18px;">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel" style="font-size:12px; color:#fff;">新增档案</h4>
+                    </div>
+                    <div class="modal-body">
+                    	<div style="width:280px; text-align:right; margin:0 auto">
+                            <span>项目年度：</span>
+                            <select id="Addyearid" name="yearid" style="width:200px;" style="height: 22px;padding: 0px;position: relative;top:2px;left:15px;">
+                            <c:forEach items="${projectYearList}" var="year">
+                            	<option value="${year.id}">${year.projectYear}</option>
+                            </c:forEach>
+                            </select><p></p>
+                            <span>项目名称：</span>
+                            <select id="Addprojectid" name="projectid" style="width:200px;" style="height: 22px;padding: 0px;position: relative;top:2px;left:15px;">
+                           	<c:forEach items="${projectNameList}" var="project">
+                           		<option value="${project.id}">${project.projectname}</option>
+                            </c:forEach>
+                            </select><p></p>
+                            
+                            <span>文件日期：</span><input type="date" id="Addfiledate" name="filedate" style="width:200px;" /><p></p>
+                            <span>收文日期：</span><input type="date" id="Addreceiptdate" name="receiptdate" style="width:200px;" /><p></p>
+                            <span>档案标题：</span><input type="text" id="Addarchivestitle" name="archivestitle" style="width:200px;" /><p></p>
+                            <span>文号：</span><input type="text" id="Addrefernumber" name="refernumber" style="width:200px;" /><p></p>
+                            <span>类别：</span>
+                            <select id="Addarchivestypeid" name="archivestypeid" style="width:200px;" style="height: 22px;padding: 0px;position: relative;top:2px;left:15px;">
+                           	<c:forEach items="${archivesTypeList}" var="type">
+                           		<option value="${type.id}">${type.archivesType}</option>
+                            </c:forEach>
+                            </select><p></p>
+                            <span>档案金额：</span><input type="text" id="Addarchivesprice" name="archivesprice" style="width:200px;" /><p></p>
+                            <span>卷号：</span><input type="text" id="Addvolumenumber" name="volumenumber" style="width:200px;" /><p></p>
+                            <span>附件链接：</span><input type="text" id="Addattachments" name="attachments" style="width:200px;" /><p></p>
+                            <span>办理情况：</span><input type="text" id="Addhandlesituation" name="handlesituation" style="width:200px;" /><p></p>
+                            <span>经办人：</span><input type="text" id="Addagent" name="agent" style="width:200px;" /><p></p>
+                            <span>办结日期：</span><input type="date" id="Addhandedate" name="handedate" style="width:200px;" /><p></p>
+                            <span>来文机关：</span><input type="text" id="Addcivilservice" name="civilservice" style="width:200px;" /><p></p>
+                           	<span>拨付日期：</span><input type="date" id="Adddisbursementdate" name="disbursementdate" style="width:200px;" /><p></p>
+                            <span>备注：</span><input type="text" id="Addremark" name="remark" style="width:200px;" />
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="text-align:center">
+                    	<button type="button" class="btn btn-xs btn-primary" onClick="saveArchivesManage();">保存</button>
+                        <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">关闭</button>
+                        
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+        
+        
+        
+</body>
+</html>
+

@@ -1,0 +1,27 @@
+package com.newhero.urbanconstruction.common.pojo;
+
+public class ConstructionUnitCasDTO {
+	private Integer id;
+	/**单位名称*/
+	private String unitname;
+	/**单位简称*/
+	private String unitshortname;
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public String getUnitname() {
+		return unitname;
+	}
+	public void setUnitname(String unitname) {
+		this.unitname = unitname;
+	}
+	public String getUnitshortname() {
+		return unitshortname;
+	}
+	public void setUnitshortname(String unitshortname) {
+		this.unitshortname = unitshortname;
+	}
+}

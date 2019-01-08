@@ -1,0 +1,40 @@
+package com.newhero.urbanconstruction.codetablemaintain.investmenttype.pojo;
+
+/**
+ * 投资分类实体类
+ * 对应数据表 dm_investmenttype
+ * @author Mjj
+ *
+ */
+public class InvestmentType {
+	private String id;
+	private String code;
+	private String investmentType; 
+	private String remark;
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	public String getInvestmentType() {
+		return investmentType;
+	}
+	public void setInvestmentType(String investmentType) {
+		this.investmentType = investmentType;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	} 
+	
+}

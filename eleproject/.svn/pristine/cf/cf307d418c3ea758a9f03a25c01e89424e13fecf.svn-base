@@ -1,0 +1,96 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    <jsp:include page="/include/public.jsp"></jsp:include>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>Insert title here</title>
+<script src="${ctx}/views/assets/js/jquery-2.0.3.min.js"></script>
+<script src="${ctx}/views/assets/js/LodopFuncs.js"></script>
+<object  id="LODOP_OB" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width=0 height=0> 
+       <embed id="LODOP_EM" type="application/x-print-lodop" width=0 height=0></embed>
+</object>
+<script language="javascript" type="text/javascript">
+var LODOP=getLodop();
+$(document).ready(function(){
+	  var approvalid=$("#approvalid").val();
+	  init(approvalid);
+	});
+function taoda() {	
+	LODOP.PRINT_DESIGN();	
+};
+function view() {
+	var approvalid=$("#approvalid").val();
+    init(approvalid);  
+    LODOP.SET_SHOW_MODE("BKIMG_IN_PREVIEW",1);  
+    LODOP.PREVIEW();  
+} 
+function init(approvalid) {
+	$.ajax({
+        url:  '${ctx}/appropriationApproval/printWordByApprovalId',
+        type: 'POST',
+        data:{'id': approvalid},
+        async: false,
+        dataType: 'json',
+        success: function (data) {
+        	LODOP.PRINT_INITA(0,0,800,1100,"北戴河打印功能");
+        	LODOP.SET_PRINT_MODE("PRINT_NOCOLLATE",1);
+        	LODOP.ADD_PRINT_SETUP_BKIMG("D:\\公司项目\\北戴河城市建设资金管理系统\\打印\\appropapproval.png");
+        	LODOP.ADD_PRINT_TEXT(100,286,69,45,data.year);
+        	LODOP.SET_PRINT_STYLEA(0,"FontName","微软雅黑");
+        	LODOP.SET_PRINT_STYLEA(0,"FontSize",18);
+        	LODOP.ADD_PRINT_TEXT(168,174,242,30,data.projectname);
+        	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        	LODOP.ADD_PRINT_TEXT(175,625,39,20,data.YY);
+        	LODOP.ADD_PRINT_TEXT(175,673,24,19,data.MM);
+        	LODOP.ADD_PRINT_TEXT(175,700,22,20,data.DD);
+        	LODOP.ADD_PRINT_TEXT(205,185,231,35,data.unitname);
+        	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        	LODOP.ADD_PRINT_TEXT(200,526,200,38,data.constructionunit);
+        	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        	LODOP.ADD_PRINT_TEXT(237,184,231,35,data.designunit);
+        	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        	LODOP.ADD_PRINT_TEXT(237,529,197,36,data.supervisionunit);
+        	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        	LODOP.ADD_PRINT_TEXT(283,186,230,52,data.payee);
+        	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        	LODOP.ADD_PRINT_TEXT(273,530,192,28,data.receivableaccount);
+        	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        	LODOP.ADD_PRINT_TEXT(315,528,195,30,data.receivablenumber);
+        	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        	LODOP.ADD_PRINT_TEXT(350,189,535,35,data.appropriationcontent);
+        	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        	LODOP.ADD_PRINT_TEXT(383,187,226,31,data.estimateamount);
+        	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        	LODOP.ADD_PRINT_TEXT(384,529,192,31,data.totalappropriation);
+        	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        	LODOP.ADD_PRINT_TEXT(459,188,223,30,data.contractprice);
+        	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        	LODOP.ADD_PRINT_TEXT(497,187,226,30,data.owepayment);
+        	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        	LODOP.ADD_PRINT_TEXT(532,187,229,32,data.evaluationprice);
+        	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        	LODOP.ADD_PRINT_TEXT(532,529,189,33,data.applicationamount);
+        	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        	LODOP.ADD_PRINT_TEXT(29,539,137,25,"NO."+data.number);
+        	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        	LODOP.ADD_PRINT_TEXT(15,55,168,31,"制单人："+data.zhidan);
+        	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        	LODOP.ADD_PRINT_TEXT(51,55,165,30,"打印人："+data.dayin);
+        	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        }
+	});
+
+} 
+</script> 
+</head>
+<body>
+<input type="hidden" id="approvalid" name="approvalid" value='<%=request.getParameter("approvalid")%>'>
+<a href="" onclick="taoda()">打印设计</a>
+<a href="" onclick="view()">打印预览</a>
+</body>
+</html>

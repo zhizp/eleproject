@@ -1,0 +1,19 @@
+package com.newhero.urbanconstruction.codetablemaintain.allocationmanage.service;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.codetablemaintain.allocationmanage.pojo.AllocationManageDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectname.pojo.ProjectNameDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+public interface AllocationManageService {
+	public List<AllocationManageDTO> selectAllAllocationManageDTO(BaseQueryVo dto);
+	public int selectCountAllocationManageDTO(BaseQueryVo dto);
+	public void insertAllocationManage(AllocationManageDTO allocationManageDto);
+	public List<ProjectNameDTO> selectProjectNames();
+	public void updateAllocationManageDTO(AllocationManageDTO allocationManageDTO);
+	public AllocationManageDTO selectAllocationManageDTOById(int id);
+	public List<AllocationManageDTO> getallocatname(String allocationaccountname);
+	public void deleteAllocationManageDTO(AllocationManageDTO allocationManageDTO);
+	public List<AllocationManageDTO> getOutOfData();
+}

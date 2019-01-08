@@ -1,0 +1,143 @@
+package com.newhero.urbanconstruction.codetablemaintain.allocationmanage.pojo;
+
+import java.math.BigDecimal;
+
+public class AllocationManageDTO {
+	private Integer id;
+	private Integer allocatid;
+	private String accountname;
+	private String allocationaccountname;
+	private Integer projectid;
+	private String projectname;
+	private String refernumber;
+	private String serviceunit;
+	private String filename;
+	private BigDecimal price;
+	private String capitaldistdepart;
+	private String functionalcategory;
+	private String economiccategory;
+	private String arrivaldate;
+	private String level;
+	private BigDecimal surplusamount;
+	public Integer operatorid;
+	public String operationtime;
+	public String isdelete;
+	
+	public String getAllocationaccountname() {
+		return allocationaccountname;
+	}
+	public void setAllocationaccountname(String allocationaccountname) {
+		this.allocationaccountname = allocationaccountname;
+	}
+	public String getIsdelete() {
+		return isdelete;
+	}
+	public void setIsdelete(String isdelete) {
+		this.isdelete = isdelete;
+	}
+	public Integer getOperatorid() {
+		return operatorid;
+	}
+	public void setOperatorid(Integer operatorid) {
+		this.operatorid = operatorid;
+	}
+	public String getOperationtime() {
+		return operationtime;
+	}
+	public void setOperationtime(String operationtime) {
+		this.operationtime = operationtime;
+	}
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public Integer getAllocatid() {
+		return allocatid;
+	}
+	public void setAllocatid(Integer allocatid) {
+		this.allocatid = allocatid;
+	}
+	public String getAccountname() {
+		return accountname;
+	}
+	public void setAccountname(String accountname) {
+		this.accountname = accountname;
+	}
+	public Integer getProjectid() {
+		return projectid;
+	}
+	public void setProjectid(Integer projectid) {
+		this.projectid = projectid;
+	}
+	public String getProjectname() {
+		return projectname;
+	}
+	public void setProjectname(String projectname) {
+		this.projectname = projectname;
+	}
+	public String getRefernumber() {
+		return refernumber;
+	}
+	public void setRefernumber(String refernumber) {
+		this.refernumber = refernumber;
+	}
+	public String getServiceunit() {
+		return serviceunit;
+	}
+	public void setServiceunit(String serviceunit) {
+		this.serviceunit = serviceunit;
+	}
+	public String getFilename() {
+		return filename;
+	}
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+	public BigDecimal getPrice() {
+		return price;
+	}
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
+	public String getCapitaldistdepart() {
+		return capitaldistdepart;
+	}
+	public void setCapitaldistdepart(String capitaldistdepart) {
+		this.capitaldistdepart = capitaldistdepart;
+	}
+	public String getFunctionalcategory() {
+		return functionalcategory;
+	}
+	public void setFunctionalcategory(String functionalcategory) {
+		this.functionalcategory = functionalcategory;
+	}
+	public String getEconomiccategory() {
+		return economiccategory;
+	}
+	public void setEconomiccategory(String economiccategory) {
+		this.economiccategory = economiccategory;
+	}
+	public String getArrivaldate() {
+		return arrivaldate;
+	}
+	public void setArrivaldate(String arrivaldate) {
+		this.arrivaldate = arrivaldate;
+	}
+	public String getLevel() {
+		return level;
+	}
+	public void setLevel(String level) {
+		this.level = level;
+	}
+	public BigDecimal getSurplusamount() {
+		return surplusamount;
+	}
+	public void setSurplusamount(BigDecimal surplusamount) {
+		this.surplusamount = surplusamount;
+	}
+	
+	
+	
+}

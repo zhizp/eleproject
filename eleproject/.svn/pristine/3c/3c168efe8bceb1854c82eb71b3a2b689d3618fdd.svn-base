@@ -1,0 +1,71 @@
+package com.test;
+
+import javax.annotation.Resource;
+
+import org.apache.log4j.Logger;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.alibaba.fastjson.JSON;
+import com.newhero.urbanconstruction.test.pojo.User;
+import com.newhero.urbanconstruction.test.service.UserService;
+
+@RunWith(SpringJUnit4ClassRunner.class) // 表示继承了SpringJUnit4ClassRunner类
+@ContextConfiguration(locations = { "classpath:spring-mybatis.xml" })
+/**
+ * 测试spring整合mybatis spring方式
+ * 
+ * @author zzp
+ */
+public class TestMyBatis {
+	private static Logger logger = Logger.getLogger(TestMyBatis.class);
+
+	@Resource
+	private UserService userService = null;
+	
+	/**
+	 * 测试查询
+	 */
+	@Test
+	public void test1() {
+		User user = userService.getUserById(6);
+		logger.info("值：" + user.getUserName());
+		logger.info(JSON.toJSONString(user));
+	}
+	/**
+	 * 测试添加
+	 */
+	@Test
+	public void test2() {		
+		User user = new User();
+		user.setUserName("杜甫4");
+		user.setPassword("111111");
+		user.setAge(21);
+		int count = userService.insert(user);
+		logger.info("count：" +count);
+	}
+	
+	/**
+	 * 测试删除
+	 */
+	@Test
+	public void test3() {		
+		int count = userService.delete(1);//删除id为1的数据
+		logger.info("count：" +count);
+	}
+	/**
+	 * 测试更新
+	 */
+	@Test
+	public void test4() {
+		User user = new User();
+		user.setId(2);
+		user.setUserName("杜甫1");
+		user.setPassword("111111");
+		user.setAge(222);
+		int count =userService.update(user);
+		logger.info("更新条数count：" +count);
+	}
+}

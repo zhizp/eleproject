@@ -1,0 +1,311 @@
+@charset "UTF-8";
+/*css 初始化 */
+html, body, ul, li, ol, dl, dd, dt, p, h1, h2, h3, h4, h5, h6, form, fieldset, legend, img {
+    margin: 0;
+    padding: 0;
+}
+
+fieldset, img, input, button {
+    border: none;
+    padding: 0;
+    margin: 0;
+    outline-style: none;
+}
+
+/*去掉input等聚焦时的蓝色边框*/
+ul, ol {
+    list-style: none;
+}
+
+input {
+    padding-top: 0;
+    padding-bottom: 0;
+    font-family: "SimSun", "宋体";
+}
+
+select, input {
+    vertical-align: middle;
+}
+
+select, input, textarea {
+    font-size: 12px;
+    margin: 0;
+}
+
+textarea {
+    resize: none;
+}
+
+/*防止拖动*/
+img {
+    border: 0;
+    vertical-align: middle;
+}
+
+/*  去掉图片低测默认的3像素空白缝隙，或者用display：block也可以*/
+table {
+    border-collapse: collapse;
+}
+
+body {
+    font: 12px/150% Arial, Verdana, "\5b8b\4f53";
+    color: #333;
+    background: #fff;
+    visibility: hidden;
+}
+
+.clearfix:before, .clearfix:after { /*清楚浮动*/
+    content: "";
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+.clearfix {
+    *zoom: 1; /*IE/7/6*/
+}
+
+a {
+    color: #666;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #C81623;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    text-decoration: none;
+    font-weight: normal;
+    font-size: 100%;
+}
+
+/*设置h标签的大小，设置跟父亲一样大的字体font-size:100%;*/
+s, i, em {
+    font-style: normal;
+    text-decoration: none;
+}
+
+.col-red {
+    color: #C81623 !important;
+}
+
+/*公共类*/
+.w { /*版心 提取 */
+    width: 1210px;
+    margin: 0 auto;
+}
+
+.fl {
+    float: left
+}
+
+.fr {
+    float: right
+}
+
+.al {
+    text-align: left
+}
+
+.ac {
+    text-align: center
+}
+
+.ar {
+    text-align: right
+}
+
+.hide {
+    display: none
+}
+
+.font12 {
+    font-size: 12px;
+}
+
+.font14 {
+    font-size: 14px;
+}
+
+.font16 {
+    font-size: 16px;
+}
+
+/*-----sn-----*/
+body {
+    padding: 8px;
+}
+
+.vo, #app { /* vue对象应加上.vo */
+    position: fixed;
+    margin: 4px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.v__menuBg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 38px;
+    background-color: rgba(209, 219, 229, 0.4); /*#d1dbe5*/
+    /*background-color: #d1dbe5;*/
+    border-bottom: 1px solid rgba(209, 219, 229, 0.4);
+    z-index: -1;
+}
+
+.v__animationBg {
+    height: 120%;
+    position: absolute;
+    width: 120%;
+    z-index: -999;
+    animation: bgmove 8s ease-in-out 0s infinite alternate;
+    -webkit-animation: bgmove 8s ease-in-out 0s infinite alternate;
+}
+
+@keyframes bgmove {
+    from {
+        bottom: -18%;
+        right: -12%;
+    }
+    to {
+        bottom: -2%;
+        right: -8%;
+    }
+}
+
+@-webkit-keyframes bgmove {
+    from {
+        bottom: -18%;
+        right: -12%;
+    }
+    to {
+        bottom: -2%;
+        right: -8%;
+    }
+}
+
+/*=====sn=====*/
+
+/*-----element ui-----*/
+/*默认按钮大小*/
+.el-button {
+    padding: 7px 9px;
+    font-size: 12px;
+    border-radius: 4px;
+}
+
+/*默认输入框大小*/
+.el-input {
+    font-size: 13px;
+}
+
+.el-input .el-input__inner {
+    height: 30px;
+}
+
+/*默认表单项之间间隔*/
+.el-form-item {
+    margin-bottom: 8px;
+}
+
+/*默认表格单元格大小（高度）*/
+.el-table td, .el-table th {
+    height: 32px;
+}
+
+/*主页面TAB控件的背景颜色*/
+.el-tabs__nav-wrap {
+    background-color: #d1dbe5;
+}
+
+.el-tabs--border-card > .el-tabs__header .el-tabs__item.is-active {
+    background-color: #ebeef5;
+    height: 42px;
+    margin-top: 0;
+}
+
+.el-tabs__item.is-active {
+    color: #0171c3;
+    font-weight: bold;
+}
+
+/*主页面MENU控件大小及颜色设置*/
+.el-submenu__title {
+    color: #fff;
+    background-image: linear-gradient(to bottom, #1685d5 0, #0070C2 100%);
+}
+
+.el-submenu .el-submenu .el-submenu__title {
+    color: #000;
+    background-image: linear-gradient(to top, #ABDCFD 0, #87CDFE 100%)
+}
+
+.el-menu-item, .el-submenu__title, .el-submenu .el-menu-item {
+    height: 42px;
+    line-height: 42px;
+
+}
+.el-submenu .el-menu-item {
+    height: 42px;
+    line-height: 42px;
+    background-color: #F2F2F2;
+    border-bottom-style: inset;
+    border-bottom-width: thin;
+    border-color: #DADADA;
+}
+
+.el-form-item__error {
+    font-size: 8pt;
+    padding-top: 0;
+}
+
+.el-table--striped .el-table__body tr.el-table__row--striped.current-row td, .el-table__body tr.current-row > td, .el-table__body tr.hover-row.current-row > td, .el-table__body tr.hover-row.el-table__row--striped.current-row > td, .el-table__body tr.hover-row.el-table__row--striped > td, .el-table__body tr.hover-row > td {
+    background-color: rgb(185, 211, 241);
+}
+
+.el-table--enable-row-hover .el-table__body tr:hover>td {
+    background-color: #e0f1bc;
+}
+
+.el-table thead {
+    color: #000;
+}
+
+.el-table {
+    color: #000;
+    font-size: 11pt;
+}
+
+.el-table--border td, .el-table--border th {
+    border-right: 1px solid #ccc;
+}
+
+.el-table td, .el-table th.is-leaf {
+    border-bottom: 1px solid #ccc;
+}
+
+.el-table--border, .el-table--group {
+    border: 1px solid #ccc;
+}
+
+.el-table th, .el-table thead.is-group th {
+    background-color: #eef;
+    border-bottom: 1px solid #ccc;
+}
+.el-dialog__body,.el-form-item__label,.el-dialog__title{
+	 color: #000;
+}
+.el-table td{
+	padding:3px 0;	
+}
+.el-dialog__body{
+	padding:0px 20px 20px 20px;
+}
+/*=====element ui=====*/

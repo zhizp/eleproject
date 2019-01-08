@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- namespace的值就是dao接口的完整路径，就这个demo而言namespace 就是userDao.java的完整路径-->
+<mapper namespace="com.newhero.urbanconstruction.codetablemaintain.investmenttype.dao.InvestmentTypeDao">
+	<resultMap id="InvestmentTypeResultMap" type="com.newhero.urbanconstruction.codetablemaintain.investmenttype.pojo.InvestmentTypeDTO">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="investmenttype" property="investmenttype" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="getInvestmentTypeListByKeyword" parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultMap="InvestmentTypeResultMap">
+  		select 
+		   id,investmenttype,remark
+		from dm_investmenttype where isdelete=0 
+		<if test='keyword != null'>
+		and investmenttype like "%"#{keyword}"%"  
+		</if>
+		<if test = "isall == null">
+			LIMIT #{startRow},#{pageSize}
+		</if>
+  	</select>
+  	
+  	<select id="getInvestmentTypeCountByKeyword" parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultType="java.lang.Integer">
+  		select 
+		   count(*)
+		from dm_investmenttype where isdelete=0  
+		<if test='keyword != null'>
+		and investmenttype like "%"#{keyword}"%"  
+		</if>
+  	</select>
+	<select id="getInvestmentTypeById" resultMap="InvestmentTypeResultMap" parameterType="java.lang.Integer">
+		select
+		id,investmenttype,remark
+		from dm_investmenttype
+		where id = #{id}
+	</select>
+	<insert id="insertInvestmentType" parameterType="com.newhero.urbanconstruction.codetablemaintain.investmenttype.pojo.InvestmentTypeDTO">
+		insert into dm_investmenttype (investmenttype, remark, isdelete,operatorid)
+		values (#{investmenttype},#{remark},0,#{operatorid})
+	</insert>
+	
+	<update id="updateInvestmentTypeById" parameterType="com.newhero.urbanconstruction.codetablemaintain.investmenttype.pojo.InvestmentTypeDTO">
+		update dm_investmenttype
+		set
+		investmenttype = #{investmenttype},
+		remark = #{remark},
+		operatorid = #{operatorid},
+		operationtime=now()
+		where id  =	#{id}
+	</update>
+	<update id="delInvestmentTypeId" parameterType="com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO">
+		update dm_investmenttype
+		set isdelete=1,operatorid=#{operatorid},operationtime=now()
+		where id  =	#{id}
+	</update>
+	<select id="checkInvest" parameterType="java.lang.String" resultType="java.lang.Integer">
+	SELECT COUNT(1)  FROM dm_projectname WHERE isdelete='0' AND investmenttypeid=#{id}
+	</select>
+</mapper>

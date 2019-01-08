@@ -1,0 +1,24 @@
+package com.newhero.urbanconstruction.codetablemaintain.unitinfo.service;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.codetablemaintain.unitinfo.pojo.UnitInfoDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+public interface UnitInfoService {
+	
+	public int getUnitInfoCountByKeyword(BaseQueryVo dto);
+	
+    public List<UnitInfoDTO> getUnitInfoListByKeyword(BaseQueryVo dto);
+	
+    public List<UnitInfoDTO> getUnitInfoList();
+	
+	public UnitInfoDTO getUnitInfoById(Integer id);
+	
+	public int updateUnitInfoById(UnitInfoDTO unit);
+	
+	public int insertUnitInfo(UnitInfoDTO unit);
+	
+	public int delUnitInfobyIds(String[]  ids, int unit);
+
+}

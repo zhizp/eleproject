@@ -1,0 +1,31 @@
+package com.newhero.urbanconstruction.apply.service;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.common.pojo.ConstructionUnitCasDTO;
+import com.newhero.urbanconstruction.common.pojo.CostTypeCasDTO;
+import com.newhero.urbanconstruction.common.pojo.ProjectNameCasDTO;
+import com.newhero.urbanconstruction.common.pojo.SegmentInfoCasDTO;
+import com.newhero.urbanconstruction.common.pojo.UnitAccountCasDTO;
+
+public interface KyzlService {
+	
+	/**根据用户年度ID查询建设单位列表*/
+	public List<ConstructionUnitCasDTO> getConstructionUnitInfoByYearId1(Integer id);
+	/**根据用户年度ID查询建设单位数量*/
+	public int getConstructionUnitNumByYearId1(Integer id);
+	
+	public List<ProjectNameCasDTO> getProjectNameInfoByUnitId1(Integer id);
+	
+	public int getProjectNameNumByUnitId1(Integer id);
+	
+	public List<CostTypeCasDTO> getCostTypeListByProjId1(Integer id);
+	
+	public int getCostTypeNumByProjId1(Integer id);
+	
+	public int getSegmentListByCostTypeId1(Integer id);
+	
+	public List<SegmentInfoCasDTO>getSegmentNumByCostTypeId1(Integer id);
+	
+	public List<UnitAccountCasDTO> getUnitAccountListByUnitInfoId1(Integer id);
+}

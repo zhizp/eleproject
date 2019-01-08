@@ -1,0 +1,951 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%> 
+<jsp:include page="/include/public.jsp"></jsp:include>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>资金审批管理</title>
+		<meta name="keywords" content="" />
+		<meta name="description" content="" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link href="${ctx}/views/assets/css/bootstrap.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace-rtl.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace-skins.min.css" />
+		<script src="${ctx}/views/assets/js/ace-extra.min.js"></script>
+        <script src="${ctx}/views/assets/js/jquery-2.0.3.min.js"></script>
+		<script src="${ctx}/views/assets/js/bootstrap.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery-ui-1.10.3.custom.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.ui.touch-punch.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.slimscroll.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.easy-pie-chart.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.sparkline.min.js"></script>
+		<script src="${ctx}/views/assets/js/ace-elements.min.js"></script>
+		<script src="${ctx}/views/assets/js/ace.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.mobile.custom.min.js"></script>
+		<script src="${ctx}/views/assets/js/typeahead-bs2.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.serializeJSON.js"></script>
+		<script src="${ctx}/views/assets/js/LodopFuncs.js"></script>
+		<object  id="LODOP_OB" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width=0 height=0> 
+		       <embed id="LODOP_EM" type="application/x-print-lodop" width=0 height=0></embed>
+		</object>
+		<style type="text/css">
+		.display{display:none;}
+		</style>
+        <script type="text/javascript">
+		var LODOP=getLodop();
+        function chgPageRows(){
+
+        	var querySelect=$("#querySelect").val();
+        	var keyword=$("#keyword").val();
+        	keyword = keyword.replace(/\s/, '');
+        	var appropriationAccount = $('#appropriationAccountList').find('option:selected').text();
+        	alert(appropriationAccount);
+        	//appropriationAccount = appropriationAccount.replace(/\s/, '');
+        	if(querySelect == 4){
+        		var dateStart = $('#dateStartId').val();
+        		let date1 = new Date(dateStart);
+        		dateStart = formatDate(date1);
+            	var dateTarget = $('#dateTargetId').val();
+            	let date2 = new Date(dateTarget);
+            	dateTarget = formatDate(date2);
+        		var url = "${ctx}/appropriationApproval/getAcceptData?state=" + ${state} + "&rowsPerPage="+$("#pagerows").val()+ "&keyword=" + keyword + "&querySelect=" + querySelect + "&dateStart=" + dateStart + "&dateTarget=" + dateTarget + "&appropriationAccount=" + encodeURI(encodeURI(appropriationAccount));
+        	} else if(querySelect == 5) {
+        		var url="${ctx}/appropriationApproval/getAcceptData?state="+${state}+"&rowsPerPage="+$("#pagerows").val()+ "&keyword=" + keyword + "&querySelect=" + querySelect + "&appropriationAccount=" + encodeURIComponent(encodeURIComponent(appropriationAccount));
+        	} else {
+        		var url="${ctx}/appropriationApproval/getAcceptData?state=" + ${state} + "&rowsPerPage="+$("#pagerows").val();
+        	}
+        	window.location.href=url;
+        }
+        function chgState(state){
+        	window.location.href="${ctx}/appropriationApproval/getAcceptData?state="+state+"&rowsPerPage="+$("#pagerows").val();
+        }
+        
+        //屏蔽包含，显示日期区间
+        function displayNoneOfContain(){
+        	var str = $('#querySelect').find('option:selected').text();
+        	if(str == "审批日期"){
+        		var d = document.getElementById('dateStartId');
+        		d.style.display = 'inline';
+        		var dd = document.getElementById('dateTargetId');
+        		dd.style.display = 'inline';
+        		var dTo = document.getElementById('toId');
+        		dTo.style.display = 'inline';
+        		var ddd = document.getElementById('keyword');
+        		ddd.style.display = 'none';
+        		var d = document.getElementById('accountList');
+        		if(d != null && d.style.display == 'inline') {
+        			d.style.display = 'none';
+        		}
+        		/* var ddd = document.getElementById('keyword');
+        		if(ddd.style.display == 'none') {
+               		ddd.style.display = 'inline';
+        		} */
+        	} else {
+        		var d = document.getElementById('accountList');
+        		if(d != null && d.style.display == 'inline') {
+        			d.style.display = 'none';
+        		}
+        		var d = document.getElementById('dateStartId');
+        		if(d != null && d.style.display == 'inline')
+        		d.style.display = 'none';
+        		var dd = document.getElementById('dateTargetId');
+        		if(dd != null && dd.style.display == 'inline')
+        		dd.style.display = 'none';
+        		var dTo = document.getElementById('toId');
+        		if(dTo != null && dTo.style.display == 'inline')
+        		dTo.style.display = 'none';
+        		var ddd = document.getElementById('keyword');
+        		if(ddd != null && ddd.style.display == 'inline')
+        		ddd.style.display = 'none';
+        	}
+        	
+        	if(str == "拨款账户") {
+        		var d = document.getElementById('accountList');
+        		d.style.display = 'inline';
+        		var dd = document.getElementById('keyword');
+        		if(dd.style.display != 'none') {
+        			dd.style.display = 'none';
+        		}
+        	} else {
+        		var dd = document.getElementById('keyword');
+				if(str == "审批日期") {
+        			dd.style.display = 'none';
+        		} else {
+        			dd.style.display = 'inline';
+        		}
+    		}
+        }
+        
+        function selectUnitByName(){
+        	var querySelect=$("#querySelect").val();
+        	var keyword=$("#keyword").val();
+        	keyword = keyword.replace(/\s/, '');
+        	var appropriationAccount = $('#appropriationAccountList').find('option:selected').text();
+        	//appropriationAccount = appropriationAccount.replace(/\s/, '');
+        	if(querySelect == 4){
+        		var dateStart = $('#dateStartId').val();
+        		let date1 = new Date(dateStart);
+        		dateStart = formatDate(date1);
+            	var dateTarget = $('#dateTargetId').val();
+            	let date2 = new Date(dateTarget);
+            	dateTarget = formatDate(date2);
+        		var url = "${ctx}/appropriationApproval/getAcceptData?state=" + ${state} + "&keyword=" + keyword + "&querySelect=" + querySelect + "&dateStart=" + dateStart + "&dateTarget=" + dateTarget + "&appropriationAccount=" + encodeURI(encodeURI(appropriationAccount));
+        	} else if(querySelect == 5) {
+        		var url="${ctx}/appropriationApproval/getAcceptData?state=" + ${state} + "&keyword=" + keyword + "&querySelect=" + querySelect + "&appropriationAccount=" + encodeURIComponent(encodeURIComponent(appropriationAccount));
+        	} else {
+        		var url="${ctx}/appropriationApproval/getAcceptData?state=" + ${state} + "&keyword=" + keyword + "&querySelect=" + querySelect;
+        	}
+        	window.location.href=url;
+        }
+        function formatDate(date) {
+			   var y = date.getFullYear();
+			    var m = date.getMonth() + 1;
+			    m = m < 10 ? '0' + m : m;
+			    var d = date.getDate();
+			    d = d < 10 ? ('0' + d) : d;
+			    return y + '-' + m + '-' + d;//这里可以写格式
+			    //输出：2017-10-9
+			}
+        function openapprop1(id){
+        	/* alert(id); */
+        	/*  $("#openapprop").attr('data-target','');
+        	$("#openapprop").attr('data-target',"#appropModal");
+        	$("#approvalid").val(id);  */
+        	$("#approvalid").val(id);
+        	$("#appropModal").modal();
+        }
+        /**审批**/
+        function updateApprop(){
+        	var id=$("#approvalid").val();
+        	var approvalamount=$("#approvalamount").val();
+        	var appropriationaccount=$("#appropriationaccount").val();
+        	var allocatid= $("#allocatid").find("option:selected").text();
+        	if(allocatid !=""){
+        		appropriationaccount=allocatid;
+        	}
+        	var allocationmanageid=$("#allocatid").find("option:selected").val();
+        	var approvalTime=$("#approvalTime").val();
+        	//审批修改金额，日期，拨款账户
+        	approvalTime=formatDate(new Date(approvalTime));//直接调用上方的方法
+        	if(approvalamount.length==0){
+        		alert('审批金额不能为空！');
+        		return false;
+        	}
+        	if(appropriationaccount.length==0){
+        		alert('拨款账户不能为空！');
+        		return false;
+        	}
+        	if(approvalTime=='NaN-NaN-NaN'){
+    			alert('审批日期不能为空！');
+    			return false;
+    		}
+        	$.ajax({
+                url:  '${ctx}/appropriationApproval/updateApprop',
+                type: 'POST',
+                data:{'id': id,'approvalamount':approvalamount,'appropriationaccount':appropriationaccount,'approvalTime':approvalTime,'allocationmanageid':allocationmanageid},
+                async: false,
+                dataType: 'json',
+                success: function (data) {
+                     if(data=='1'){
+                    	 handleState('2','1',id,'审批');
+                     }
+                }
+    		});
+        }
+        function cacelapprop(state,id,content){
+        	if(confirm("你确认要对编号："+ id + "进行" + content +"操作？")){
+       		 $.ajax({
+                      url:  '${ctx}/appropriationApproval/cacelapprop',
+                      type: 'POST',
+                      data:{'id': id,'state':state},
+                      async: false,
+                      dataType: 'json',
+                      success: function (data) {
+                           if(data=='1'){
+	                            alert("处理完毕！");
+		                		parent.mainFrame.location.reload();
+                           }
+							
+                      }
+          		}); 
+       	}
+        }
+        function handleState(state,opid,id,content){
+        	if(confirm("你确认要对编号："+ id + "进行" + content +"操作？")){
+        		 $.ajax({
+                       url:  '${ctx}/appropriationApproval/updApprovalState',
+                       type: 'POST',
+                       data:{'id': id,'opid':opid,'state':state},
+                       async: false,
+                       dataType: 'json',
+                       success: function (data) {
+                            if(data=='1'){
+	                            alert("处理完毕！");
+		                		parent.mainFrame.location.reload();
+                            }
+							
+                       }
+           		}); 
+        	}
+        }
+        function printApproval(approvalid){
+        	
+   				 //var href = "${ctx}/views/appropriationapproval/printWord.jsp?approvalid="+approvalid;
+   				 //var href = "${ctx}/views/appropriationapproval/printing.jsp?approvalid="+approvalid;
+   				 //window.open(href);
+   				 /**lodop方式打印*/
+   				init(approvalid);  
+   			    LODOP.SET_SHOW_MODE("BKIMG_IN_PREVIEW",1);  
+   			    LODOP.PREVIEW(); 
+        }
+        function init(approvalid) {
+        	$.ajax({
+                url:  '${ctx}/appropriationApproval/printWordByApprovalId',
+                type: 'POST',
+                data:{'id': approvalid},
+                async: false,
+                dataType: 'json',
+                success: function (data) {
+                	LODOP.PRINT_INITA(0,0,800,1100,"北戴河打印功能");
+                	LODOP.SET_PRINT_MODE("PRINT_NOCOLLATE",1);
+                	//LODOP.ADD_PRINT_SETUP_BKIMG("D:\\公司项目\\北戴河城市建设资金管理系统\\打印\\appropapproval.png");
+                	LODOP.ADD_PRINT_SETUP_BKIMG("<img border='0' src='${ctx}/views/appropriationapproval/appropapproval.png'>");
+                	LODOP.SET_SHOW_MODE("BKIMG_LEFT",0);
+                	LODOP.SET_SHOW_MODE("BKIMG_WIDTH","210.08mm");
+                	LODOP.SET_SHOW_MODE("BKIMG_HEIGHT","288.93mm");
+                	LODOP.SET_SHOW_MODE("BKIMG_IN_PREVIEW",true);
+                	LODOP.ADD_PRINT_TEXT(100,286,69,45,data.year);
+                	LODOP.SET_PRINT_STYLEA(0,"FontName","微软雅黑");
+                	LODOP.SET_PRINT_STYLEA(0,"FontSize",18);
+                	LODOP.ADD_PRINT_TEXT(160,174,242,30,data.projectname);
+                	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+                	LODOP.ADD_PRINT_TEXT(167,615,39,20,data.YY);
+                	LODOP.ADD_PRINT_TEXT(167,658,24,19,data.MM);
+                	LODOP.ADD_PRINT_TEXT(167,683,22,20,data.DD);
+                	LODOP.ADD_PRINT_TEXT(205,185,231,35,data.unitname);
+                	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+                	LODOP.ADD_PRINT_TEXT(200,520,200,38,data.constructionunit);
+                	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+                	LODOP.ADD_PRINT_TEXT(237,184,231,35,data.designunit);
+                	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+                	LODOP.ADD_PRINT_TEXT(237,520,197,36,data.supervisionunit);
+                	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+                	LODOP.ADD_PRINT_TEXT(283,186,230,52,data.payee);
+                	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+                	LODOP.ADD_PRINT_TEXT(273,520,192,28,data.receivableaccount);
+                	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+                	LODOP.ADD_PRINT_TEXT(315,520,195,30,data.receivablenumber);
+                	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+                	LODOP.ADD_PRINT_TEXT(350,189,535,35,data.appropriationcontent);
+                	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+                	LODOP.ADD_PRINT_TEXT(383,187,226,31,data.estimateamount);
+                	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+                	LODOP.ADD_PRINT_TEXT(384,520,192,31,data.totalappropriation);
+                	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+                	LODOP.ADD_PRINT_TEXT(455,188,223,30,data.contractprice);
+                	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+                	LODOP.ADD_PRINT_TEXT(493,187,226,30,data.owepayment);
+                	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+                	LODOP.ADD_PRINT_TEXT(527,187,229,32,data.evaluationprice);
+                	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+                	LODOP.ADD_PRINT_TEXT(527,520,189,33,data.applicationamount);
+                	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+                	LODOP.ADD_PRINT_TEXT(40,539,137,25,"NO."+data.number);
+                	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+                	LODOP.ADD_PRINT_TEXT(40,55,168,31,"制单人："+data.zhidan);
+                	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+                	LODOP.ADD_PRINT_TEXT(60,55,165,30,"打印人："+data.dayin);
+                	LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+                }
+        	});
+
+        } 
+        function printMaintain(approvalid){
+        	init(approvalid);  
+		    LODOP.SET_SHOW_MODE("BKIMG_IN_PREVIEW",1);  
+        	LODOP.PRINT_SETUP();
+        }
+        
+        //判断浏览器内核
+        function btnlogin()
+        {
+             if(navigator.userAgent.indexOf("MSIE")>0) {                                 // MSIE内核        
+                    return "MSIE"; 
+                }
+            if(navigator.userAgent.indexOf("Firefox")>0){                                 // Firefox内核       
+                    return "Firefox"; 
+                }
+            if(navigator.userAgent.indexOf("Opera")>0){                                  // Opera内核       
+                    return "Opera"; 
+                }
+            if(navigator.userAgent.indexOf("Safari")>0) {                                  // Safari内核       
+                    return "Safari";  
+                } 
+            if(navigator.userAgent.indexOf("Camino")>0){                                  // Camino内核       
+                    return "Camino"; 
+                } 
+            if(navigator.userAgent.indexOf("Gecko")>0){                                    // Gecko内核       
+                    return "Gecko"; 
+                } 
+        };
+      //导出资金审批Excel表
+        exportApproval = function(){
+        	//alert("run to here.");
+        	if(btnlogin == "Safari") {
+            	window.event.returnValue = false;
+        	} else if(btnlogin == "Firefox") {
+        		
+        	}
+
+        	//window.location.href = "${ctx}/appropriationApproval/exportApproval?state="+${state};
+        	
+        	//修改后
+        	var querySelect = $('#querySelect').val();
+        	var keyword = $('#keyword').val();
+        	var appriationAccount = $('#appropriationAccountList').find('option:selected').text();
+        	if(querySelect == '4') {
+        		var dateStart = $('#dateStartId').val();
+        		let date1 = new Date(dateStart);
+        		dateStart = formatDate(date1);
+        		var dateTarget = $('#dateTargetId').val();
+        		let date2 = new Date(dateTarget);
+        		dateTarget = formatDate(date2);
+        		var url = "${ctx}/appropriationApproval/exportApproval?state=" + ${state} + "&querySelect=" + querySelect +"&dateStart=" + dateStart + "&dateTarget=" + dateTarget + "&keyword=" + keyword;
+        		window.location.href = url;
+        	} else if(querySelect == '5') {
+        		var url = "${ctx}/appropriationApproval/exportApproval?state=" + ${state} + "&querySelect=" + querySelect + "&appriationAccount=" + encodeURI(encodeURI(appriationAccount)) + "&keyword=" + keyword;
+        		window.location.href = url;
+        	} else {
+        		if(btnlogin == "Safari") {
+        			window.location.href = "${ctx}/appropriationApproval/exportApproval?state=" + ${state}+ "&querySelect=" + querySelect  + "&keyword=" + keyword;
+        		} else if(btnlogin == "Firefox") {
+        			document.location = "${ctx}/appropriationApproval/exportApproval?state=" + ${state}+ "&querySelect=" + querySelect  + "&keyword=" + keyword;
+        		}
+        	}
+        }
+        
+        function chgAccountName(){
+        	
+        	var appropriationaccount = $("#appropriationaccount").val();
+        	
+        	$("#coding").empty();
+        	
+        	$.ajax({
+	            url:  '${ctx}/appropriationApproval/getAccountNameListByCode',
+	            type: 'POST',
+	            data: {code:appropriationaccount},
+	            async: false,
+	            dataType: 'json',
+	            success:function(data) {
+	            
+		            if (data.length != 0) {
+		            
+	            		for (var o in data){                        	                    
+	                        var name =data[o].accountName;
+	                        var str = "<li style='border-bottom:1px #d2d2d2 dashed;' onClick='clkCode(\""+name+"\");'>" + name + "</li>";
+	                        $("#coding").append(str);
+	                        $("#coding").show();
+	                    }
+	            	
+	            	}
+	            }
+        	
+        	   });
+        	
+        }
+        
+        function clkCode(name){
+        	$("#allocatid").empty();
+        	if(name.trim()=="上级专款"){
+        		$("#allocatid").removeClass("display");
+        		$("#spanallocat").removeClass("display");
+        		getallocatname(name);
+        	}else{
+        		$("#allocatid").addClass("display");
+        		$("#spanallocat").addClass("display");
+        	}
+        	$("#appropriationaccount").val(name);
+        	$("#coding").hide();
+        }
+        function getallocatname(name){
+        	$.ajax({
+	            url:  '${ctx}/allocationManageController/getallocatname',
+	            type: 'POST',
+	            data: {allocationaccountname:name},
+	            async: false,
+	            dataType: 'json',
+	            success:function(data) {
+	            
+		            if (data.length != 0) {
+		            
+	            		for (var o in data){                        	                    
+							$("#allocatid").empty();
+                            if (data.length != 0) {
+	                             for (var i in data){
+	                                 var id = data[i].id;
+	                                 var name = data[i].allocationaccountname;
+	                                 var str = "<option value=" + id + ">" + name + "</option>";
+	                                 $("#allocatid").append(str);
+	                            }
+                           }else{
+                        	   var allconst = " <option value='-1'>该年度下暂无账户</option>";
+	                           $("#allocatid").append(allconst);
+                           }
+	                    }
+	            	
+	            	}
+	            }
+        	
+        	   });
+        }
+        //getTheSelectedTd
+        function getTheSelectedTd(obj){
+        	var approvalProject = $('#approvalProject');
+        	var thisTd = $(obj).find('td');
+        	var id = thisTd.eq(2).text();
+        	getTheApprovalProjectByApprovalCode(id);
+        };
+        
+      //getTheApprovalProjectByApprovalCode
+        function getTheApprovalProjectByApprovalCode(id){
+        	$.ajax({
+        		url:'${ctx}/appropriationApproval/getTheApprovalProjectByApprovalCode',
+        		type:'post',
+        		data:{'id':id},
+        		dataType:'json',
+        		success:function(data){
+        			var queryApproval = data;
+        			$("#updateid").val(id);
+        			updateFunction(queryApproval);
+        		},
+        		error:function(){}
+        	});
+        };
+       	
+        //updateFunction
+        function updateFunction(queryApproval){
+        	$('#updateconstructionunit').val(queryApproval.constructionUnit);			//施工单位
+        	$('#updatedesignunit').val(queryApproval.designUnit);						//设计单位
+        	$('#updatesupervisionunit').val(queryApproval.supervisionUnit);				//监理单位
+        	$('#updatepayee').val(queryApproval.payee);									//收款单位
+        	$('#updatereceivableaccount').val(queryApproval.receivableAccount);			//收款账户
+        	$('#updatereceivablenumber').val(queryApproval.receivablenumber);			//收款账号
+        	$('#updateappropriationcontent').val(queryApproval.appropriationcontent);	//拨款内容
+        	$('#updateapplyDate').val(queryApproval.applicationdate);					//申请日期
+        	$('#updateapplicationamount').val(queryApproval.applicationamount);			//申请金额
+        	$('#updateremark').val(queryApproval.remark);								//备注
+            $("#updateModal").modal('show');
+        };
+        
+        //updateApply
+        function updateApply(){
+    	var id = $("#updateid").val().trim();
+    	var constructionunit = $("#updateconstructionunit").val().trim();
+		var designunit = $("#updatedesignunit").val().trim();
+		var supervisionunit = $("#updatesupervisionunit").val().trim();
+		var payee = $("#updatepayee").val().trim();
+		var receivableaccount = $("#updatereceivableaccount").val().trim();
+		var receivablenumber = $("#updatereceivablenumber").val().trim();
+		var appropriationcontent = $("#updateappropriationcontent").val().trim();
+		var applicationDate = $("#updateapplyDate").val().trim();
+		var applicationAmount = $("#updateapplicationamount").val().trim();
+		var remark = $("#updateremark").val().trim();
+		if(payee.length==0 ){
+			alert('收款单位不能为空！');
+			return false;
+		}
+		if(receivableaccount.length==0 ){
+			alert('收款账户不能为空！');
+			return false;
+		}
+		if(applicationAmount.length==0 ){
+			alert('申请金额不能为空！');
+			return false;
+		}
+		let date5 = new Date(applicationDate);//直接用 new Date(时间戳) 格式转化获得时间
+		applicationDate=formatDate(date5);//直接调用上方的方法
+		if(applicationDate=='NaN-NaN-NaN'){
+			alert('申请日期不能为空！');
+			return false;
+		}
+		$.ajax({
+               url:  "${ctx}/appropriationApplyController/updateApplyData",
+               type: 'POST',
+               data:{
+            	   'id': id,
+            	   'constructionUnit': constructionunit,
+            	   'designUnit': designunit,
+            	   'supervisionUnit': supervisionunit,
+            	   'payee': payee,
+            	   'receivableAccount': receivableaccount,
+            	   'receivablenumber': receivablenumber,
+            	   'appropriationContent': appropriationcontent,
+            	   'applicationDate':applicationDate,
+            	   'applicationAmount': applicationAmount,
+            	   'remark': remark
+            	 },
+               async: false,
+               dataType: 'json',
+               success: function (data) {
+               	alert("更新成功！");
+               	$("input[name='selapplytId']").attr('checked',false);
+               	window.close();
+               	location.reload();
+               },
+               error:function(data){
+               	alert("更新失败！");
+               }
+       
+   		});
+    }
+        
+        $(document).ready(function(){
+        	
+    		var selected='${querySelect}';
+       		if(selected !=''){
+       	 		$("#querySelect option[value="+selected+"]").attr('selected',true); 
+	       	 	if(selected == '4') {
+		       	 	var d = document.getElementById('dateStartId');
+		    		d.style.display = 'inline';
+		    		var dd = document.getElementById('dateTargetId');
+		    		dd.style.display = 'inline';
+		    		var dTo = document.getElementById('toId');
+		    		dTo.style.display = 'inline';
+		    		var ddd = document.getElementById('keyword');
+		    		ddd.style.display = 'none';
+		    		if('${dateStart != null && dateStart != ""}') {
+		    			$('#dateStartId').val('${dateStart}');
+		    		}
+		    		if('${dateTarget != null && dateTarget != ""}') {
+		    			$('#dateTargetId').val('${dateTarget}');
+		    		}
+	       	 	}
+	       	 	if(selected == '5') {
+	       	 		var d = document.getElementById('keyword');
+	       	 		d.style.display = 'none';
+	       	 		var dd = document.getElementById('accountList');
+	       	 		dd.style.display = 'inline';
+	       	 		$('#appropriationAccountList option[value=' + decodeURI('${appriationAccount}') +']').attr('selected', true);
+	       	 	}
+       	 	}
+       		
+       		//加载付款账户列表
+       		var str = "";
+       		var accountList = '${appropriationAccountList}'.split('[')[1].split(']')[0].split(',');
+       		for(var item = 0; item < accountList.length; item++) { 
+       			str = '<option value="'+accountList[item].trim()+'"style="width:300px;">' + accountList[item].trim() + '</option>';
+       			$('#appropriationAccountList').append(str);
+       		} 
+       		
+       		var selectappriatAccount='${selectappriatAccount}';
+	       	$("#appropriationAccountList option").each(function(){
+	       	    if($(this).text() == selectappriatAccount){
+	       	    	$(this).attr("selected",true);
+	       	    }
+	       	}); 
+
+       	});
+        
+        function chgupdatePayee(){
+        	$("#updateunitId").val("");
+        	var payee = $("#updatepayee").val();
+        	$("#updateunitaccountlist").empty();
+        	$.ajax({
+                url:  '${ctx}/appropriationApplyController/getPayeeListByName',
+                type: 'POST',
+                data: {unitname:payee},
+                async: false,
+                dataType: 'json',
+                success:function(data) {
+               		var list=data;
+               		for (var o in list){
+                           var id = list[o].id;
+                           var name = list[o].unitname;
+                           var str = "<li style='border-bottom:1px #d2d2d2 dashed;' onClick='upclkCode(\""+id+"\",\""+name+"\");'>" + name + "</li>";
+                           $("#updateunitaccountlist").append(str);
+                           $("#updateunitaccountlist").show();
+                       }
+                },
+    	    	error:function(){
+    	        	alert('获取数据失败');	
+    	    	}
+        	   });
+        	
+        }
+        function upclkCode(id, name){
+        	$("#updateunitId").val(id);
+        	$("#updatepayee").val(name);
+        	$("#updateunitaccountlist").hide();
+        	$("#updatereceivableaccount").val('');
+        	$("#updatereceivablenumber").val('');
+        	$("#updateunitaccountlist").empty();
+        	$.ajax({
+                url:  '${ctx}/appropriationApplyController/getReceivableaccount',
+                type: 'POST',
+                data: {unitinfoid:id},
+                async: false,
+                dataType: 'json',
+                success:function(data) {
+                	var list=data;
+               		for (var o in list){
+                           var id = list[o].id;
+                           var bank = list[o].bank;
+                           var accountnumber = list[o].accountnumber;
+                           var str = "<li style='border-bottom:1px #d2d2d2 dashed;' onClick='upclkAccount(\""+data.id+"\",\""+bank+"\",\""+accountnumber+"\");'>" + bank + "</li>";
+                           $("#updateunitaccountlist").append(str);
+                           $("#updateunitaccountlist").show();
+                       }
+                }
+        	   });
+        }
+        function upclkAccount(id,bank,accountnumber){
+        	$("#unitaccountId").val(id);
+       	    $("#updatereceivableaccount").val(bank);
+            $("#updatereceivablenumber").val(accountnumber);
+        	$("#updateunitaccountlist").hide();
+        }
+        </script>
+
+        <style type="text/css">
+        td,th
+        {
+            white-space: nowrap;
+        }
+        .breadcrumbs {
+			    position: relative;
+			    border-bottom: 1px solid #e5e5e5;
+			    background-color: #f5f5f5;
+			    min-height: 41px;
+			    line-height: 40px;
+			    padding: 0 12px 0 0;
+			    display: block;
+			}
+    </style>
+
+        <style>
+			
+		</style>
+        
+
+	</head>
+
+	<body style="background-color:#fff !important;">
+	<form id="openWindow" target="_blank" action=""><input type="hidden" id="state" name="state" value="${state }"/></form>
+				<div class="breadcrumbs" id="breadcrumbs">
+						<script type="text/javascript">
+							try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+						</script>
+
+						<ul class="breadcrumb">
+							<li>
+								<i class="icon-home home-icon"></i>
+								<a href="${ctx}/views/maincontent.jsp">首页</a>
+							</li>
+							<li class="active">资金审批</li>
+						</ul><!-- .breadcrumb -->
+					</div>
+
+					<div class="page-content">
+						<div class="page-header">
+                            <!-- <button class="btn btn-minier btn-yellow"><i class="icon-print"></i> 打印</button> -->
+                            <button class="btn btn-minier btn-warning" onclick="exportApproval()" style="height:30px; top:-1px;">
+                            <i class="icon-download-alt"></i> 导出</button>
+                            <!-- <button class="btn btn-minier btn-warning" onclick="printWord()"><i class="icon-download-alt"></i> 打印</button> -->
+                            <select id="querySelect" name="querySelect" value="${querySelect}" style="height: 30px;padding: 0px;
+                            	position: relative;top:2px;left:15px;" onchange="displayNoneOfContain()">
+                            	<option value="0">建设单位</option>
+                            	<option value="1">申请表编号</option>
+                            	<option value="2">项目年度</option>
+                            	<option value="3">项目名称</option>
+                            	<option value="4">审批日期</option>
+                            	<option value="5">拨款账户</option>
+                            </select>
+                            <select id="containId" style="height: 30px;padding: 0px;position: relative;top:2px;left:15px;">
+                                <option>包含</option>
+                            </select>
+                            
+                            <div id="accountList" style="display:none">
+                            <select id="appropriationAccountList"   style="height:30px; width:300px; padding: 0px;position: relative;top:2px;left:15px;">
+                            </select>
+                            </div>
+                            
+                            <input id="dateStartId" type="date" value="${dateStart }" style="height:30px; top:1px; position:relative; left:15px; display:none;"/>
+                            <span id="toId" style="position:relative; left:15px; display:none">到</span>
+                            <input id="dateTargetId" type="date"  value="${dateTarget }" style="height:30px; top:1px; position:relative; left:15px; display:none"/>
+                            
+                            <input type="text" name="keyword" id="keyword" value="${keyword}" style="position:relative;left:20px;height:22px;top:2px;border:0;border-bottom:1px #ccc solid; font-size:12px;" />
+                            <button type="button" onClick="selectUnitByName();" style="border:0; background:none;padding:0;margin:0;left: 15px;border-bottom: 1px #ccc solid;top: 3px;position: relative;"><i class="icon-search" style="position:relative;"></i></button>
+						</div>
+						<div class="row">
+							<div class="table-responsive">
+                            	<div class="tabbable">
+                                    <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab4" style="height:41px;">
+                                        <li <c:if test="${state==0}" >  class="active"</c:if>>
+                                            <a data-toggle="tab" href="#" <c:if test="${state!=0}" > onClick="chgState(0)"</c:if>>未受理</a>
+                                        </li>
+
+                                        <li <c:if test="${state==1}" >  class="active"</c:if>>
+                                            <a data-toggle="tab" href="#" <c:if test="${state!=1}" > onClick="chgState(1)"</c:if>>已受理</a>
+                                        </li>
+
+                                        <li <c:if test="${state==2}" >  class="active"</c:if>>
+                                            <a data-toggle="tab" href="#"<c:if test="${state!=2}" > onClick="chgState(2)"</c:if>>已审批</a>
+                                        </li>
+                                        <li <c:if test="${state==3}" >  class="active"</c:if>>
+                                            <a data-toggle="tab" href="#"<c:if test="${state!=3}" > onClick="chgState(3)"</c:if>>已拨款</a>
+                                        </li>
+                                    </ul>
+
+                                    <div class="tab-content" style="overflow:auto;">
+                                        <div class="tab-pane active">
+                                            <table id="sample-table-2" class="table table-striped table-bordered table-hover" >
+                                                <thead>
+                                                    <tr>
+                                                        <th>操作</th>
+                                                        <th>自定义序号</th>
+                                                        <th>申请表编号</th>
+                                                        <th>项目年度</th>
+                                                        <th style="text-align:center;">项目名称</th>
+                                                        <th>建设单位</th>
+                                                        <th>收款单位简称</th>
+                                                        <th>拨款内容</th>
+                                                        <th>合同价(万元)</th>
+                                                        <th>评审价(万元)</th>
+                                                        <th>累计拨款(万元)</th>
+                                                        <th>拨付比例</th>
+                                                        <th>欠付款(万元)</th>
+                                                        <th>申请金额(万元)</th>
+                                                        <th>申请比例</th>
+                                                        <c:if test="${state==2||state==3}" ><th >审批日期</th></c:if>
+                                                        <c:if test="${state==2||state==3}" ><th >审批金额(万元)</th></c:if>
+                                                        <c:if test="${state==2}" ><th >审批比例</th></c:if>
+                                                        <c:if test="${state==2||state==3}" ><th >拨款账户</th></c:if>
+                                                        <th>备注</th>
+                                                        <c:if test="${state==0}" ><th style="text-align:center;">打印</th></c:if>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                	<c:forEach var="approval" items="${appropriationApprovalList}" varStatus="status">
+                                                    <tr id="approvalProject" ondblclick="getTheSelectedTd(this);"> <%-- <c:if test="${state == 0}"> --%>
+                                                    	<td style="width: 120px;">
+                                                    		<c:if test="${approval.state==0}"><span class="btn btn-minier  btn-success" onClick="handleState('1','0','${approval.id}','受理');">受理</span></c:if>
+                                                    	    <c:if test="${approval.state==1}"><span class="btn btn-minier  btn-success" onClick="handleState('0','0','${approval.id}','撤销受理');">撤销受理</span>&nbsp;&nbsp;
+                                                    	    <span class="btn btn-minier  btn-success" id="openapprop" onclick="openapprop1('${approval.id}');" data-toggle="modal" >审批</span>
+                                                    	    </c:if>
+                                                    	    <c:if test="${approval.state==2}"><span class="btn btn-minier  btn-success" onClick="cacelapprop('1','${approval.id}','撤销审批')">撤销审批</span>&nbsp;&nbsp;<!-- handleState('1','1','${approval.id}','撤销审批'); -->
+                                                    	    <span class="btn btn-minier  btn-success" onClick="handleState('3','2','${approval.id}','拨款');">拨款</span>
+                                                    	    </c:if>
+                                                    	    <c:if test="${approval.state==3}"><span class="btn btn-minier  btn-success" onClick="handleState('2','2','${approval.id}','撤销拨款');">撤销拨款</span></c:if>
+                                                    	</td>
+                                                        <td>${ (page.currentPage-1)*page.rowsPerPage+status.index + 1}</td>
+                                                        <td>${approval.id}</td>
+                                                        <td>${approval.projectyear}</td>
+                                                        <td>${approval.projectname}</td>
+                                                        <td>${approval.constructionUnit}</td>
+                                                        <td>${approval.payee}</td>
+                                                        <td>${approval.appropriationcontent}</td>
+                                                        <td><fmt:formatNumber type="number" value="${approval.contractpricebywy}" pattern="#######0.000000" maxIntegerDigits="8" maxFractionDigits="6"/></td>
+                                                        <td><fmt:formatNumber type="number" value="${approval.settlreviewamountbywy}" pattern="#######0.000000" maxIntegerDigits="8" maxFractionDigits="6"/></td>
+                                                        <td><c:if test="${approval.totalappropriation!=null}"><fmt:formatNumber type="number" value="${approval.totalappropriationbywy}" pattern="#######0.000000" maxIntegerDigits="8" maxFractionDigits="6"/></c:if><c:if test="${approval.totalappropriation==null}">0.0000</c:if></td>
+                                                        <td>
+                                                        <%-- <c:if test="${approval.totalappropriation!=null&&(approval.settlreviewamount!=null && approval.settlreviewamount>0)}"><fmt:formatNumber type="number" value="${approval.totalappropriation/approval.settlreviewamount * 100}" pattern="######0.00" maxIntegerDigits="6" maxFractionDigits="2"/></c:if><c:if test="${approval.totalappropriation==null||approval.settlreviewamount==null || approval.settlreviewamount<0.01}">0.00</c:if> --%>
+                                                       <fmt:formatNumber type="number" value="${approval.lappropriationratio }" pattern="#######0.00" maxIntegerDigits="8" maxFractionDigits="2"/>
+                                                       %
+                                                        </td>
+                                                        <td><c:if test="${approval.owepayment!=null}"><fmt:formatNumber type="number" value="${approval.owepaymentbywy}" pattern="#######0.000000" maxIntegerDigits="8" maxFractionDigits="6"/></c:if><c:if test="${approval.owepayment==null}">0.0000</c:if></td>
+                                                        <td><fmt:formatNumber type="number" value="${approval.applicationamountbywy}" pattern="#######0.000000" maxIntegerDigits="8" maxFractionDigits="6"/></td>
+                                                        <td>
+                                                        <fmt:formatNumber type="number" value="${approval.applicationRatio }" pattern="#######0.00" maxIntegerDigits="8" maxFractionDigits="2"/>
+                                                        %
+                                                        </td>
+                                                       	
+                                                       	<c:if test="${approval.state==2||approval.state==3}" ><td ><fmt:formatDate value="${approval.approvaltime}" pattern="yyyy-MM-dd"/></td></c:if>
+                                                       	<c:if test="${approval.state==2||approval.state==3}" > <td>
+                                                       	<fmt:formatNumber type="number" value="${approval.approvalamountbywy}" pattern="#######0.000000" maxIntegerDigits="8" maxFractionDigits="6"/>
+                                                       	</td></c:if>
+                                                       	
+                                                      
+                                                        	<c:if test="${approval.state==2}" >
+                                                        		<td>
+                                                        		<%-- <c:if test="${approval.approvalamount!=null&&(approval.settlreviewamount!=null && approval.settlreviewamount>0)}">
+                                                        		<fmt:formatNumber type="number" value="${approval.approvalamount/approval.settlreviewamount * 100}" pattern="######0.00" maxIntegerDigits="6" maxFractionDigits="2"/>
+                                                        		</c:if>
+                                                        		<c:if test="${approval.approvalamount==null||approval.settlreviewamount==null || approval.settlreviewamount<0.01}">
+                                                        		0.00</c:if> --%>
+                                                        		<fmt:formatNumber type="number" value="${approval.approvalRatio }" pattern="#######0.00" maxIntegerDigits="8" maxFractionDigits="2"/>
+                                                        		%</td>
+                                                        	</c:if>
+                                                       
+                                                        <c:if test="${approval.state==2||approval.state==3}" ><td >${approval.appropriationaccount }</td></c:if>
+                                                        <td>${approval.remark} &nbsp;</td>
+                                                        <c:if test="${approval.state==0}">
+                                                        
+                                                        <td><button class="btn btn-minier btn-yellow"  onClick="printApproval('${approval.id}');"><i class="icon-print" ></i> 打印</button>&nbsp;
+                                                        <button class="btn btn-minier btn-yellow"  onClick="printMaintain('${approval.id}');"><i class="icon-print" ></i> 打印维护</button>
+                                                        </td></c:if>
+                                                    </tr>
+                                                    </c:forEach>
+                                                    <tr>
+                                                        <td colspan="20">
+                                                        
+                                                            	每页显示
+                                                            <select size="1" id="pagerows" style="padding:0" onchange="chgPageRows();">
+                                                                <option value="10" <c:if test='${page.rowsPerPage==10}'>selected="selected"</c:if> >10</option>
+                                                                <option value="20" <c:if test='${page.rowsPerPage==20}'>selected="selected"</c:if> >20</option>
+                                                                <option value="50" <c:if test='${page.rowsPerPage==50}'>selected="selected"</c:if> >50</option>
+                                                            </select>
+                                                            	条数据，共${page.rowsCount}条数据
+                                                            
+                                                            <ul class="pagination" style="float:right; margin:0; padding:0">
+                                                                ${page.pagination}
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                    
+                                                </tbody>
+                                                
+                                            </table>
+                                        </div>
+                                     </div>
+                                </div>
+                                
+                            </div>
+                            
+						</div>
+					</div>
+
+        <div class="modal fade" id="appropModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:400px; margin:0 auto;margin-top:100px;">
+                <div class="modal-content">
+                    <div class="modal-header" style="background:#555555;padding:5px;">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color:#fff; font-size:18px;">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel" style="font-size:12px; color:#fff;">审批</h4>
+                    </div>
+                    <div class="modal-body">
+                    	<div style="width:280px;; text-align:right; margin:0 auto">
+                            <input type="hidden" id="approvalid" style="width:200px;" /><p></p>
+                            <span>审批金额：</span><input type="text" id="approvalamount" name="approvalamount"placeholder="元" style="width:200px;" /><p></p>
+                            <span>拨款账户：</span>
+                            <%--<select  id="appropriationaccount" name="appropriationaccount" style="width:200px;" style="height: 22px;padding: 0px;position: relative;top:2px;left:15px;">
+                           	 <c:forEach items="${AllocationsAccountList}" var="AllocationsAccount">
+                          		<option value="${AllocationsAccount.accountName}">${AllocationsAccount.accountName}</option>
+                            </c:forEach>
+                            </select><p></p> --%>
+                            
+                            <input type="text" id="appropriationaccount" name="appropriationaccount" onkeyup="chgAccountName();" style="width:200px;" value="" />
+                            <p></p>
+                            <ul id="coding" style="width:200px;position:absolute;z-index:1200;background:#fff;top:95px;left:105px;border:1px #d2d2d2 solid;text-align:left;padding:5px;max-height:119px;overflow:auto;display:none">
+                            </ul> 
+                            
+                            <span id="spanallocat" class="display">专款账户：</span>
+ 							<select id="allocatid" name="allocatid" class="display" style="width:200px;" style="height: 22px;padding: 0px;position: relative;top:2px;left:15px;">
+                           
+                            </select><p></p>
+                            <span>审批日期：</span><input type="date" id="approvalTime" name="approvalTime" style="width:200px;" />
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="text-align:center">
+                    	<button type="button" class="btn btn-xs btn-primary" onClick="updateApprop();">保存</button>
+                        <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">关闭</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+        
+        <!--updateModal-->
+        
+        <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:400px; margin:0 auto;margin-top:50px;">
+                <div class="modal-content">
+                    <div class="modal-header" style="background:#555555;padding:5px;">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color:#fff; font-size:18px;">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel" style="font-size:12px; color:#fff;">修改拨款申请</h4>
+                    </div>
+                    <div class="modal-body">
+                    	<div style="width:290px;  text-align:right; margin:0 auto">
+                    		<input type="hidden" id="updateid" name="id"  style="width:200px;" />
+                            <span>施工单位：</span>
+                           	<input type="text" id="updateconstructionunit" name="constructionUnit"  style="width:200px;" /><p></p>
+                            <p></p>
+                            <span>设计单位：</span>
+                           <input type="text" id="updatedesignunit" name="designUnit" style="width:200px;" /><p></p>
+                            <p></p>
+                            <span>监理单位：</span>
+                           <input type="text" id="updatesupervisionunit" name="supervisionUnit" style="width:200px;" /><p></p>
+                            <p></p>
+                            <span style="color:#C00;">*</span>
+                            <span>收款单位：</span><input type="hidden" id="updateunitId" name="unitId" style="width:200px;" value="" />
+                            <input type="text" id="updatepayee" name="payee" onkeyup="chgupdatePayee();" style="width:200px;" /><p></p>
+                            <p></p>
+                            <span style="color:#C00;">*</span>
+                            <span>收款账户：</span>
+                            <input type="text" id="updatereceivableaccount" name="receivableAccount" style="width:200px;" /><p></p>
+                            <ul id="updateunitaccountlist" style="width:200px;position:absolute;z-index:1200;background:#fff;top:164px;left:109px;border:1px #d2d2d2 solid;text-align:left;padding:5px;max-height:119px;overflow:auto;display:none">
+                            </ul>
+                            <input type="text" id="updatereceivablenumber" name="receivablenumber" style="width:200px;" />
+                            <p></p>
+                            <span>拨款内容：</span><input type="text" id="updateappropriationcontent" name="appropriationContent" style="width:200px;" /><p></p>
+                            <span style="color:#C00;">*</span><span>申请日期：</span><input id="updateapplyDate" name="applicationDate" type="date" style="width:200px;" /><p></p> 
+                            <span style="color:#C00;">*</span><span>申请金额：</span><input type="text" id="updateapplicationamount" name="applicationAmount" placeholder="元" style="width:200px;" /><p></p>
+                            <span>备注：</span><input type="text" id="updateremark" name="remark" style="width:200px;" />
+                            
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="text-align:center">
+                    	<button type="button" onClick="updateApply()" class="btn btn-xs btn-primary">保存</button>
+                        <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">关闭</button>
+                        
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+
+
+		
+</body>
+</html>
+

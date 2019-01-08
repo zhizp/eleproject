@@ -1,0 +1,108 @@
+package com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo;
+
+import java.math.BigDecimal;
+
+public class SegmentProjectDTO {
+
+	private Integer id;
+	private Integer segmentinfoid;
+	private Integer operatorid;
+	private String remark;
+	private BigDecimal estimateamount;
+	private BigDecimal contractprice;
+	private BigDecimal barrageprice;
+	private BigDecimal totalappropriation;
+	private Double lappropriationratio;
+	private BigDecimal owepayment;
+	private BigDecimal settlreviewamount;
+	private Integer projectid;
+	private String investmenttype;
+	/**申请金额*/
+	private BigDecimal applicationamount;
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public Integer getSegmentinfoid() {
+		return segmentinfoid;
+	}
+	public void setSegmentinfoid(Integer segmentinfoid) {
+		this.segmentinfoid = segmentinfoid;
+	}
+	public Integer getOperatorid() {
+		return operatorid;
+	}
+	public void setOperatorid(Integer operatorid) {
+		this.operatorid = operatorid;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public BigDecimal getEstimateamount() {
+		return estimateamount;
+	}
+	public void setEstimateamount(BigDecimal estimateamount) {
+		this.estimateamount = estimateamount;
+	}
+	public BigDecimal getContractprice() {
+		return contractprice;
+	}
+	public void setContractprice(BigDecimal contractprice) {
+		this.contractprice = contractprice;
+	}
+	public BigDecimal getBarrageprice() {
+		return barrageprice;
+	}
+	public void setBarrageprice(BigDecimal barrageprice) {
+		this.barrageprice = barrageprice;
+	}
+	public BigDecimal getTotalappropriation() {
+		return totalappropriation;
+	}
+	public void setTotalappropriation(BigDecimal totalappropriation) {
+		this.totalappropriation = totalappropriation;
+	}
+	public Double getLappropriationratio() {
+		return lappropriationratio;
+	}
+	public void setLappropriationratio(Double lappropriationratio) {
+		this.lappropriationratio = lappropriationratio;
+	}
+	public BigDecimal getOwepayment() {
+		return owepayment;
+	}
+	public void setOwepayment(BigDecimal owepayment) {
+		this.owepayment = owepayment;
+	}
+	public BigDecimal getSettlreviewamount() {
+		return settlreviewamount;
+	}
+	public void setSettlreviewamount(BigDecimal settlreviewamount) {
+		this.settlreviewamount = settlreviewamount;
+	}
+	public Integer getProjectid() {
+		return projectid;
+	}
+	public void setProjectid(Integer projectid) {
+		this.projectid = projectid;
+	}
+	public String getInvestmenttype() {
+		return investmenttype;
+	}
+	public void setInvestmenttype(String investmenttype) {
+		this.investmenttype = investmenttype;
+	}
+	public BigDecimal getApplicationamount() {
+		return applicationamount;
+	}
+	public void setApplicationamount(BigDecimal applicationamount) {
+		this.applicationamount = applicationamount;
+	}
+	
+	
+}

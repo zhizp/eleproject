@@ -1,0 +1,218 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%> 
+<jsp:include page="/include/public.jsp"></jsp:include>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>拨款申请表</title>
+        <script src="${ctx}/views/assets/js/jquery-2.0.3.min.js"></script>
+<style>
+body{
+margin:0;
+padding:0;
+border:0;
+}
+.date{
+display:inline;
+}
+.hide-style{border-style: none;}
+.addborder{border:1px solid #000;}
+.tag{font-size:14px;}
+.td1{width:110px;}
+.printdata{font-family:宋体;}
+</style>
+<style media="print">
+    @page {
+      size: auto;  /* auto is the initial value */
+      margin: 0mm; /* this affects the margin in the printer settings */
+    }
+</style>
+<script type="text/javascript">
+$(document).ready(function(){
+	  //$("input[type='text']").addClass("hide-style");
+	  $("#content td").addClass("addborder");
+	  var approvalid=$("#approvalid").val();
+	  printApproval(approvalid);
+	});
+function printApproval(approvalid){
+			 $.ajax({
+               url:  '${ctx}/appropriationApproval/printWordByApprovalId',
+               type: 'POST',
+               data:{'id': approvalid},
+               async: false,
+               dataType: 'json',
+               success: function (data) {
+            	   $("#zhidan").html(data.zhidan);
+            	   $("#dayin").html(data.dayin);
+            	   $("#projectname").html(data.projectname);
+            	   $("#number").html("NO."+data.number);
+            	   $("#year").html(data.year);
+            	   $("#YY").html(data.YY);
+            	   $("#MM").html(data.MM);
+            	   $("#DD").html(data.DD);
+            	   $("#unitname").html(data.unitname);
+            	   $("#constructionunit").html(data.constructionunit);
+            	   $("#designunit").html(data.designunit);
+            	   $("#supervisionunit").html(data.supervisionunit);
+            	   $("#payee").html(data.payee);
+            	   $("#receivableaccount").html(data.receivableaccount);
+            	   $("#receivablenumber").html(data.receivablenumber);
+            	   $("#appropriationcontent").html(data.appropriationcontent);
+            	   $("#estimateamount").html(data.estimateamount);
+            	   $("#totalappropriation").html(data.totalappropriation);
+            	   $("#contractprice").html(data.contractprice);
+            	   $("#owepayment").html(data.owepayment);
+            	   $("#evaluationprice").html(data.evaluationprice);
+            	   $("#applicationamount").html(data.applicationamount);
+               }
+   		});
+}
+function printWord(){
+	var approvalid=$("#approvalid").val();
+	if(confirm("你确认要对编号："+ approvalid + "进行打印操作？")){
+		$("#content td").removeClass("addborder");
+		$(".tag").html('');
+		$("#print").hide();
+		$("#cacelprint").hide();
+		window.print();
+		window.close();
+		alert("打印完成！");
+	}
+	
+}
+</script>
+</head>
+<body>
+<br/>
+<table style="width:650px;height:auto;margin:0 auto;" border="0">
+		<tbody>
+			<tr height="30">
+				<td width="180" style="font-size:14px;">制单人：<span style="font-size:14px;" id="zhidan" class="printdata"></span></td>
+				<td width="235"></td>
+				<td width="110"></td>
+				<td width="200" style="font-size:14px;"><span style="font-size:14px;width:100%;" id="number" name="number" class="printdata"></span></td>
+			</tr>
+			<tr>
+				<td style="font-size:14px;">打印人：<span id="dayin" style="font-size:14px;" class="printdata"></span></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+		</tbody>
+</table>
+	
+<input type="hidden" id="approvalid" name="approvalid" value='<%=request.getParameter("approvalid")%>'>
+	<table style="width:650px;height:auto;margin:0 auto;margin-bottom:10px;margin-top:20px;"border="0">
+		<tbody>
+			<tr>
+				<td width="170" align="right" style="font-size:18px;" class="tag">北戴河区</td>
+				<td width="10" ><span style="font-size:18px;width:50px;" id="year" name="year" class="printdata"></span></td>
+				<td width="300" align="left"style="font-size:18px;" class="tag">年重点项目拨款申请表</td>
+			</tr>
+			
+		</tbody>
+	</table>
+	<table style="width:650px;height:auto;margin:0 auto;padding:0;font-size:14px;margin-bottom:0px;border-bottom:0px;padding-bottom:0px;" >
+		<tbody>
+			
+			<tr height="30">
+				<td width="100"></td>
+				<td width="240"><span style="font-size:12px;top: 185px;"class="printdata" id="projectname" name="projectname" ></span></td>
+				<td width="100"></td>
+				<td width="200">
+				<div style="position: absolute;top: 170px;overflow: hidden;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<span class="printdata" id="YY"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<span class="printdata" id="MM"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+					<span class="printdata" id="DD"></span>
+				</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<table id="content" style="width:650px;height:auto;font-size:14px;margin:0 auto;margin-top:3px;border-top:0px;padding-top:0px;" cellpadding="0" cellspacing="0" >
+		<tbody>
+			<tr height="48" >
+				<td width="150" class="tag td1">项目建设单位</td>
+				<td width="235"><span id="unitname" name="unitname" class="printdata"style="position: absolute;top: 205px;overflow: hidden;"></td>
+				<td width="110" class="tag">工程施工单位</td>
+				<td width="200"><span id="constructionunit" name="constructionunit" class="printdata"style="position: absolute;top: 205px;overflow: hidden;"></span></td>
+			</tr>
+			<tr height="40">
+				<td class="tag">工程设计单位</td>
+				<td><span id="designunit" name="designunit" class="printdata"></span></td>
+				<td class="tag">工程监理单位</td>
+				<td><span id="supervisionunit" name="supervisionunit" class="printdata"></span></td>
+			</tr>
+			<tr height="37">
+				<td rowspan="2" class="tag">收款单位全称</td>
+				<td rowspan="2"><span id="payee" style="width:100%" name="payee" class="printdata"></span></td>
+				<td class="tag">开户行</td>
+				<td><span id="receivableaccount" name="receivableaccount" class="printdata"></span></td>
+			</tr>
+			<tr height="40">
+				<td class="tag">银行账号</td>
+				<td><span id="receivablenumber" name="receivablenumber" class="printdata"></span></td>
+			</tr>
+			<tr height="36">
+				<td class="tag">申请拨款内容</td>
+				<td colspan="3"><span id="appropriationcontent" name="appropriationcontent" class="printdata"></span></td>
+			</tr>
+			<tr height="38">
+				<td class="tag">发改委概算批复金额</td>
+				<td><span id="estimateamount" name="estimateamount" class="printdata"></span></td>
+				<td class="tag">累计拨付资金</td>
+				<td><span id="totalappropriation" name="totalappropriation" class="printdata"></span></td>
+			</tr>
+			<tr height="38">
+				<td><span class="tag">财政部门预算核定金额</span></td>
+				<td><span>&nbsp;</span></td>
+				<td><span>&nbsp;</span></td>
+				<td><span>&nbsp;</span></td>
+			</tr>
+			<tr height="38">
+				<td class="tag">项目合同或中标价款</td>
+				<td><span id="contractprice" name="contractprice" class="printdata"></span></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr height="38">
+				<td class="tag">欠付款</td>
+				<td><span id="owepayment" name="owepayment" class="printdata"></span></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr height="38">
+				<td class="tag">财政决算或决算评审价款</td>
+				<td><span id="evaluationprice" name="evaluationprice" class="printdata"></span></td>
+				<td class="tag">申请价款</td>
+				<td><span id="applicationamount" name="applicationamount" class="printdata"></span></td>
+			</tr>
+			<tr height="100">
+				<td class="tag">工程进度、质量及监理情况</td>
+				<td colspan="3">&nbsp;</td>
+			</tr>
+			<tr height="100">
+				<td class="tag">项目建设单位意见</td>
+				<td colspan="3">&nbsp;</td>
+			</tr>
+			<tr height="100">
+				<td class="tag">业务科意见</td>
+				<td colspan="3">&nbsp;</td>
+			</tr>
+		</tbody>
+		
+	</table>
+	<table  style="width:650px;height:auto;margin:0 auto;margin-top:30px;" >
+		<tbody>
+			<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><input type="button" id="print" value="确认打印" onClick="printWord()">
+			<input type="button" id="cacelprint" value="取消打印" onClick="window.close()">
+			</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>

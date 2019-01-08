@@ -1,0 +1,76 @@
+package com.newhero.urbanconstruction.sysmanager.user.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.newhero.urbanconstruction.codetablemaintain.unitinfo.pojo.UnitInfoDTO;
+import com.newhero.urbanconstruction.sysmanager.user.dao.SysUserDao;
+import com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO;
+import com.newhero.urbanconstruction.sysmanager.user.service.SysUserService;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+/**
+ * userService 接口的实现类
+ * 
+ */
+@Transactional
+@Service("sysUserService")
+public class SysUserServiceImpl implements SysUserService {
+
+	@Resource
+	private SysUserDao sysUserDao;
+	//显示用户列表
+	public List<UserDTO> userList(){
+		return sysUserDao.userList();
+	}
+	@Override
+	public UserDTO getSysUserById(String id) {
+		return sysUserDao.getSysUserById(id);
+	}
+	@Override
+	public int insertSysUser(UserDTO user) {
+		return sysUserDao.insertSysUser(user);
+	}
+	@Override
+	public int updateSysUserById(UserDTO user) {
+		return sysUserDao.updateSysUserById(user);
+	}
+	@Override
+	public int delSysUserByIds(String[] ids, int userid) {
+		int rs = 0;
+		for(String id:ids){
+			UserDTO user = new UserDTO();
+			user.setId(Integer.parseInt(id));
+			user.setOperatorid(userid);
+			
+			rs += sysUserDao.delSysUserById(user);
+		}
+		
+		return rs;
+	}
+	@Override
+	public int updateSysUserPwdById(UserDTO user) {
+		
+		return sysUserDao.updateSysUserPwdById(user);
+	}
+
+	public List<UnitInfoDTO> getUnitInfoListByCode(String code){
+		UnitInfoDTO dto = new UnitInfoDTO();
+		dto.setUnitcode(code);
+		return sysUserDao.getUnitInfoListByCode(dto);
+	}
+	@Override
+	public List<UserDTO> getUserList(BaseQueryVo dto) {
+		List<UserDTO> list = sysUserDao.getUserList(dto);
+		return list;
+	}
+	
+	@Override
+	public List<String> getUserNameList(){
+		List<String> list = sysUserDao.getUserNameList();
+		return list;
+	}
+}

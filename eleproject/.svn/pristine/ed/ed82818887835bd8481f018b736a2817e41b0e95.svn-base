@@ -1,0 +1,146 @@
+package com.newhero.urbanconstruction.codetablemaintain.segmentinfo.service.impl;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.newhero.urbanconstruction.codetablemaintain.investmenttype.dao.InvestmentTypeDao;
+import com.newhero.urbanconstruction.codetablemaintain.investmenttype.pojo.InvestmentTypeDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectname.dao.ProjectNameDao;
+import com.newhero.urbanconstruction.codetablemaintain.projectname.pojo.ProjectNameDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO;
+import com.newhero.urbanconstruction.codetablemaintain.segmentinfo.dao.SegmentInfoDao;
+import com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentInfoDTO;
+import com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentProjectDTO;
+import com.newhero.urbanconstruction.codetablemaintain.segmentinfo.service.SegmentInfoService;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+/**
+ * segmentInfoService 接口的实现类
+ * 
+ */
+@Transactional
+@Service("segmentInfoService")
+public class SegmentInfoServiceImpl implements SegmentInfoService {
+
+	@Resource
+	private SegmentInfoDao segmentInfoDao;
+	
+	@Resource
+	private ProjectNameDao projectNameDao;
+	
+	@Resource
+	private InvestmentTypeDao investmentTypeDao;
+	
+	@Override
+	public int getSegmentInfoCountByKeyword(BaseQueryVo dto) {
+		return segmentInfoDao.getSegmentInfoCountByKeyword(dto);
+	}
+
+	@Override
+	public List<SegmentInfoDTO> getSegmentInfoListByKeyword(BaseQueryVo dto) {
+		return segmentInfoDao.getSegmentInfoListByKeyword(dto);
+	}
+
+	@Override
+	public SegmentInfoDTO getSegmentInfoById(Integer id) {
+		return  segmentInfoDao.getSegmentInfoById(id);
+	}
+
+	@Override
+	public int updateSegmentInfoById(SegmentInfoDTO unit) {
+		return segmentInfoDao.updateSegmentInfoById(unit);
+	}
+
+	@Override
+	public int insertSegmentInfo(SegmentInfoDTO unit) {
+		ProjectNameDTO dto = projectNameDao.selectProjectNameById(unit.getProjectnameid());
+		InvestmentTypeDTO investmentTypeDTO = investmentTypeDao.getInvestmentTypeById(dto.getInvestmenttypeid());
+		segmentInfoDao.insertSegmentInfo(unit);
+		SegmentProjectDTO segmentProject = new SegmentProjectDTO();
+		segmentProject.setSegmentinfoid(unit.getId());
+		segmentProject.setOperatorid(unit.getOperatorid());
+		segmentProject.setEstimateamount(BigDecimal.ZERO);
+		segmentProject.setContractprice(BigDecimal.ZERO);
+		segmentProject.setBarrageprice(BigDecimal.ZERO);
+		segmentProject.setTotalappropriation(BigDecimal.ZERO);
+		segmentProject.setLappropriationratio(0.00d);
+		segmentProject.setOwepayment(BigDecimal.ZERO);
+		segmentProject.setSettlreviewamount(BigDecimal.ZERO);
+		segmentProject.setProjectid(unit.getProjectnameid());
+		segmentProject.setInvestmenttype(investmentTypeDTO.getInvestmenttype());
+		return segmentInfoDao.insertSegmentProject(segmentProject);
+	}
+	
+	@Override
+	public int insertSegmentInfoForHistroy(SegmentInfoDTO unit) {
+		/*ProjectNameDTO dto = projectNameDao.selectProjectNameById(unit.getProjectnameid());
+		InvestmentTypeDTO investmentTypeDTO = investmentTypeDao.getInvestmentTypeById(dto.getInvestmenttypeid());
+		segmentInfoDao.insertSegmentInfo(unit);
+		SegmentProjectDTO segmentProject = new SegmentProjectDTO();
+		segmentProject.setSegmentinfoid(unit.getId());
+		segmentProject.setOperatorid(unit.getOperatorid());
+		segmentProject.setEstimateamount(BigDecimal.ZERO);
+		segmentProject.setContractprice(BigDecimal.ZERO);
+		segmentProject.setBarrageprice(BigDecimal.ZERO);
+		segmentProject.setTotalappropriation(BigDecimal.ZERO);
+		segmentProject.setLappropriationratio(0.00d);
+		segmentProject.setOwepayment(BigDecimal.ZERO);
+		segmentProject.setSettlreviewamount(BigDecimal.ZERO);
+		segmentProject.setProjectid(unit.getProjectnameid());
+		segmentProject.setInvestmenttype(investmentTypeDTO.getInvestmenttype());
+		return segmentInfoDao.insertSegmentProject(segmentProject);*/
+		return segmentInfoDao.insertSegmentInfo(unit);
+	}
+
+	@Override
+	public int delSegmentInfobyIds(String[] ids, int userid) {
+		int rs = 0;
+		for(String id:ids){
+			SegmentInfoDTO unit = new SegmentInfoDTO();
+			unit.setId(Integer.parseInt(id));
+			unit.setOperatorid(userid);
+			rs += segmentInfoDao.delSegmentInfoId(unit);
+		}
+		return rs;
+	}
+
+	public List<ProjectYearDTO> selectUsedProjectYears(){
+		return segmentInfoDao.selectUsedProjectYears();
+	}
+
+	@Override
+	public int countApp(int id) {
+		
+		return segmentInfoDao.countApp(id);
+	}
+
+	@Override
+	public SegmentInfoDTO getSegmentInfoByName(String constructionNameTemp,String projectNameTemp,String costtypeTemp,String segmentName) {
+		Map<String,String> map=new HashMap<String,String>();
+		map.put("constructionNameTemp", constructionNameTemp);
+		map.put("projectNameTemp", projectNameTemp);
+		map.put("costtypeTemp", costtypeTemp);
+		map.put("segmentName", segmentName);
+		return segmentInfoDao.getSegmentInfoByName(map);
+	}
+
+	@Override
+	public List<SegmentInfoDTO> selectSegmentInfoByDifferentYearidUnitIdProjectNameIdCosttypeid(String projectyear,
+			String unitname, String projectname, String costtype, String segmentname) {
+		return segmentInfoDao.selectSegmentInfoByDifferentYearidUnitIdProjectNameIdCosttypeid(projectyear, unitname, projectname, costtype, segmentname)
+				;
+	}
+
+	@Override
+	public int insertSegmentInfoForHistroyNew(SegmentInfoDTO unit) {
+		return segmentInfoDao.insertSegmentInfoForHistoryNew(unit);
+	}
+
+
+}

@@ -1,0 +1,80 @@
+package com.newhero.urbanconstruction.codetablemaintain.constructionunit.pojo;
+
+import java.util.Date;
+
+/**
+ * 建设单位表实体类
+ * 对应数据表dm_constructionunit
+ * author:zzp
+ */
+public class ConstructionunitDTO {
+
+	private Integer id;
+	private Integer yearId;
+	private String unitName;//单位名称
+	private String unitShortName;//单位简称
+	private String briefInfo;//简要信息
+	private String remark;
+	private Integer isdelete;
+	private Integer operatorid;
+	private Date operationtime;
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public Integer getYearId() {
+		return yearId;
+	}
+	public void setYearId(Integer yearId) {
+		this.yearId = yearId;
+	}
+	public String getUnitName() {
+		return unitName;
+	}
+	public void setUnitName(String unitName) {
+		this.unitName = unitName;
+	}
+	public String getUnitShortName() {
+		return unitShortName;
+	}
+	public void setUnitShortName(String unitShortName) {
+		this.unitShortName = unitShortName;
+	}
+	public String getBriefInfo() {
+		return briefInfo;
+	}
+	public void setBriefInfo(String briefInfo) {
+		this.briefInfo = briefInfo;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public Integer getIsdelete() {
+		return isdelete;
+	}
+	public void setIsdelete(Integer isdelete) {
+		this.isdelete = isdelete;
+	}
+	public Integer getOperatorid() {
+		return operatorid;
+	}
+	public void setOperatorid(Integer operatorid) {
+		this.operatorid = operatorid;
+	}
+	public Date getOperationtime() {
+		return operationtime;
+	}
+	public void setOperationtime(Date operationtime) {
+		this.operationtime = operationtime;
+	}
+	
+	
+	
+	
+	
+}

@@ -1,0 +1,67 @@
+package com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo;
+/**
+ * 标段信息表实体类
+ * 对应数据表dm_segmentinfo
+ * author:zzp
+ */
+public class SegmentInfoDTO {
+
+	private Integer id;
+	private Integer yearid;
+	private Integer constructionid;
+	private Integer projectnameid;
+	private Integer costtypeid;
+	private String segmentname;
+	private String remark;
+	private Integer operatorid;
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public Integer getYearid() {
+		return yearid;
+	}
+	public void setYearid(Integer yearid) {
+		this.yearid = yearid;
+	}
+	public Integer getConstructionid() {
+		return constructionid;
+	}
+	public void setConstructionid(Integer constructionid) {
+		this.constructionid = constructionid;
+	}
+	public Integer getProjectnameid() {
+		return projectnameid;
+	}
+	public void setProjectnameid(Integer projectnameid) {
+		this.projectnameid = projectnameid;
+	}
+	public Integer getCosttypeid() {
+		return costtypeid;
+	}
+	public void setCosttypeid(Integer costtypeid) {
+		this.costtypeid = costtypeid;
+	}
+	public String getSegmentname() {
+		return segmentname;
+	}
+	public void setSegmentname(String segmentname) {
+		this.segmentname = segmentname;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public Integer getOperatorid() {
+		return operatorid;
+	}
+	public void setOperatorid(Integer operatorid) {
+		this.operatorid = operatorid;
+	}
+	
+	
+}

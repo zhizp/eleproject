@@ -1,0 +1,32 @@
+package com.newhero.urbanconstruction.importhistorydata.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.newhero.urbanconstruction.importhistorydata.dao.HistorydataDao;
+import com.newhero.urbanconstruction.importhistorydata.pojo.ImportdataDTO;
+import com.newhero.urbanconstruction.importhistorydata.service.HistorydataService;
+
+@Transactional
+@Service("historydataService")
+public class HistorydataServiceImpl implements HistorydataService {
+
+	@Resource
+	private HistorydataDao historydataDao;
+	public HistorydataDao getHistorydataDao() {
+		return historydataDao;
+	}
+	
+	public List<ImportdataDTO> selectAllHistoryData(){
+		List<ImportdataDTO> list=historydataDao.selectAllHistoryData();
+		return list;
+	}
+	
+	public int updateImportData(ImportdataDTO importdataDTO) {
+		return historydataDao.updateImportData(importdataDTO);
+	}
+}

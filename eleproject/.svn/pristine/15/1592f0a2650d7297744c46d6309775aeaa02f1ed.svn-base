@@ -1,0 +1,47 @@
+package com.newhero.urbanconstruction.sysmanager.menu.pojo;
+/**
+ * 菜单表实体类
+ * 对应数据表sys_menu
+ * author:zzp
+ */
+public class MenuDTO {
+
+	private String id;
+	private String menuName;
+	private String url;
+	private String parantMenuId;
+	private Character state;
+	
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getMenuName() {
+		return menuName;
+	}
+	public void setMenuName(String menuName) {
+		this.menuName = menuName;
+	}
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	public String getParantMenuId() {
+		return parantMenuId;
+	}
+	public void setParantMenuId(String parantMenuId) {
+		this.parantMenuId = parantMenuId;
+	}
+	public Character getState() {
+		return state;
+	}
+	public void setState(Character state) {
+		this.state = state;
+	}
+	
+}

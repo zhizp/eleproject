@@ -1,0 +1,71 @@
+package com.newhero.urbanconstruction.codetablemaintain.costtype.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.transaction.Transactional;
+
+import org.springframework.stereotype.Service;
+
+import com.newhero.urbanconstruction.codetablemaintain.constructionunit.pojo.ConstructionunitDTO;
+import com.newhero.urbanconstruction.codetablemaintain.costtype.dao.CostTypeDao;
+import com.newhero.urbanconstruction.codetablemaintain.costtype.pojo.CostTypeDTO;
+import com.newhero.urbanconstruction.codetablemaintain.costtype.service.CostTypeService;
+import com.newhero.urbanconstruction.codetablemaintain.projectname.pojo.ProjectNameDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+/**
+ * CostTypeService 接口实现类
+ */
+@Transactional
+@Service("costTypeService")
+public class CostTypeServiceImpl implements CostTypeService{
+	@Resource
+	private CostTypeDao costTypeDao;
+	
+	public CostTypeDTO getCostTypeId(int id){
+		return this.costTypeDao.selectCostTypeById(id);
+	}
+	
+	@Override
+	public void saveCostType(CostTypeDTO costType) {
+		this.costTypeDao.saveCostType(costType);
+	}
+	
+	@Override
+	public void updateCostType(CostTypeDTO costType){
+		this.costTypeDao.updateCostType(costType);
+	}
+	
+	@Override
+	public void deleteCostType(CostTypeDTO costType){
+		this.costTypeDao.deleteCostType(costType);
+	}
+	
+	public List<CostTypeDTO> selectCostTypes(BaseQueryVo dto){
+		return costTypeDao.selectCostTypes(dto);
+	}
+	public int selectCostTypeCountByKeyword(BaseQueryVo dto) {
+		return costTypeDao.selectCostTypeCountByKeyword(dto);
+	}
+	public List<ProjectYearDTO> selectProjectYears(){
+		return costTypeDao.selectProjectYears();
+	}
+	public List<ProjectNameDTO> selectProjectNames(){
+		return costTypeDao.selectProjectNames();
+	}
+	public List<ConstructionunitDTO> selectconstructions(){
+		return costTypeDao.selectconstructions();
+	}
+	
+	public List<CostTypeDTO> selectCostTypeByName(String costType){
+		return costTypeDao.selectCostTypeByName(costType);
+	}
+
+	@Override
+	public int selectCountSegmentByCosttypeId(int id) {
+		
+		return costTypeDao.selectCountSegmentByCosttypeId(id);
+	}
+}

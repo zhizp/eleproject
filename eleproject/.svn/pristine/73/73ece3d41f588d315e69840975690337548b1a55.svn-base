@@ -1,0 +1,33 @@
+package com.newhero.urbanconstruction.sysmanager.rolemenu.pojo;
+/**
+ * 角色菜单表实体类
+ * 对应数据表sys_role_menu
+ * author:zzp
+ */
+public class RoleMenuDTO {
+
+	private String id;
+	private String roleId;
+	private String menuId;
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getRoleId() {
+		return roleId;
+	}
+	public void setRoleId(String roleId) {
+		this.roleId = roleId;
+	}
+	public String getMenuId() {
+		return menuId;
+	}
+	public void setMenuId(String menuId) {
+		this.menuId = menuId;
+	}
+	
+	
+	
+}

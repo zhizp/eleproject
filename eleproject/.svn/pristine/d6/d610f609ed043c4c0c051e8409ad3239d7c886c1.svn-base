@@ -1,0 +1,103 @@
+package com.newhero.urbanconstruction.approval.pojo;
+/**
+ * 资金审批管理表实体类
+ * 对应数据表 capitalapproval
+ * @author mjj
+ */
+public class CapitalApprovalDTO {
+	private String id;
+	private String project;
+	private String conStructionNnit; 	//建设单位
+	private String payEeshortName;		//收款单位简称
+	private String appropriationContent; 	//拨款内容
+	private Double conTractPrice;	//合同价
+	private Double evaLuationPrice;		//评审价
+	private Double totalApproPriation;		//累计拨款
+	private Double lappropRiationRatio;		//拨付比例
+	private Double owePayMent;		//欠付款
+	private Double applicationAmount;		//申请金额
+	private Double applicationRatio;		//申请比例
+	private String remark;
+	
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getProject() {
+		return project;
+	}
+	public void setProject(String project) {
+		this.project = project;
+	}
+	public String getConStructionNnit() {
+		return conStructionNnit;
+	}
+	public void setConStructionNnit(String conStructionNnit) {
+		this.conStructionNnit = conStructionNnit;
+	}
+	public String getPayEeshortName() {
+		return payEeshortName;
+	}
+	public void setPayEeshortName(String payEeshortName) {
+		this.payEeshortName = payEeshortName;
+	}
+	public String getAppropriationContent() {
+		return appropriationContent;
+	}
+	public void setAppropriationContent(String appropriationContent) {
+		this.appropriationContent = appropriationContent;
+	}
+	public Double getConTractPrice() {
+		return conTractPrice;
+	}
+	public void setConTractPrice(Double conTractPrice) {
+		this.conTractPrice = conTractPrice;
+	}
+	public Double getEvaLuationPrice() {
+		return evaLuationPrice;
+	}
+	public void setEvaLuationPrice(Double evaLuationPrice) {
+		this.evaLuationPrice = evaLuationPrice;
+	}
+	public Double getTotalApproPriation() {
+		return totalApproPriation;
+	}
+	public void setTotalApproPriation(Double totalApproPriation) {
+		this.totalApproPriation = totalApproPriation;
+	}
+	public Double getLappropRiationRatio() {
+		return lappropRiationRatio;
+	}
+	public void setLappropRiationRatio(Double lappropRiationRatio) {
+		this.lappropRiationRatio = lappropRiationRatio;
+	}
+	public Double getOwePayMent() {
+		return owePayMent;
+	}
+	public void setOwePayMent(Double owePayMent) {
+		this.owePayMent = owePayMent;
+	}
+	public Double getApplicationAmount() {
+		return applicationAmount;
+	}
+	public void setApplicationAmount(Double applicationAmount) {
+		this.applicationAmount = applicationAmount;
+	}
+	public Double getApplicationRatio() {
+		return applicationRatio;
+	}
+	public void setApplicationRatio(Double applicationRatio) {
+		this.applicationRatio = applicationRatio;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	
+}

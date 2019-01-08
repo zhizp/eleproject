@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.newhero.urbanconstruction.common.dao.LoginDao">
+	<resultMap id="BaseResultMap" type="com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO">
+		<id column="id" property="id" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="username" property="username" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="INTEGER" />
+		<result column="roleId" property="roleId" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="selectUser" resultMap="BaseResultMap" parameterType="com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO">
+		select * from sys_user where name = #{name} and password=#{password}
+	</select>
+	<select id="selectMenuState" resultType="java.lang.String" parameterType="com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO">
+		select menuState from sys_role where id = #{roleId} 
+	</select>
+	<select id="getUserDTOByName" resultMap="BaseResultMap">
+		select * from sys_user where name = #{name}
+	</select>
+	
+</mapper>

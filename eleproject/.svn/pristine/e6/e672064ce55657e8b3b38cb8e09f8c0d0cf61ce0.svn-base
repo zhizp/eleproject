@@ -1,0 +1,24 @@
+package com.newhero.urbanconstruction.codetablemaintain.archivestype.dao;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.codetablemaintain.archivestype.pojo.ArchivesType;
+
+public interface ArchivesTypeDaO {
+	/**
+	 * 
+	 * @param dto
+	 * @return
+	 */
+	public int addCotegory(ArchivesType dto);
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public List<ArchivesType> selectTheArchivesType();
+	
+	public int deleteCotegory(String[] ids);
+	
+	public int updateCotegory(ArchivesType archivesType);
+}

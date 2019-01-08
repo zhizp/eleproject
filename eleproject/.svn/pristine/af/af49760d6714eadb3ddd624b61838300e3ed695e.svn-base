@@ -1,0 +1,27 @@
+package com.newhero.urbanconstruction.common.dao;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.common.pojo.ConstructionUnitCasDTO;
+import com.newhero.urbanconstruction.common.pojo.CostTypeCasDTO;
+import com.newhero.urbanconstruction.common.pojo.ProjectNameCasDTO;
+import com.newhero.urbanconstruction.common.pojo.UnitAccountCasDTO;
+
+public interface InfoCascadeDao {
+
+	public List<ConstructionUnitCasDTO> getConstructionUnitInfoByYearId(Integer id);
+	
+	public int getConstructionUnitNumByYearId(Integer id);
+	
+	public List<ProjectNameCasDTO> getProjectNameInfoByUnitId(Integer id);
+	
+	public int getProjectNameNumByUnitId(Integer id);
+	
+	public List<CostTypeCasDTO> getCostTypeListByProjId(Integer id);
+	
+	public int getCostTypeNumByProjId(Integer id);
+	
+	public int getSegmentListByCostTypeId(Integer id);
+	
+	public List<UnitAccountCasDTO> getUnitAccountListByUnitInfoId(Integer id);
+}

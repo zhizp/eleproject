@@ -1,0 +1,140 @@
+package com.newhero.urbanconstruction.codetablemaintain.archivestype.controller;
+
+import java.net.URLEncoder;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.newhero.urbanconstruction.codetablemaintain.archivestype.pojo.ArchivesType;
+import com.newhero.urbanconstruction.codetablemaintain.archivestype.service.ArchivesTypeService;
+import com.newhero.urbanconstruction.common.SupportAction;
+import com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO;
+
+@Controller
+@RequestMapping(value = "/archivesTypeController")
+public class ArchivesTypeController extends SupportAction {
+
+	/**
+     * 向用户登录页面跳转
+     */
+	
+	@Resource
+	private ArchivesTypeService archivesTypeService;
+	
+    @RequestMapping(value = "/toArchivesType")
+    public String toArchivesType(Integer pageSize, Integer pageNumber, Model model, HttpServletResponse response, 
+    		HttpServletRequest request, String keyword){
+    	UserDTO userDto = (UserDTO)request.getSession().getAttribute("USER_SESSION");
+    	// 分页查询
+    	ArchivesType temp = new ArchivesType();
+    	temp.setKeyword(keyword);
+    	if(pageNumber == null){
+    		pageNumber = 1;
+    	} 
+    	if(pageSize == null){
+    		pageSize = 10;
+    	}
+    	PageHelper.startPage(pageNumber, pageSize);
+//    	List<ArchivesType> archivesTypeList = archivesTypeService.selectTheArchivesType();
+    	List<ArchivesType> archivesTypeList = archivesTypeService.selectByKeyword(temp);
+		PageInfo<ArchivesType> pageInfoArchivesType= new PageInfo<>(archivesTypeList);
+    	model.addAttribute("userDto", userDto);
+    	model.addAttribute("pageInfoArchivesType", pageInfoArchivesType.getList());
+    	model.addAttribute("pageNumber", pageInfoArchivesType.getPageNum());
+    	model.addAttribute("pageSize", pageInfoArchivesType.getPageSize());
+    	model.addAttribute("archivesTypeListSize", pageInfoArchivesType.getList().size());
+    	model.addAttribute("keyword", keyword);
+        return  "dm_CodeTable/FileCategory";
+    }
+    
+    @RequestMapping(value = "/addCotegory", method = RequestMethod.POST)
+    @ResponseBody
+    public int addCotegory(ArchivesType archivesType){
+    	return archivesTypeService.addCotegory(archivesType);
+    }
+    
+    @RequestMapping(value = "/deleteCotegory", method = RequestMethod.POST)
+    @ResponseBody
+    public int deleteCotegory(String[] ids){
+    	return archivesTypeService.deleteCotegory(ids);
+    }
+    
+    @RequestMapping(value = "/updateCotegory", method = RequestMethod.POST)
+    @ResponseBody
+    public int updateCotegory(ArchivesType archivesType){
+    	return archivesTypeService.updateCotegory(archivesType);
+    }
+    
+    @RequestMapping(value = "/exportFile")
+    public void exportFile(HttpServletResponse response, HttpServletRequest request, String keyword) throws Exception {
+    	ArchivesType tempType = new ArchivesType();
+    	tempType.setKeyword(keyword);
+    	List<ArchivesType> list = archivesTypeService.selectByKeyword(tempType);
+    	//设置输出头信息
+    	response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+    	//设置输出文件名称
+    	String filename = "档案类别.xls";
+    	//设置HTTP响应头
+    	//设置HTTP响应的头
+		String t = request.getHeader("User-Agent");
+		if (t.indexOf("Firefox") > 0) {
+			response.setHeader("Content-disposition", "attachment;filename="
+					+ new String(filename.getBytes("gb2312"), "ISO8859-1"));
+		} else {
+			response.setHeader("Content-disposition", "attachment;filename="
+					+ URLEncoder.encode(filename, "UTF-8"));
+		}
+		ServletOutputStream stream = response.getOutputStream();
+		
+		//创建工作薄
+		HSSFWorkbook book = new HSSFWorkbook();
+		//创建新Sheet
+		HSSFSheet sheet = book.createSheet("档案类别");
+		//创建Row
+		HSSFRow row = sheet.createRow(0);
+		//创建Cell
+		HSSFCell cell0 = row.createCell(0);
+		cell0.setCellValue("序号");
+		
+		HSSFCell cell1 = row.createCell(1);
+		cell1.setCellValue("类别");
+		
+		HSSFCell cell2 = row.createCell(2);
+		cell2.setCellValue("备注");
+		
+		for(int i = 0; i < list.size(); i++){
+			ArchivesType temp = list.get(i);
+			HSSFRow rownext = sheet.createRow(i + 1);
+			rownext.createCell(0).setCellValue(i+1);
+			rownext.createCell(1).setCellValue(temp.getArchivesType());
+			rownext.createCell(2).setCellValue(temp.getRemark());
+		}
+		
+		book.write(stream);
+		stream.flush();
+		stream.close();
+    }
+    
+    @RequestMapping(value = "/selectByKeyword", method = RequestMethod.GET)
+    public String selectByKeyword(ArchivesType archivesType, Model model){
+    	List<ArchivesType> typeList = archivesTypeService.selectByKeyword(archivesType);
+    	model.addAttribute("pageInfoArchivesType", typeList);
+    	return "dm_CodeTable/FileCategory";
+    }
+   
+}

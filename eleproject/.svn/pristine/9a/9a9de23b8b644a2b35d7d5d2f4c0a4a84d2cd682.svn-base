@@ -1,0 +1,38 @@
+package com.newhero.urbanconstruction.common.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.newhero.urbanconstruction.common.dao.LoginDao;
+import com.newhero.urbanconstruction.common.service.LoginService;
+import com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO;
+
+@Transactional
+@Service("loginService")
+public class LoginServiceImpl implements LoginService {
+	@Resource
+	private LoginDao loginDao;	
+	
+	@Override
+	public boolean checkPwdByUser() {
+		return false;
+	}
+	@Override
+	public UserDTO selectUser(UserDTO user) {
+		return loginDao.selectUser(user);
+	}
+	
+	public String selectMenuState(UserDTO user) {
+		return loginDao.selectMenuState(user);
+	}
+
+	public List<UserDTO> getUserDTOByName(String username) {
+		
+		return loginDao.getUserDTOByName(username);
+	}
+
+}

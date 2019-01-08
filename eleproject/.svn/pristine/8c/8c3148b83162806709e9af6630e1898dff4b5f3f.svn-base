@@ -1,0 +1,37 @@
+package com.newhero.urbanconstruction.codetablemaintain.archivestype.controller;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.newhero.urbanconstruction.codetablemaintain.archivestype.pojo.ArchivesType;
+import com.newhero.urbanconstruction.codetablemaintain.archivestype.service.ArchivesTypeService;
+import com.newhero.urbanconstruction.common.SupportAction;
+
+@Controller
+@RequestMapping(value = "/archivesTypeController")
+public class ArchivesTypeController extends SupportAction {
+
+	/**
+     * 向用户登录页面跳转
+     */
+	
+	@Resource
+	private ArchivesTypeService archivesTypeService;
+	
+    @RequestMapping(value = "/toArchivesType")
+    public String toArchivesType(){
+        return  "dm_CodeTable/FileCategory";
+    }
+    
+    @RequestMapping(value = "/addCotegory", method = RequestMethod.POST)
+    @ResponseBody
+    public int addCotegory(ArchivesType dto){
+    	return archivesTypeService.addCotegory(dto);
+    }
+
+   
+}

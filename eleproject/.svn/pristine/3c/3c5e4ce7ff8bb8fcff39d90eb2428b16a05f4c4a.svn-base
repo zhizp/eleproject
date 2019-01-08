@@ -1,0 +1,372 @@
+package com.newhero.urbanconstruction.apply.pojo;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+public class AppropriationApprovalDTO {
+	private int id;
+	/**项目名称*/
+	private String projectname;
+	/**施工单位*/
+	private String constructionUnit;
+	/**设计单位*/
+	private String designUnit;
+	/**监理单位*/
+	private String supervisionUnit;	
+	/**收款单位*/
+	private String payee;
+	/**收款账户*/
+	private String receivableAccount;
+	/**拨款内容*/
+	private String appropriationcontent;
+	
+	/**合同金额*/
+	private BigDecimal contractprice;
+	/**评审金额*/
+	private BigDecimal settlreviewamount;
+	/**拦标价格*/
+	private BigDecimal barrageprice;
+	/**累计拨款金额*/
+	private BigDecimal totalappropriation;
+	/**拨款比例*/
+	private Double lappropriationratio;
+	/**欠付款*/
+	private BigDecimal owepayment;
+	/**申请金额*/
+	private BigDecimal applicationamount;
+	/**申请比例*/
+	private Double applicationRatio;
+	/**审批比例*/
+	private Double approvalRatio;
+	/**备注*/
+	private String remark;
+	private int operatorid;
+	private int state;
+	private int segmentprojectid;
+	private String unitname;
+	
+	private BigDecimal estimateamount;
+	/**受理撤销受理处理人*/
+	private Integer acceptorid;
+	/**受理、撤销受理时间*/
+	private Date acceptortime;
+	/**审批撤销审批处理人*/
+	private Integer approvalerid;
+	/**审批、撤销审批时间*/
+	private Date approvaltime;
+	/**拨款撤销拨款处理人*/
+	private Integer granterid;
+	/**拨款、撤销拨款时间*/
+	private Date granttime;
+	/**项目年度*/
+	private String projectyear;
+	
+	private BigDecimal approvalamount;
+	private String appropriationaccount;
+	private String applicationdate;
+	private String receivablenumber;
+	private String source;
+	
+	
+	
+	public String getSource() {
+		return source;
+	}
+	public void setSource(String source) {
+		this.source = source;
+	}
+	public BigDecimal getBarrageprice() {
+		return barrageprice;
+	}
+	public void setBarrageprice(BigDecimal barrageprice) {
+		this.barrageprice = barrageprice;
+	}
+	public String getReceivablenumber() {
+		return receivablenumber;
+	}
+	public void setReceivablenumber(String receivablenumber) {
+		this.receivablenumber = receivablenumber;
+	}
+	public String getApplicationdate() {
+		return applicationdate;
+	}
+	public void setApplicationdate(String applicationdate) {
+		this.applicationdate = applicationdate;
+	}
+	public BigDecimal getApprovalamount() {
+		return approvalamount;
+	}
+	public BigDecimal getApprovalamountbywy() {
+		return approvalamount!=null?approvalamount.divide(new BigDecimal(10000)):BigDecimal.ZERO;
+	}
+	public void setApprovalamount(BigDecimal approvalamount) {
+		this.approvalamount = approvalamount;
+	}
+	public String getAppropriationaccount() {
+		return appropriationaccount;
+	}
+	public void setAppropriationaccount(String appropriationaccount) {
+		this.appropriationaccount = appropriationaccount;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getConstructionUnit() {
+		return constructionUnit;
+	}
+	public void setConstructionUnit(String constructionUnit) {
+		this.constructionUnit = constructionUnit;
+	}
+	public String getDesignUnit() {
+		return designUnit;
+	}
+	public void setDesignUnit(String designUnit) {
+		this.designUnit = designUnit;
+	}
+	public String getSupervisionUnit() {
+		return supervisionUnit;
+	}
+	public void setSupervisionUnit(String supervisionUnit) {
+		this.supervisionUnit = supervisionUnit;
+	}
+	public String getPayee() {
+		return payee;
+	}
+	public void setPayee(String payee) {
+		this.payee = payee;
+	}
+	public String getReceivableAccount() {
+		return receivableAccount;
+	}
+	public void setReceivableAccount(String receivableAccount) {
+		this.receivableAccount = receivableAccount;
+	}
+	public String getAppropriationcontent() {
+		return appropriationcontent;
+	}
+	public void setAppropriationcontent(String appropriationcontent) {
+		this.appropriationcontent = appropriationcontent;
+	}
+	public String getProjectname() {
+		return projectname;
+	}
+	public void setProjectname(String projectname) {
+		this.projectname = projectname;
+	}
+	//转换为万元
+	public BigDecimal getContractpricebywy() {
+		return contractprice!=null?contractprice.divide(new BigDecimal(10000)):BigDecimal.ZERO;
+	}
+	public BigDecimal getContractprice() {
+		return contractprice;
+	}
+	public void setContractprice(BigDecimal contractprice) {
+		this.contractprice = contractprice;
+	}
+	//转换为万元
+	public BigDecimal getTotalappropriationbywy() {
+		return totalappropriation!=null?totalappropriation.divide(new BigDecimal(10000)):BigDecimal.ZERO;
+	}
+	public BigDecimal getTotalappropriation() {
+		return totalappropriation;
+	}
+	public void setTotalappropriation(BigDecimal totalappropriation) {
+		this.totalappropriation = totalappropriation;
+	}
+	public Double getLappropriationratio() {
+		 /*<c:choose>
+	     	<c:when test="${approval.totalappropriation!=null&&(approval.settlreviewamount!=null && approval.settlreviewamount>0)}">
+	     		<fmt:formatNumber type="number" value="${approval.totalappropriation/approval.settlreviewamount * 100}" pattern="######0.00" maxIntegerDigits="6" maxFractionDigits="2"/>
+	     	</c:when>
+	     	<c:when test="${approval.totalappropriation!=null && approval.contractprice!=null && approval.contractprice>0}">
+	     		<fmt:formatNumber type="number" value="${approval.totalappropriation/approval.contractprice * 100}" pattern="######0.00" maxIntegerDigits="6" maxFractionDigits="2"/>
+	     	</c:when>
+	     	<c:when test="${approval.totalappropriation!=null &&  approval.barrageprice!=null && approval.barrageprice>0}">
+	     		<fmt:formatNumber type="number" value="${approval.totalappropriation/approval.barrageprice * 100}" pattern="######0.00" maxIntegerDigits="6" maxFractionDigits="2"/>
+	     	</c:when>
+	     	<c:otherwise>0.00</c:otherwise>
+	     </c:choose>*/
+		if(this.totalappropriation!=null && !this.totalappropriation.toString().equals("0.00")) {
+			if(this.settlreviewamount!=null && !this.settlreviewamount.toString().equals("0.00")) {
+				lappropriationratio=this.totalappropriation.divide(this.settlreviewamount,4,BigDecimal.ROUND_HALF_UP).doubleValue();
+			}else if(this.contractprice!=null && !this.contractprice.toString().equals("0.00")){
+				lappropriationratio=this.totalappropriation.divide(this.contractprice,4, BigDecimal.ROUND_HALF_UP).doubleValue();
+			}else if(this.barrageprice!=null && !this.barrageprice.toString().equals("0.00")){
+				lappropriationratio=this.totalappropriation.divide(this.barrageprice,4, BigDecimal.ROUND_HALF_UP).doubleValue();
+			}else {
+				lappropriationratio=0.00;
+			}
+		}else {
+			lappropriationratio=0.00;
+		}
+		return lappropriationratio*100;
+	}
+	public void setLappropriationratio(Double lappropriationratio) {
+		this.lappropriationratio = lappropriationratio;
+	}
+	public Double getApprovalRatio() {
+		/*<c:if test="${approval.approvalamount!=null&&(approval.settlreviewamount!=null && approval.settlreviewamount>0)}">
+		<fmt:formatNumber type="number" value="${approval.approvalamount/approval.settlreviewamount * 100}" pattern="######0.00" maxIntegerDigits="6" maxFractionDigits="2"/>
+		</c:if>
+		<c:if test="${approval.approvalamount==null||approval.settlreviewamount==null || approval.settlreviewamount<0.01}">
+		0.00</c:if>*/
+		if(this.approvalamount!=null && !this.approvalamount.toString().equals("0.00")) {
+			if(this.settlreviewamount!=null && !this.settlreviewamount.toString().equals("0.00")) {
+				approvalRatio=this.approvalamount.divide(this.settlreviewamount,4,BigDecimal.ROUND_HALF_UP).doubleValue();
+			}else if(this.contractprice!=null && !this.contractprice.toString().equals("0.00")){
+				approvalRatio=this.approvalamount.divide(this.contractprice,4, BigDecimal.ROUND_HALF_UP).doubleValue();
+			}else if(this.barrageprice!=null && !this.barrageprice.toString().equals("0.00")){
+				approvalRatio=this.approvalamount.divide(this.barrageprice,4, BigDecimal.ROUND_HALF_UP).doubleValue();
+			}else {
+				approvalRatio=0.00;
+			}
+		}else {
+			approvalRatio=0.00;
+		}
+		return approvalRatio*100;
+	}
+	public void setApprovalRatio(Double approvalRatio) {
+		this.approvalRatio = approvalRatio;
+	}
+	//转换为万元
+	public BigDecimal getOwepaymentbywy() {
+		return owepayment!=null?owepayment.divide(new BigDecimal(10000)):BigDecimal.ZERO;
+	}
+	public BigDecimal getOwepayment() {
+		return owepayment;
+	}
+	public void setOwepayment(BigDecimal owepayment) {
+		this.owepayment = owepayment;
+	}
+	//转换为万元
+	public BigDecimal getApplicationamountbywy() {
+		return applicationamount!=null?applicationamount.divide(new BigDecimal(10000)):BigDecimal.ZERO;
+	}
+	public BigDecimal getApplicationamount() {
+		return applicationamount;
+	}
+	public void setApplicationamount(BigDecimal applicationamount) {
+		this.applicationamount = applicationamount;
+	}
+	public Double getApplicationRatio() {
+		if(this.applicationamount!=null && !this.applicationamount.toString().equals("0.00")) {
+			if(this.settlreviewamount!=null && !this.settlreviewamount.toString().equals("0.00")) {
+				applicationRatio=this.applicationamount.divide(this.settlreviewamount,4,BigDecimal.ROUND_HALF_UP).doubleValue();
+			}else if(this.contractprice!=null && !this.contractprice.toString().equals("0.00")){
+				applicationRatio=this.applicationamount.divide(this.contractprice,4, BigDecimal.ROUND_HALF_UP).doubleValue();
+			}else if(this.barrageprice!=null && !this.barrageprice.toString().equals("0.00")){
+				applicationRatio=this.applicationamount.divide(this.barrageprice,4, BigDecimal.ROUND_HALF_UP).doubleValue();
+			}else {
+				applicationRatio=0.00;
+			}
+		}else {
+			applicationRatio=0.00;
+		}
+		return applicationRatio*100;
+	}
+	public void setApplicationRatio(Double applicationRatio) {
+		this.applicationRatio = applicationRatio;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public int getState() {
+		return state;
+	}
+	public void setState(int state) {
+		this.state = state;
+	}
+	public int getOperatorid() {
+		return operatorid;
+	}
+	public void setOperatorid(int operatorid) {
+		this.operatorid = operatorid;
+	}
+	//转换为万元
+	public BigDecimal getSettlreviewamountbywy() {
+		return settlreviewamount!=null?settlreviewamount.divide(new BigDecimal(10000)):BigDecimal.ZERO;
+	}
+	public BigDecimal getSettlreviewamount() {
+		return settlreviewamount;
+	}
+	public void setSettlreviewamount(BigDecimal settlreviewamount) {
+		this.settlreviewamount = settlreviewamount;
+	}
+	public int getSegmentprojectid() {
+		return segmentprojectid;
+	}
+	public void setSegmentprojectid(int segmentprojectid) {
+		this.segmentprojectid = segmentprojectid;
+	}
+	public String getUnitname() {
+		return unitname;
+	}
+	public void setUnitname(String unitname) {
+		this.unitname = unitname;
+	}
+	//转换为万元
+	public BigDecimal getEstimateamountbywy() {
+		return estimateamount!=null?estimateamount.divide(new BigDecimal(10000)):BigDecimal.ZERO;
+	}
+	public BigDecimal getEstimateamount() {
+		return estimateamount;
+	}
+	public void setEstimateamount(BigDecimal estimateamount) {
+		this.estimateamount = estimateamount;
+	}	
+	
+	
+	public Integer getAcceptorid() {
+		return acceptorid;
+	}
+	public void setAcceptorid(Integer acceptorid) {
+		this.acceptorid = acceptorid;
+	}
+	public Date getAcceptortime() {
+		return acceptortime;
+	}
+	public void setAcceptortime(Date acceptortime) {
+		this.acceptortime = acceptortime;
+	}
+	public Integer getApprovalerid() {
+		return approvalerid;
+	}
+	public void setApprovalerid(Integer approvalerid) {
+		this.approvalerid = approvalerid;
+	}
+	public Date getApprovaltime() {
+		return approvaltime;
+	}
+	public void setApprovaltime(Date approvaltime) {
+		this.approvaltime = approvaltime;
+	}
+	public Integer getGranterid() {
+		return granterid;
+	}
+	public void setGranterid(Integer granterid) {
+		this.granterid = granterid;
+	}
+	public Date getGranttime() {
+		return granttime;
+	}
+	public void setGranttime(Date granttime) {
+		this.granttime = granttime;
+	}
+	
+	public String getProjectyear() {
+		return projectyear;
+	}
+	public void setProjectyear(String projectyear) {
+		this.projectyear = projectyear;
+	}
+	public static void main(String[] args) {
+		java.text.DecimalFormat decimalWyformat=new java.text.DecimalFormat("0.000000");
+		System.out.println(decimalWyformat.format(new BigDecimal(3555543.78).divide(new BigDecimal(10000))));
+	}
+}

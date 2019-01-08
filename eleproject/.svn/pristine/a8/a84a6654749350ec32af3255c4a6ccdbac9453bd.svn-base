@@ -1,0 +1,13 @@
+package com.newhero.urbanconstruction.common.service;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO;
+
+public interface LoginService {
+
+	public boolean checkPwdByUser();
+	public UserDTO selectUser(UserDTO user);
+	public String selectMenuState(UserDTO user);
+	public List<UserDTO> getUserDTOByName(String username);
+}

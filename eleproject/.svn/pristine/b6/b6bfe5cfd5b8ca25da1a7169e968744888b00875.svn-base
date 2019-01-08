@@ -1,0 +1,40 @@
+package com.newhero.urbanconstruction.codetablemaintain.archivestype.pojo;
+/**
+ * 档案类别实体类
+ * 对应数据表 dm_archivestype
+ * @author mjj
+ *
+ */
+public class ArchivesType {
+	private String id;
+	private String code;
+	private String archivesType;
+	private String remark;
+	
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	public String getArchivesType() {
+		return archivesType;
+	}
+	public void setArchivesType(String archivesType) {
+		this.archivesType = archivesType;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	
+}

@@ -1,0 +1,15 @@
+package com.newhero.urbanconstruction.codetablemaintain.allocationsaccount.service;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.codetablemaintain.allocationsaccount.pojo.AllocationsAccountDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+public interface AllocationsAccountService {
+	public List<AllocationsAccountDTO>selectAllocationsAccounts(BaseQueryVo dto);
+	public int selectAllocationsAccountCountByKeyword(BaseQueryVo dto) ;
+	public void deleteAllocationsAccountCount(AllocationsAccountDTO allocationsAccount);
+	public void updateAllocationsAccount(AllocationsAccountDTO allocationsAccountDTO);
+	public void saveAllocationsAccount(AllocationsAccountDTO allocationsAccountDTO);
+	public AllocationsAccountDTO selectAllocationsAccountById(int id);
+}

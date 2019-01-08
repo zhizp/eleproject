@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.newhero.urbanconstruction.apply.dao.AppropriationApplyDao">
+  	<select id="getApplyDataById" parameterType="java.lang.Integer" resultType="com.newhero.urbanconstruction.apply.pojo.AppropriationApply">
+  		select id,segmentProjectId,
+  				constructionUnit,
+  				designUnit,
+  				supervisionUnit,
+  				payee,
+  				receivableAccount,
+  				receivablenumber,
+  				appropriationContent,
+  				DATE_FORMAT(applicationDate, '%Y-%m-%d') as applicationDate,
+  				applicationAmount,
+  				remark,
+	  			appropriationaccount,
+	  			approvalamount from appropriationapply 
+	  			where id = #{id}
+  	</select>
+  	<select id="getApplyAllData" parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultType="java.util.Map">
+  		select id,segmentProjectId,
+  				constructionUnit,
+  				designUnit,
+  				supervisionUnit,
+  				payee,
+  				receivableAccount,
+  				appropriationContent,
+  				applicationDate,
+  				applicationAmount,
+  				remark,
+  				
+  				operatorId,
+  				(CASE WHEN (DATE_FORMAT(operationTime,'%Y-%m-%d')='0000-00-00')  THEN '' ELSE DATE_FORMAT(operationTime,'%Y-%m-%d')  END )as operationTime,
+  				 state,
+  				acceptorId,
+  				(CASE WHEN (DATE_FORMAT(acceptorTime,'%Y-%m-%d')='0000-00-00')  THEN '' ELSE DATE_FORMAT(acceptorTime,'%Y-%m-%d')  END )as acceptorTime,
+  				approvalerId,
+	  			(CASE WHEN (DATE_FORMAT(approvalTime,'%Y-%m-%d')='0000-00-00')  THEN '' ELSE DATE_FORMAT(approvalTime,'%Y-%m-%d')  END )as approvalTime,
+	  			granterId,
+	  			(CASE WHEN (DATE_FORMAT(granttime,'%Y-%m-%d')='0000-00-00')  THEN '' ELSE DATE_FORMAT(granttime,'%Y-%m-%d')  END )as grantTime,	
+	  			appropriationaccount,
+	  			approvalamount from appropriationapply  where isdelete=0 
+	  			<if test='keyword != null'>
+	  			and segmentprojectid=(select id from segmentproject where segmentinfoid=#{keyword})
+	  			</if>
+	  			<if test = "isall == null">
+	  				LIMIT #{startRow},#{pageSize}
+	  			</if>
+  	</select>
+  	<select id="getApplyAllData1" parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultType="java.util.Map">
+  		select id,segmentProjectId,
+  				constructionUnit,
+  				designUnit,
+  				supervisionUnit,
+  				payee,
+  				receivableAccount,
+  				receivablenumber,
+  				appropriationContent,
+  				applicationDate,
+  				applicationAmount,
+  				remark,
+  				
+  				operatorId,
+  				(CASE WHEN (DATE_FORMAT(operationTime,'%Y-%m-%d')='0000-00-00')  THEN '' ELSE DATE_FORMAT(operationTime,'%Y-%m-%d')  END )as operationTime,
+  				 state,
+  				acceptorId,
+  				(CASE WHEN (DATE_FORMAT(acceptorTime,'%Y-%m-%d')='0000-00-00')  THEN '' ELSE DATE_FORMAT(acceptorTime,'%Y-%m-%d')  END )as acceptorTime,
+  				approvalerId,
+	  			(CASE WHEN (DATE_FORMAT(approvalTime,'%Y-%m-%d')='0000-00-00')  THEN '' ELSE DATE_FORMAT(approvalTime,'%Y-%m-%d')  END )as approvalTime,
+	  			granterId,
+	  			(CASE WHEN (DATE_FORMAT(granttime,'%Y-%m-%d')='0000-00-00')  THEN '' ELSE DATE_FORMAT(granttime,'%Y-%m-%d')  END )as grantTime,	
+	  			appropriationaccount,
+	  			approvalamount 
+	  			from appropriationapply  where isdelete=0 
+	  			and segmentprojectid=(select id from segmentproject where segmentinfoid=#{keyword})
+  	</select>
+  	<select id="selectApplyCountByKeyword"  parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultType="java.lang.Integer">
+	select 
+		   count(*)
+		from appropriationapply where isdelete=0  
+		<if test='keyword != null'>
+		and segmentprojectid=(select id from segmentproject where segmentinfoid=#{keyword})
+		</if>
+	</select>
+	
+	<!-- selectApplyBySegmentId -->
+	<select id="selectApplyBySegmentId" parameterType="java.lang.String"
+			resultType="com.newhero.urbanconstruction.apply.pojo.AppropriationApply">
+			select * from appropriationapply where id = #{segmentid} and isdelete = 0
+	</select>
+	
+	<!-- selectApplyBySegmentProjectId -->
+	<select id="selectApplyBySegmentProjectId" parameterType="java.lang.String"
+			resultType="com.newhero.urbanconstruction.apply.pojo.AppropriationApply">
+			select * from appropriationapply where segmentprojectid = #{segmentprojectid} and isdelete = 0
+	</select>
+	
+  	<insert id="insertApplyData" parameterType="com.newhero.urbanconstruction.apply.pojo.AppropriationApply">
+  		insert into appropriationapply
+  			(
+  				segmentProjectId,
+  				constructionUnit,
+  				designUnit,
+  				supervisionUnit,
+  				payee,
+  				receivableAccount,
+  				receivablenumber,
+  				appropriationContent,
+  				applicationDate,
+  				applicationAmount,
+  				remark,
+  				
+  				operatorId,
+  				operationTime,
+  				state,
+	  			appropriationaccount,
+	  			source
+	  		) 
+	  		values(
+	  		(select id from  segmentproject where segmentinfoid=#{segmentinfoId}),
+  			#{constructionUnit},
+  			#{designUnit},
+  			#{supervisionUnit},
+  			#{payee},
+  			#{receivableAccount},
+  			#{receivablenumber},
+  			#{appropriationContent},
+  			STR_TO_DATE(#{applicationDate},'%Y-%m-%d'),
+  			#{applicationAmount},
+  			#{remark},
+  			
+  			#{operatorId},
+  			now(),
+  			'0',
+  			#{appropriationaccount},
+  			0
+  		)
+  	</insert>
+  	
+  	<insert id="insertApplyDataNew" parameterType="com.newhero.urbanconstruction.apply.pojo.AppropriationApply">
+  		insert into appropriationapply
+  			(
+  				segmentProjectId,
+  				constructionUnit,
+  				designUnit,
+  				supervisionUnit,
+  				payee,
+  				receivableAccount,
+  				receivablenumber,
+  				appropriationContent,
+  				applicationDate,
+  				applicationAmount,
+  				remark,
+  				
+  				operatorId,
+  				operationTime,
+  				state,
+	  			appropriationaccount,
+	  			source
+	  		) 
+	  		values(
+	  		#{segmentProjectId},
+	  		<!-- (select id from  segmentproject where segmentinfoid=#{segmentinfoId}), -->
+  			#{constructionUnit},
+  			#{designUnit},
+  			#{supervisionUnit},
+  			#{payee},
+  			#{receivableAccount},
+  			#{receivablenumber},
+  			#{appropriationContent},
+  			STR_TO_DATE(#{applicationDate},'%Y-%m-%d'),
+  			#{applicationAmount},
+  			#{remark},
+  			
+  			#{operatorId},
+  			now(),
+  			'0',
+  			#{appropriationaccount},
+  			1
+  		)
+  	</insert>
+  	
+  	<insert id="insertApplyDataNew1" parameterType="com.newhero.urbanconstruction.apply.pojo.AppropriationApply">
+  		insert into appropriationapply
+  			(
+  				id,
+  				segmentProjectId,
+  				constructionUnit,
+  				designUnit,
+  				supervisionUnit,
+  				payee,
+  				receivableAccount,
+  				receivablenumber,
+  				appropriationContent,
+  				applicationDate,
+  				applicationAmount,
+  				remark,
+  				
+  				operatorId,
+  				operationTime,
+  				state,
+	  			appropriationaccount,
+	  			source,
+	  			approvalTime,
+				approvalamount,
+				grantTime		
+	  		) 
+	  		values(
+	  		#{id},
+	  		#{segmentProjectId},
+	  		<!-- (select id from  segmentproject where segmentinfoid=#{segmentinfoId}), -->
+  			#{constructionUnit},
+  			#{designUnit},
+  			#{supervisionUnit},
+  			#{payee},
+  			#{receivableAccount},
+  			#{receivablenumber},
+  			#{appropriationContent},
+  			STR_TO_DATE(#{applicationDate},'%Y-%m-%d'),
+  			#{applicationAmount},
+  			#{remark},
+  			
+  			#{operatorId},
+  			now(),
+  			'0',
+  			#{appropriationaccount},
+  			1,
+  			#{approvalTime},
+			#{approvalamount},
+			STR_TO_DATE(IFNULL(#{grantTime},'0000-00-00'),'%Y-%m-%d')
+  		)
+  	</insert>
+  	
+  	<!-- applicationDate = #{applicationDate}, -->
+  	<update id="updateAppropriationApplyData" parameterType="com.newhero.urbanconstruction.apply.pojo.AppropriationApply">
+  		update appropriationapply set 
+	  		constructionUnit = #{constructionUnit},
+	  		designUnit = #{designUnit},
+	  		supervisionUnit = #{supervisionUnit},
+	  		payee = #{payee},
+	  		receivableAccount = #{receivableAccount},
+	  		receivablenumber = #{receivablenumber},
+	  		appropriationContent = #{appropriationContent},
+	  		applicationAmount = #{applicationAmount},
+	  		remark = #{remark},
+	  		operatorId = #{operatorId},
+	  		operationTime = now(),
+	  		applicationDate = STR_TO_DATE(#{applicationDate},'%Y-%m-%d')
+	  		where id=#{id}
+  	</update>
+  	
+  	<update id="updateAppropriationApplyDataStateById" parameterType="java.lang.String">
+  		update appropriationapply set 
+  			state = #{state}
+  		where id = #{id}
+  	</update>
+  	
+  	<update id="upadteAppropriationApplyDataById">
+		update appropriationapply set 
+	  		constructionUnit = #{constructionUnit},
+	  		designUnit = #{designUnit},
+	  		supervisionUnit = #{supervisionUnit},
+	  		payee = #{payee},
+	  		receivableAccount = #{receivableAccount},
+	  		receivablenumber = #{receivablenumber},
+	  		appropriationContent = #{appropriationContent},
+	  		applicationDate = #{applicationDate},
+	  		applicationAmount = #{applicationCount},
+	  		remark = #{remark}
+  		where id = #{id}  	
+  	</update>
+  	
+  	<update id="deleteAppropriationApplyById" parameterType="com.newhero.urbanconstruction.apply.pojo.AppropriationApply">
+		update appropriationapply set 
+			isdelete=1 ,	
+			operatorId = #{operatorId},
+	  		operationTime = now()
+			where id = #{id}
+  	</update>
+  	
+  	<select id="selectSegmentProjectBySegmentId" resultType="com.newhero.urbanconstruction.apply.pojo.SegmentProjectReviewDTO">
+  	select t.segmentinfoid,i.investmenttype as investmenttype,t.barrageprice,t.estimateamount,t.contractprice,t.settlreviewamount,t.reviewnumber,
+  	t.settlreviewinfo,t.remark,t.owepayment,t.totalappropriation,t.lappropriationratio
+  	from segmentproject t
+  	left join dm_projectname p
+  	on t.projectid=p.id
+  	left join dm_investmenttype i
+  	on i.id=p.investmenttypeid
+  	where t.segmentinfoid=#{segmentinfoid}
+  	</select>
+  	
+  	<update id="updateProjectPrceBySegmentId" parameterType="com.newhero.urbanconstruction.apply.pojo.SegmentProjectReviewDTO">
+  	update segmentproject
+  	set contractprice=#{contractprice},
+  	barrageprice=#{barrageprice},
+  	estimateamount=#{estimateamount},
+  	owepayment=#{estimateamount},
+  	operatorid=#{operatorid},
+  	operationtime=now()
+  	where segmentinfoid=#{segmentinfoid}
+  </update>
+  	<update id="updateRemarkBySegmentId" parameterType="com.newhero.urbanconstruction.apply.pojo.SegmentProjectReviewDTO">
+  	update segmentproject
+  	set remark=#{remark},
+  	operatorid=#{operatorid},
+  	operationtime=now()
+  	where segmentinfoid=#{segmentinfoid}
+  </update>
+  	<update id="updateReviewBySegmentId" parameterType="com.newhero.urbanconstruction.apply.pojo.SegmentProjectReviewDTO">
+  	update segmentproject
+  	set settlreviewamount=#{settlreviewamount},
+  	reviewnumber=#{reviewnumber},
+  	settlreviewinfo=#{settlreviewinfo},
+  	operatorid=#{operatorid},
+  	operationtime=now()
+  	where segmentinfoid=#{segmentinfoid}
+  </update>
+  <update id="updateApplysettlreviewamount" parameterType="java.util.HashMap">
+  update appropriationapply
+  set approvalamount=#{approvalamount},
+  operatorid=#{operatorid},
+  operationtime=now()
+  where segmentprojectid=(select id from segmentproject where segmentinfoid=#{segmentinfoid})
+  </update>
+  <select id="getPayeeListByName" resultType="java.util.HashMap"  parameterType="java.lang.String">
+  select  id,unitname,unitcode
+		from dm_unitinfo where isdelete=0  
+		<if test="_parameter  != null" >
+		and unitname like "%"#{unitname}"%"
+		</if>
+  </select>
+  <select id="getReceivableaccount" parameterType="java.lang.String" resultType="com.newhero.urbanconstruction.codetablemaintain.unitaccount.pojo.UnitAccountDTO">
+  select id,unitinfoid,bank,accountnumber from dm_unitaccount where isdelete=0 and unitinfoid=#{unitinfoid}
+  </select>
+  </mapper>

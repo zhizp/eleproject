@@ -1,0 +1,30 @@
+package com.newhero.urbanconstruction.codetablemaintain.projectname.dao;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.codetablemaintain.constructionunit.pojo.ConstructionunitDTO;
+import com.newhero.urbanconstruction.codetablemaintain.investmenttype.pojo.InvestmentTypeDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectname.pojo.ProjectNameDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+
+/**
+ * projectName类Dao层接口
+ * @author Mjj
+ */
+public interface ProjectNameDao {
+	
+	public ProjectNameDTO selectProjectNameById(int id);
+	void saveProjectName(ProjectNameDTO projectNameDto);
+	void updateProjectName(ProjectNameDTO projectNameDto);
+	void deleteProjectName(ProjectNameDTO projectName);
+	public int selectProjectNameCountByKeyword(BaseQueryVo dto) ;
+	public List<ProjectNameDTO> selectProjectNames(BaseQueryVo dto);
+	public List<ProjectYearDTO> selectProjectYears();
+	public List<InvestmentTypeDTO> selectInvestments();
+	public List<ConstructionunitDTO> selectconstructions();
+	public List<ProjectNameDTO> selectProjectNameByName(String projectName);
+	public int selectProjectNameCountFromCostType(int projectnameid);
+	
+}

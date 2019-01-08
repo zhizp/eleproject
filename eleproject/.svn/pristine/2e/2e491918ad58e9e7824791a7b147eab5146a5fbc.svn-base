@@ -1,0 +1,63 @@
+package com.newhero.urbanconstruction.codetablemaintain.allocationsaccount.pojo;
+
+import java.util.Date;
+
+/**
+ * 拨款账户实体类
+ * 对应数据表dm_allocationsaccount
+ * author:zzp
+ */
+public class AllocationsAccountDTO {
+	
+	private Integer id; 
+	private String accountName; 
+	private String accountshortname; 
+	private String remark;
+	private Integer isdelete;
+	private Integer operatorid;
+	private Date operationtime;
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public String getAccountName() {
+		return accountName;
+	}
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+	public String getAccountshortname() {
+		return accountshortname;
+	}
+	public void setAccountshortname(String accountshortname) {
+		this.accountshortname = accountshortname;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public Integer getIsdelete() {
+		return isdelete;
+	}
+	public void setIsdelete(Integer isdelete) {
+		this.isdelete = isdelete;
+	}
+	public Integer getOperatorid() {
+		return operatorid;
+	}
+	public void setOperatorid(Integer operatorid) {
+		this.operatorid = operatorid;
+	}
+	public Date getOperationtime() {
+		return operationtime;
+	}
+	public void setOperationtime(Date operationtime) {
+		this.operationtime = operationtime;
+	}
+	
+	
+}

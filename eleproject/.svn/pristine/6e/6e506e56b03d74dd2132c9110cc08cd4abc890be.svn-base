@@ -1,0 +1,24 @@
+package com.newhero.urbanconstruction.codetablemaintain.investmenttype.service;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.codetablemaintain.investmenttype.pojo.InvestmentTypeDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+public interface InvestmentTypeService {
+
+	public List<InvestmentTypeDTO> getInvestmentTypeListByKeyword(BaseQueryVo dto);
+	
+	public int getInvestmentTypeCountByKeyword(BaseQueryVo dto);
+	
+	public InvestmentTypeDTO getInvestmentTypeById(Integer id);
+	
+	public int updateInvestmentTypeById(InvestmentTypeDTO invest);
+	
+	public int insertInvestmentType(InvestmentTypeDTO invest);
+	
+	public int delInvestmentTypeIds(String[]  ids, int userid);
+	
+	public int checkInvest(String id);
+	
+}

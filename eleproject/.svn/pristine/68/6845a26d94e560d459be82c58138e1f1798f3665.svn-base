@@ -1,0 +1,46 @@
+package com.newhero.urbanconstruction.codetablemaintain.unitinfo.pojo;
+
+/**
+ * 单位信息实体类
+ * 对应数据表 dm_unitinfo
+ * @author Mjj
+ *
+ */
+public class UnitInfo {
+	private String id;
+	private String code;
+	private String unitName;
+	private String unitShortName;
+	private String remark;
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	public String getUnitName() {
+		return unitName;
+	}
+	public void setUnitName(String unitName) {
+		this.unitName = unitName;
+	}
+	public String getUnitShortName() {
+		return unitShortName;
+	}
+	public void setUnitShortName(String unitShortName) {
+		this.unitShortName = unitShortName;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+}

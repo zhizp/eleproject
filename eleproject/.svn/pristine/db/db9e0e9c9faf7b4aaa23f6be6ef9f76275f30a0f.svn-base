@@ -1,0 +1,170 @@
+package com.newhero.urbanconstruction.codetablemaintain.archivesmanage.pojo;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+
+public class ArchivesManageDTO {
+	public Integer id;
+	public Integer yearid;
+	public String projectyear;
+	public Integer projectid;
+	public String projectname;
+	public String  filedate;
+	public String receiptdate;
+	public String archivestitle;
+	public String refernumber;
+	public Integer archivestypeid;
+	public String archivestype;
+	public BigDecimal archivesprice;
+	public String volumenumber;
+	public String attachments;
+	public String handlesituation;
+	public String agent;
+	public String handedate;
+	public String civilservice;
+	public String disbursementdate;
+	public String remark;
+	public Integer isdelete;
+	public Integer operatorid;
+	public String operationtime;
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public Integer getYearid() {
+		return yearid;
+	}
+	public void setYearid(Integer yearid) {
+		this.yearid = yearid;
+	}
+	public String getProjectyear() {
+		return projectyear;
+	}
+	public void setProjectyear(String projectyear) {
+		this.projectyear = projectyear;
+	}
+	public Integer getProjectid() {
+		return projectid;
+	}
+	public void setProjectid(Integer projectid) {
+		this.projectid = projectid;
+	}
+	public String getProjectname() {
+		return projectname;
+	}
+	public void setProjectname(String projectname) {
+		this.projectname = projectname;
+	}
+	public String getFiledate() {
+		return filedate;
+	}
+	public void setFiledate(String filedate) {
+		this.filedate = filedate;
+	}
+	public String getReceiptdate() {
+		return receiptdate;
+	}
+	public void setReceiptdate(String receiptdate) {
+		this.receiptdate = receiptdate;
+	}
+	public String getArchivestitle() {
+		return archivestitle;
+	}
+	public void setArchivestitle(String archivestitle) {
+		this.archivestitle = archivestitle;
+	}
+	public String getRefernumber() {
+		return refernumber;
+	}
+	public void setRefernumber(String refernumber) {
+		this.refernumber = refernumber;
+	}
+	public Integer getArchivestypeid() {
+		return archivestypeid;
+	}
+	public void setArchivestypeid(Integer archivestypeid) {
+		this.archivestypeid = archivestypeid;
+	}
+	public String getArchivestype() {
+		return archivestype;
+	}
+	public void setArchivestype(String archivestype) {
+		this.archivestype = archivestype;
+	}
+	public BigDecimal getArchivesprice() {
+		return archivesprice;
+	}
+	public void setArchivesprice(BigDecimal archivesprice) {
+		this.archivesprice = archivesprice;
+	}
+	public String getVolumenumber() {
+		return volumenumber;
+	}
+	public void setVolumenumber(String volumenumber) {
+		this.volumenumber = volumenumber;
+	}
+	public String getAttachments() {
+		return attachments;
+	}
+	public void setAttachments(String attachments) {
+		this.attachments = attachments;
+	}
+	public String getHandlesituation() {
+		return handlesituation;
+	}
+	public void setHandlesituation(String handlesituation) {
+		this.handlesituation = handlesituation;
+	}
+	public String getAgent() {
+		return agent;
+	}
+	public void setAgent(String agent) {
+		this.agent = agent;
+	}
+	public String getHandedate() {
+		return handedate;
+	}
+	public void setHandedate(String handedate) {
+		this.handedate = handedate;
+	}
+	public String getCivilservice() {
+		return civilservice;
+	}
+	public void setCivilservice(String civilservice) {
+		this.civilservice = civilservice;
+	}
+	public String getDisbursementdate() {
+		return disbursementdate;
+	}
+	public void setDisbursementdate(String disbursementdate) {
+		this.disbursementdate = disbursementdate;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public Integer getIsdelete() {
+		return isdelete;
+	}
+	public void setIsdelete(Integer isdelete) {
+		this.isdelete = isdelete;
+	}
+	public Integer getOperatorid() {
+		return operatorid;
+	}
+	public void setOperatorid(Integer operatorid) {
+		this.operatorid = operatorid;
+	}
+	public String getOperationtime() {
+		return operationtime;
+	}
+	public void setOperationtime(String operationtime) {
+		this.operationtime = operationtime;
+	}
+	
+}

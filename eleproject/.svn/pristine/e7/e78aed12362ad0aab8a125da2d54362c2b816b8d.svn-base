@@ -1,0 +1,40 @@
+package com.newhero.urbanconstruction.apply.service;
+
+import java.util.Date;
+import java.util.List;
+
+import com.newhero.urbanconstruction.apply.pojo.AppropriationApply;
+import com.newhero.urbanconstruction.apply.pojo.AppropriationApprovalDTO;
+import com.newhero.urbanconstruction.codetablemaintain.allocationsaccount.pojo.AllocationsAccountDTO;
+import com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentProjectDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+public interface AppropriationApprovalService {
+	
+	public List<AppropriationApprovalDTO> getAppropriationApprovalListByState(BaseQueryVo dto);
+	public List<AppropriationApprovalDTO> getAllocationManageList(BaseQueryVo dto);
+
+	public int getAppropriationApprovalCountByState(BaseQueryVo dto);
+	public int getAllocationManageListCountByState(BaseQueryVo dto);
+	
+	public AppropriationApprovalDTO getAppropriationApprovalById(int id);
+	public SegmentProjectDTO getSegmentProjectById(int id);
+	
+	public AppropriationApprovalDTO getAppropriationApprovalInfoById(int id);
+	
+	public int updApprovalState(AppropriationApprovalDTO dto);
+	
+	public List<Date> getApplicationDate();
+	
+	public List<Date> getGrantDate();
+	
+	public List<String> getAppropriationAccount();
+	
+	public int updateApprop(AppropriationApply dto);
+	public int updateSegmentprojectBySP(SegmentProjectDTO dto) ;
+	public int cacelapprop(AppropriationApply dto);
+	public List<AllocationsAccountDTO> selectAccountNames();
+	public List<AllocationsAccountDTO> getAccountNameBycode(String code);
+
+	public AppropriationApprovalDTO getAppropriationApprovalListById(String id);
+}

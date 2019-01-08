@@ -1,0 +1,147 @@
+package com.newhero.urbanconstruction.util;
+
+public class BaseQueryVo {
+
+	private String fieldid;
+	
+	private String keyword;
+	
+	private int state;
+	/** 是否显示所有记录：值为1为显示所有，值为空则分页显示 */
+	private Integer isall;
+	/** 起始行 */
+	private int startRow;
+	/** 页行大小 */
+	private int pageSize;
+	/** 模糊查询下拉框选择select的option,jsp页面定义value值 */
+	private String querySelect;
+	
+	private String keyYear;
+	private String civilservice;
+	private String allocatid;
+	
+	/** 根据审批时间进行区间查询 */
+	private String dateStart; //开始日期
+	private String dateTarget; //结束日期
+	/** 拨款账户 */
+	private String appropriationaccount;
+	
+	/** 项目名称 */
+	private String projectName;
+	
+	
+	public String getAllocatid() {
+		return allocatid;
+	}
+
+	public void setAllocatid(String allocatid) {
+		this.allocatid = allocatid;
+	}
+
+	public String getKeyYear() {
+		return keyYear;
+	}
+
+	public void setKeyYear(String keyYear) {
+		this.keyYear = keyYear;
+	}
+
+	public String getCivilservice() {
+		return civilservice;
+	}
+
+	public void setCivilservice(String civilservice) {
+		this.civilservice = civilservice;
+	}
+
+	public String getFieldid() {
+		return fieldid;
+	}
+
+	public void setFieldid(String fieldid) {
+		this.fieldid = fieldid;
+	}
+
+	public String getKeyword() {
+		return keyword;
+	}
+
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
+
+	public int getStartRow() {
+		return startRow;
+	}
+
+	public void setStartRow(int startRow) {
+		this.startRow = startRow;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public int getState() {
+		return state;
+	}
+
+	public void setState(int state) {
+		this.state = state;
+	}
+
+	public Integer getIsall() {
+		return isall;
+	}
+
+	public void setIsall(Integer isall) {
+		this.isall = isall;
+	}
+
+	public String getQuerySelect() {
+		return querySelect;
+	}
+
+	public void setQuerySelect(String querySelect) {
+		this.querySelect = querySelect;
+	}
+
+	public String getDateStart() {
+		return dateStart;
+	}
+
+	public void setDateStart(String dateStart) {
+		this.dateStart = dateStart;
+	}
+
+	public String getDateTarget() {
+		return dateTarget;
+	}
+
+	public void setDateTarget(String dateTarget) {
+		this.dateTarget = dateTarget;
+	}
+
+	public String getAppropriationaccount() {
+		return appropriationaccount;
+	}
+
+	public void setAppropriationaccount(String appropriationaccount) {
+		this.appropriationaccount = appropriationaccount;
+	}
+
+	public String getProjectName() {
+		return projectName;
+	}
+
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
+	
+	
+	
+}

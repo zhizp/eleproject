@@ -1,0 +1,66 @@
+package com.newhero.urbanconstruction.codetablemaintain.constructionunit.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.newhero.urbanconstruction.codetablemaintain.constructionunit.dao.ConstructionDao;
+import com.newhero.urbanconstruction.codetablemaintain.constructionunit.pojo.ConstructionunitDTO;
+import com.newhero.urbanconstruction.codetablemaintain.constructionunit.service.ConstructionService;
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+@Transactional
+@Service("constructionService")
+public class ConstructionServiceImpl implements ConstructionService {
+
+	@Resource
+	private ConstructionDao constructionDao;
+	public ConstructionDao getConstructionDao() {
+		return constructionDao;
+	}
+	public int selectConstructionCountByKeyword(BaseQueryVo dto) {
+		return constructionDao.selectConstructionCountByKeyword(dto);
+	}
+	public List<ConstructionunitDTO> selectConstructions(BaseQueryVo dto){
+		return constructionDao.selectConstructions(dto);
+	}
+	
+	public List<ProjectYearDTO> selectProjectYears(){
+		return constructionDao.selectProjectYears();
+	}
+	
+
+	public ConstructionunitDTO selectConstructionById(int id) {
+		return constructionDao.selectConstructionById(id);
+	}
+	
+	public void saveConstruction(ConstructionunitDTO constructionunitDTO) {
+		 constructionDao.saveConstruction(constructionunitDTO);
+	}
+	public void updateConstruction(ConstructionunitDTO constructionunitDTO) {
+		 constructionDao.updateConstruction(constructionunitDTO);
+	}
+	public void deleteConstruction(ConstructionunitDTO constructionunitDTO) {
+		 constructionDao.deleteConstruction(constructionunitDTO);
+	}
+	
+	public List<ConstructionunitDTO> selectConstructionByName(String unitname){
+		return constructionDao.selectConstructionByName(unitname);
+	}
+	@Override
+	public int selectCountProjectNameByConstructionId(int id) {
+		
+		return constructionDao.selectCountProjectNameByConstructionId(id);
+	}
+	@Override
+	public List<ConstructionunitDTO> selectConstructionByNameForHistory(String unitname) {
+		return constructionDao.selectConstructionByNameForHistory(unitname);
+	}
+	@Override
+	public List<ConstructionunitDTO> selectConstructionByNameForHistoryOfDifferentYearId(String unitname, String projectyear) {
+		return constructionDao.selectConstructionByNameForHistoryOfDifferentYearId(unitname, projectyear);
+	}
+}

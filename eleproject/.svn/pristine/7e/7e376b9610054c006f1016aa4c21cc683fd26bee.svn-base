@@ -1,0 +1,13 @@
+package com.newhero.urbanconstruction.apply.dao;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.apply.pojo.SegmentProjectReviewDTO;
+import com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentProjectDTO;
+
+public interface SegmentProjectDao {
+	public List<SegmentProjectReviewDTO> selectSegProjectBySegInfoId(String segmentinfoid);
+	public int insertSegProject(SegmentProjectReviewDTO segmentProjectDTO);
+	public int updateSegProject(SegmentProjectReviewDTO segmentProjectDTO);
+	public SegmentProjectDTO selectSegmentProjectBySegmentProjectId(int segmentprojectid);
+}

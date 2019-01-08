@@ -1,0 +1,114 @@
+package com.newhero.urbanconstruction.apply.service.impl;
+
+import java.util.Date;
+import java.math.BigDecimal;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.newhero.urbanconstruction.apply.dao.AppropriationApprovalDao;
+import com.newhero.urbanconstruction.apply.pojo.AppropriationApply;
+import com.newhero.urbanconstruction.apply.pojo.AppropriationApprovalDTO;
+import com.newhero.urbanconstruction.apply.service.AppropriationApprovalService;
+import com.newhero.urbanconstruction.codetablemaintain.allocationsaccount.pojo.AllocationsAccountDTO;
+import com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentProjectDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+import com.newhero.urbanconstruction.util.Constant;
+
+@Transactional
+@Service("appropriationApprovalService")
+public class AppropriationApprovalServiceImpl implements AppropriationApprovalService {
+	@Resource
+	private AppropriationApprovalDao appropriationApprovalDao;
+	
+	public List<AppropriationApprovalDTO> getAppropriationApprovalListByState(BaseQueryVo dto){
+		return appropriationApprovalDao.getAppropriationApprovalListByState(dto);
+	}
+
+	public int getAppropriationApprovalCountByState(BaseQueryVo dto){
+		return appropriationApprovalDao.getAppropriationApprovalCountByState(dto);
+	}
+
+	public AppropriationApprovalDTO getAppropriationApprovalById(int id){
+		return appropriationApprovalDao.getAppropriationApprovalById(id);
+	}
+	
+	public AppropriationApprovalDTO getAppropriationApprovalInfoById(int id){
+		return appropriationApprovalDao.getAppropriationApprovalInfoById(id);
+	}
+	@Override
+	public int updApprovalState(AppropriationApprovalDTO dto) {
+		AppropriationApprovalDTO tempdto = appropriationApprovalDao.getAppropriationApprovalById(dto.getId());
+		if(Constant.APPROPRIATIONAPPLY_STATE_APPROPRIATION_PASSED == dto.getState()){
+			//当进行通过拨款操作，进行拨款总计累加，欠付款累减
+			SegmentProjectDTO segmentdto = appropriationApprovalDao.getSegmentProjectById(tempdto.getSegmentprojectid());
+			segmentdto.setId(tempdto.getSegmentprojectid());
+			//totalappropriation=totalappropriation+#{applicationamount},owepayment=evaluationprice-#{applicationamount}
+			BigDecimal totalappropriation = segmentdto.getTotalappropriation().add(tempdto.getApplicationamount());
+			segmentdto.setTotalappropriation(totalappropriation);
+			segmentdto.setOwepayment(segmentdto.getSettlreviewamount().subtract(totalappropriation));
+			appropriationApprovalDao.updSegmentProjectTotal(segmentdto);
+		}else if(Constant.APPROPRIATIONAPPLY_STATE_APPROPRIATION_CANCEL == dto.getState() && Constant.APPROPRIATIONAPPLY_STATE_APPROPRIATION_PASSED == tempdto.getState()){
+			//当进行取消拨款操作(先前拨款状态为已拨款，修改到已审批装)，进行拨款总计累加，欠付款累减
+			SegmentProjectDTO segmentdto = appropriationApprovalDao.getSegmentProjectById(tempdto.getSegmentprojectid());
+			segmentdto.setId(tempdto.getSegmentprojectid());
+			//totalappropriation=totalappropriation+#{applicationamount},owepayment=evaluationprice-#{applicationamount}
+			BigDecimal totalappropriation = segmentdto.getTotalappropriation().subtract(tempdto.getApplicationamount());
+			segmentdto.setTotalappropriation(totalappropriation);
+			segmentdto.setOwepayment(segmentdto.getSettlreviewamount().subtract(totalappropriation));
+			appropriationApprovalDao.updSegmentProjectTotal(segmentdto);
+		}
+		return appropriationApprovalDao.updApprovalState(dto);
+	}
+
+	@Override
+	public List<Date> getApplicationDate() {
+		List<Date> list = appropriationApprovalDao.getApplicationDate();
+		return list;
+	}
+
+	@Override
+	public List<Date> getGrantDate() {
+		List<Date> list = appropriationApprovalDao.getGrantDate();
+		return list;
+	}
+
+	@Override
+	public List<String> getAppropriationAccount() {
+		List<String> list = appropriationApprovalDao.getAppropriationAccount();
+		return list;
+	}
+
+	public int updateApprop(AppropriationApply dto) {
+		return appropriationApprovalDao.updateApprop(dto);
+	}
+	public int updateSegmentprojectBySP(SegmentProjectDTO dto) {
+		return appropriationApprovalDao.updateSegmentprojectBySP(dto);
+	}
+	public int cacelapprop(AppropriationApply dto) {
+		return appropriationApprovalDao.cacelapprop(dto);
+	}
+
+	@Override
+	public List<AllocationsAccountDTO> selectAccountNames() {
+		return appropriationApprovalDao.selectAccountNames();
+	}
+
+	@Override
+	public List<AllocationsAccountDTO> getAccountNameBycode(String code) {
+		AllocationsAccountDTO allocationsAccount=new AllocationsAccountDTO();
+		allocationsAccount.setAccountName(code);
+		return appropriationApprovalDao.getAccountNameBycode(allocationsAccount);
+	}
+	public SegmentProjectDTO getSegmentProjectById(int id) {
+		return appropriationApprovalDao.getSegmentProjectById(id);
+	}
+
+	@Override
+	public AppropriationApprovalDTO getAppropriationApprovalListById(String id) {
+		return appropriationApprovalDao.getAppropriationApprovalListById(id);
+	}
+}

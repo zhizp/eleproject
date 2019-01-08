@@ -1,0 +1,36 @@
+package com.newhero.urbanconstruction.codetablemaintain.costtype.service;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.codetablemaintain.constructionunit.pojo.ConstructionunitDTO;
+import com.newhero.urbanconstruction.codetablemaintain.costtype.pojo.CostTypeDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectname.pojo.ProjectNameDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+
+/**
+ * Servies 接口
+ */
+public interface CostTypeService {
+	
+	public int selectCostTypeCountByKeyword(BaseQueryVo dto);
+	public List<CostTypeDTO> selectCostTypes(BaseQueryVo dto);
+	public List<ProjectYearDTO> selectProjectYears();
+	public List<ProjectNameDTO> selectProjectNames();
+	public List<ConstructionunitDTO> selectconstructions();
+	//根据id来查找
+	public CostTypeDTO getCostTypeId(int costTypeId);
+	
+	//添加一条数据
+	public void saveCostType(CostTypeDTO costType);
+	
+	//删除指定数据
+	public void deleteCostType(CostTypeDTO costType);
+	
+	//修改数据
+	public void updateCostType(CostTypeDTO costType);
+	 
+	public List<CostTypeDTO> selectCostTypeByName(String costType);
+	public int selectCountSegmentByCosttypeId(int id);
+}

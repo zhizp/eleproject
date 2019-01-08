@@ -1,0 +1,55 @@
+package com.newhero.urbanconstruction.apply.dao;
+
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.newhero.urbanconstruction.apply.pojo.AppropriationApply;
+import com.newhero.urbanconstruction.apply.pojo.SegmentProjectReviewDTO;
+import com.newhero.urbanconstruction.codetablemaintain.unitaccount.pojo.UnitAccountDTO;
+import com.newhero.urbanconstruction.codetablemaintain.unitinfo.pojo.UnitInfoDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+/*
+ * dao层接口
+ * 实现方法的接口
+ * @Author lsf
+ * 
+ */
+
+public interface AppropriationApplyDao {
+	
+	//select
+	//根据ID获取实体数据
+	public AppropriationApply getApplyDataById(int id);
+	//获取全部的申请拨款信息表
+	public List<AppropriationApply> getApplyAllData(BaseQueryVo dto);
+	
+	public List<AppropriationApply> getApplyAllData1(BaseQueryVo dto);
+	
+	public int selectApplyCountByKeyword(BaseQueryVo dto);
+	//insert
+	//插入
+	public int insertApplyData(AppropriationApply appropriationApply);
+	
+	//update
+	//更改申请注册拨款信息表（全部）信息
+	public int updateAppropriationApplyData(AppropriationApply appropriationApply);
+	//更改申请拨款信息表业务流程的状态
+	public int updateAppropriationApplyDataStateById(String id);
+	
+	//delete
+	//根据ID删除信息
+	public int deleteAppropriationApplyById(AppropriationApply appropriationApply);
+	
+	public SegmentProjectReviewDTO selectSegmentProjectBySegmentId(String segmentinfoid);
+	public int updateProjectPrceBySegmentId(SegmentProjectReviewDTO segmentProjectReviewDTO);
+	public int updateRemarkBySegmentId(SegmentProjectReviewDTO segmentProjectReviewDTO);
+	public int updateReviewBySegmentId(SegmentProjectReviewDTO segmentProjectReviewDTO);
+	public int updateApplysettlreviewamount(Map map);
+	public List<UnitInfoDTO> getPayeeListByName(String unitname);
+	public List<UnitAccountDTO> getReceivableaccount(String unitinfoid);
+}

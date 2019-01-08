@@ -1,0 +1,37 @@
+package com.newhero.urbanconstruction.codetablemaintain.costtype.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.newhero.urbanconstruction.codetablemaintain.constructionunit.pojo.ConstructionunitDTO;
+import com.newhero.urbanconstruction.codetablemaintain.costtype.pojo.CostTypeDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectname.pojo.ProjectNameDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+
+public interface CostTypeDao {
+	
+	CostTypeDTO selectCostTypeById(int id);
+	void saveCostType(CostTypeDTO costTypeDto);
+	void updateCostType(CostTypeDTO costTypeDto);
+	void deleteCostType(CostTypeDTO costType);
+	public List<CostTypeDTO> selectCostTypes(BaseQueryVo dto);
+	public int selectCostTypeCountByKeyword(BaseQueryVo dto);
+	public List<ProjectYearDTO> selectProjectYears();
+	public List<ProjectNameDTO> selectProjectNames();
+	public List<ConstructionunitDTO> selectconstructions();
+	public List<CostTypeDTO> selectCostTypeByName(String costType);
+	//
+	public List<CostTypeDTO> selectCostTypeByNameForHistory(String costType);
+	public CostTypeDTO selectCostTypeForHistory(Map map);
+	//
+	public List<CostTypeDTO> selectCostTypeByNameForHistoryOfDifferentYearIdUnitIdProjectNameId(@Param("projectyear") String projectyear,
+			@Param("unitname") String unitname,
+			@Param("projectname") String projectname,
+			@Param("costType") String costType);
+	public int selectCountSegmentByCosttypeId(int id);
+	
+}

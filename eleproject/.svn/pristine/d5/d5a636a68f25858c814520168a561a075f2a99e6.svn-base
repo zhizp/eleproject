@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.newhero.urbanconstruction.codetablemaintain.allocationsaccount.dao.AllocationsAccountDao">
+	<resultMap type="com.newhero.urbanconstruction.codetablemaintain.allocationsaccount.pojo.AllocationsAccountDTO" id="BaseResultMap">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="accountName" property="accountName" jdbcType="VARCHAR"/>
+		<result column="accountshortname" property="accountshortname" jdbcType="VARCHAR"/>
+		<result column="remark" property="remark" jdbcType="VARCHAR"/>		
+		<result column="isdelete" property="isdelete" jdbcType="INTEGER" />
+		<result column="operatorid" property="operatorid" jdbcType="INTEGER" />
+		<result column="operationtime" property="operationtime" jdbcType="DATE" />
+	</resultMap>
+	<select id="selectAllocationsAccounts" parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultType="java.util.Map">
+		select id,accountName,accountshortname,remark
+		from dm_allocationsaccount
+		where isdelete=0
+		<if test='keyword != null'>
+		and accountName like "%"#{keyword}"%"  
+		</if>
+		<if test='isall==null'>
+		LIMIT #{startRow},#{pageSize}
+		</if>
+	</select>
+	<select id="selectAllocationsAccountCountByKeyword" parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultType="java.lang.Integer" >
+		select 
+		   count(*)
+		from dm_allocationsaccount where isdelete=0
+		<if test='keyword != null'>
+		and accountName like "%"#{keyword}"%"  
+		</if>
+	</select>
+	<update id="deleteAllocationsAccountCount" parameterType="java.lang.Integer">
+		update dm_allocationsaccount
+		set isdelete=1,
+		operatorid=#{operatorid},
+		operationtime=utc_timestamp() 
+		where id = #{id}
+	</update>
+	<update id="updateAllocationsAccount" parameterType="com.newhero.urbanconstruction.codetablemaintain.allocationsaccount.pojo.AllocationsAccountDTO">
+		update dm_allocationsaccount
+		set accountName=#{accountName},
+		accountshortname=#{accountshortname},
+		remark=#{remark},
+		operatorid=#{operatorid},
+		operationtime=utc_timestamp() 
+		where id=#{id}
+	</update>
+	<insert id="saveAllocationsAccount" parameterType="com.newhero.urbanconstruction.codetablemaintain.allocationsaccount.pojo.AllocationsAccountDTO">
+		insert into dm_allocationsaccount
+		(accountName,accountshortname,remark,operatorid)
+		values(#{accountName},#{accountshortname},#{remark},#{operatorid})
+	</insert>
+	<select id="selectAllocationsAccountById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select * from dm_allocationsaccount
+		where id=#{id} and isdelete=0
+	</select>
+</mapper>

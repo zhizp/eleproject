@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- namespace的值就是dao接口的完整路径，就这个demo而言namespace 就是userDao.java的完整路径-->
+<mapper namespace="com.newhero.urbanconstruction.apply.dao.KyzlDao">
+	<resultMap id="ConstructionUnitResultMap1" type="com.newhero.urbanconstruction.common.pojo.ConstructionUnitCasDTO">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="unitname" property="unitname" jdbcType="VARCHAR" />
+		<result column="unitshortname" property="unitshortname" jdbcType="VARCHAR" />
+	</resultMap>
+	<!-- 根据用户年度ID查询建设单位列表 -->
+	<select id="getConstructionUnitInfoByYearId1" resultMap="ConstructionUnitResultMap1" parameterType="java.lang.Integer">
+		select
+		  id, unitname, unitshortname 
+		from dm_constructionunit  WHERE isdelete=0 and yearId = #{id}
+	</select>
+	<!-- 根据用户年度ID查询建设单位数量 -->
+	<select id="getConstructionUnitNumByYearId1" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select
+		  count(*) 
+		from dm_constructionunit  WHERE isdelete=0 and yearId = #{id}
+	</select>
+	
+	<resultMap id="ProjectNameResultMap1" type="com.newhero.urbanconstruction.common.pojo.ProjectNameCasDTO">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="projectname" property="projectname" jdbcType="VARCHAR" />
+	</resultMap> 
+	<!-- 根据建设单位ID查询项目名称列表 -->
+	<select id="getProjectNameInfoByUnitId1" resultMap="ProjectNameResultMap1" parameterType="java.lang.Integer">
+		select
+		  id, projectname
+		from dm_projectname  WHERE isdelete=0 and constructionid = #{id}
+	</select>
+	<!-- 根据建设单位ID查询项目名称数量 -->
+	<select id="getProjectNameNumByUnitId1" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select
+		  count(*) 
+		from dm_projectname  WHERE isdelete=0 and constructionid = #{id}
+	</select>
+	
+	<resultMap id="CostTypeResultMap1" type="com.newhero.urbanconstruction.common.pojo.CostTypeCasDTO">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="costtype" property="costtype" jdbcType="VARCHAR" />
+	</resultMap>
+	<!-- 根据项目名称ID查询费用类别列表 -->
+	<select id="getCostTypeListByProjId1" resultMap="CostTypeResultMap1" parameterType="java.lang.Integer">
+		select
+		  id, costtype
+		from dm_costtype  WHERE isdelete=0 and projectnameid = #{id}
+	</select>
+	<!-- 根据项目名称ID查询费用类别数量 -->
+	<select id="getCostTypeNumByProjId1" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select
+		  count(*) 
+		from dm_costtype  WHERE isdelete=0 and projectnameid = #{id}
+	</select>
+	
+	<!-- 根据费用类别ID查询标段信息数量 -->
+	<select id="getSegmentListByCostTypeId1" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select
+		  count(*) 
+		from dm_segmentinfo  WHERE isdelete=0 and costtypeid = #{id}
+	</select>
+	
+	<resultMap id="SegmentTypeResultMap1" type="com.newhero.urbanconstruction.common.pojo.SegmentInfoCasDTO">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="segmentname" property="segmentname" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<!-- 根据费用类别ID查询标段信息列表 -->
+	<select id="getSegmentNumByCostTypeId1" resultMap="SegmentTypeResultMap1" parameterType="java.lang.Integer">
+		select id, segmentname
+		from dm_segmentinfo where isdelete = 0 and costtypeid = #{id}
+	</select>
+	
+	
+	<resultMap id="UnitAccountResultMap1" type="com.newhero.urbanconstruction.common.pojo.UnitAccountCasDTO">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="unitshortname" property="unitshortname" jdbcType="VARCHAR" />
+		<result column="bank" property="bank" jdbcType="VARCHAR" />
+		<result column="accountnumber" property="accountnumber" jdbcType="VARCHAR" />
+	</resultMap>
+	<!-- 根据项目名称ID查询费用类别列表 -->
+	<select id="getUnitAccountListByUnitInfoId1" resultMap="UnitAccountResultMap1" parameterType="java.lang.Integer">
+		select
+		  id, unitshortname,bank,accountnumber
+		from dm_unitaccount  WHERE isdelete=0 and unitinfoid = #{id}
+	</select>
+	
+</mapper>

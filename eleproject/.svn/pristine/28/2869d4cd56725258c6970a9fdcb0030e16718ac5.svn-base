@@ -1,0 +1,10 @@
+driver=com.mysql.jdbc.Driver
+url=jdbc:mysql://192.168.1.163:3306/urbanconstructionsys?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+user=user
+password=newhero
+
+initialPoolSize=3
+maxPoolSize=25
+minPoolSize=5
+maxIdleTime=600
+maxStatements=60000

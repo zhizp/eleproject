@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newhero.urbanconstruction.codetablemaintain.costtype.dao.CostTypeDao">
+
+	<resultMap id="BaseResultMap" type="com.newhero.urbanconstruction.codetablemaintain.costtype.pojo.CostTypeDTO">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<id column="yearId" property="yearId" jdbcType="INTEGER" />
+		<id column="constructionId" property="constructionId" jdbcType="INTEGER" />
+		<result column="projectNameId" property="projectNameId" jdbcType="INTEGER" />
+		<result column="costType" property="costType" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="isDelete" property="isDelete" jdbcType="INTEGER" />
+		<result column="operatorId" property="operatorId" jdbcType="INTEGER" />
+		<result column="operationTime" property="operationTime" jdbcType="DATE" />
+	</resultMap>
+	
+	<sql id="CostType_List">
+		id,  yearId,constructionId,projectNameId, costType,remark,isDelete,operatorId,operationTime
+	</sql>
+	<select id="selectCostTypeCountByKeyword"  parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultType="java.lang.Integer">
+	select 
+		   count(*)
+		from dm_costtype where isdelete=0  
+		<if test='keyword != null'>
+		and costType like "%"#{keyword}"%"  
+		</if>
+	</select>
+	<!--(select investmenttype from dm_investmenttype where id=t.costType)as costType  -->
+	<select id="selectCostTypes"  parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultType="com.newhero.urbanconstruction.codetablemaintain.costtype.pojo.CostTypeDTO" >
+		select
+		t.id,  t.yearId,t.constructionId,t.projectNameId,costType,t.remark,t.isDelete,t.operatorId,t.operationTime
+		from dm_costtype t
+		where isDelete=0
+		<if test='keyword != null'>
+		and costType like "%"#{keyword}"%"  
+		</if>
+		<if test='isall==null'>
+		LIMIT #{startRow},#{pageSize}
+		</if>
+		
+	</select>
+	<select id="selectProjectYears" resultType="java.util.Map" >
+		select
+		id,projectyear
+		from dm_projectyear
+		where isDelete=0  order by id desc
+	</select>
+	
+	<select id="selectProjectNames" resultType="java.util.Map" >
+		select
+		id,projectname
+		from dm_projectname
+		where isDelete=0
+	</select>
+	
+	<select id="selectconstructions" resultType="java.util.Map" >
+		select
+		id,unitname
+		from dm_constructionunit
+		where isDelete=0
+	</select>
+	
+	<select id="selectCostTypeByName" resultType="java.util.Map" parameterType="String">
+		select
+		<include refid="CostType_List" />
+		from dm_costtype
+		where isDelete=0 and costType like "%"#{costType}"%"  
+	</select>
+	
+	<select id="selectCostTypeById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="CostType_List" />
+		from dm_costtype
+		where id = #{id} and isDelete=0
+	</select>
+	
+	<insert id="saveCostType" parameterType="com.newhero.urbanconstruction.codetablemaintain.costtype.pojo.CostTypeDTO">
+		insert into dm_costtype (yearId, constructionId,projectNameId,costType,remark,operatorId)
+		values (#{yearId},#{constructionId},#{projectNameId},#{costType},#{remark},#{operatorId})
+	</insert>
+	
+	<update id="updateCostType" parameterType="com.newhero.urbanconstruction.codetablemaintain.costtype.pojo.CostTypeDTO">
+		update dm_costtype
+		set 
+		yearId  = #{yearId},
+		constructionId = #{constructionId},
+		projectNameId=#{projectNameId},
+		costType=#{costType},
+		remark=#{remark},
+		operatorId=#{operatorId},
+		operationTime=utc_timestamp() 
+		where id  =	#{id}
+	</update>
+	
+	<update id="deleteCostType" parameterType="java.lang.Integer">
+		update dm_costtype
+		set isDelete=1,
+		operatorId=#{operatorId},
+		operationTime=utc_timestamp() 
+		where id = #{id}
+	</update>
+	<select id="selectCountSegmentByCosttypeId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select count(*)
+		from dm_segmentinfo
+		where costtypeid=#{id}
+		and isDelete=0
+	</select>
+</mapper>

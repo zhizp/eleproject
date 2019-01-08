@@ -1,0 +1,69 @@
+package com.newhero.urbanconstruction.codetablemaintain.unitinfo.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.newhero.urbanconstruction.codetablemaintain.unitinfo.dao.UnitInfoDao;
+import com.newhero.urbanconstruction.codetablemaintain.unitinfo.pojo.UnitInfoDTO;
+import com.newhero.urbanconstruction.codetablemaintain.unitinfo.service.UnitInfoService;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+/**
+ * investmentTypeService 接口的实现类
+ * 
+ */
+@Transactional
+@Service("unitInfoService")
+public class UnitInfoServiceImpl implements UnitInfoService {
+
+	@Resource
+	private UnitInfoDao unitInfoDao;
+	
+	@Override
+	public int getUnitInfoCountByKeyword(BaseQueryVo dto) {
+		return unitInfoDao.getUnitInfoCountByKeyword(dto);
+	}
+
+	@Override
+	public List<UnitInfoDTO> getUnitInfoListByKeyword(BaseQueryVo dto) {
+		return unitInfoDao.getUnitInfoListByKeyword(dto);
+	}
+
+	public List<UnitInfoDTO> getUnitInfoListByname(UnitInfoDTO unit){
+		return unitInfoDao.getUnitInfoListByname(unit);
+	}
+	public List<UnitInfoDTO> getUnitInfoList(){
+		return unitInfoDao.getUnitInfoList();
+	}
+	@Override
+	public UnitInfoDTO getUnitInfoById(Integer id) {
+		return unitInfoDao.getUnitInfoById(id);
+	}
+
+	@Override
+	public int updateUnitInfoById(UnitInfoDTO unit) {
+		return unitInfoDao.updateUnitInfoById(unit);
+	}
+
+	@Override
+	public int insertUnitInfo(UnitInfoDTO unit) {
+		return unitInfoDao.insertUnitInfo(unit);
+	}
+
+	@Override
+	public int delUnitInfobyIds(String[] ids, int userid) {
+		int rs = 0;
+		for(String id:ids){
+			UnitInfoDTO unit = new UnitInfoDTO();
+			unit.setId(Integer.parseInt(id));
+			unit.setOperatorid(userid);
+			rs += unitInfoDao.delUnitInfoId(unit);
+		}
+		return rs;
+	}
+
+}

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.newhero.urbanconstruction.codetablemaintain.allocationmanage.dao.AllocationManageDao">
+	
+	<select id="selectAllAllocationManageDTO" parameterType="com.newhero.urbanconstruction.util.BaseQueryVo"
+	resultType="com.newhero.urbanconstruction.codetablemaintain.allocationmanage.pojo.AllocationManageDTO">
+	select am.id,am.allocatid,da.accountname,
+	am.allocationaccountname,
+	am.projectid,dp.projectname,am.refernumber,
+	am.serviceunit,am.filename,am.price,
+	am.capitaldistdepart,am.functionalcategory,
+	am.economiccategory,am.arrivaldate,am.level,
+	am.projectyearid,
+	IFNULL((price-(SELECT SUM(ap.approvalamount)
+		FROM appropriationapply ap, segmentproject sp, dm_projectname pj ,dm_projectyear py ,dm_segmentinfo sg,dm_constructionunit dc,allocationmanage ag
+		WHERE ap.segmentprojectid=sp.id AND sp.projectid=pj.id AND sp.segmentinfoid=sg.id AND sg.constructionid=dc.id AND pj.yearid=py.id AND ap.allocationmanageid=ag.id
+		AND sp.isdelete=0 AND ap.isdelete=0 
+		AND ap.allocationmanageid = am.id
+		)),am.price)AS surplusamount
+	from allocationmanage am
+	left join dm_allocationsaccount da
+	on am.allocatid=da.id
+	left join dm_projectname dp
+	on am.projectid=dp.id
+	where   am.isdelete=0 and am.allocatid=#{allocatid}
+	<if test='keyword != null'>
+		and dp.projectname like "%"#{keyword}"%"  
+	</if>
+	<if test='isall==null'>
+		LIMIT #{startRow},#{pageSize}
+	</if>
+</select>
+	
+	
+	<select id="selectCountAllocationManageDTO" parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultType="java.lang.Integer">
+		select count(*) from allocationmanage am
+		left join dm_allocationsaccount da
+		on am.allocatid=da.id
+		left join dm_projectname dp
+		on am.projectid=dp.id
+		where am.isdelete=0 
+		and am.allocatid=#{allocatid}
+		<if test='keyword != null'>
+		and dp.projectname like "%"#{keyword}"%"  
+		</if>
+	</select>
+	
+	<insert id="insertAllocationManage" parameterType="com.newhero.urbanconstruction.codetablemaintain.allocationmanage.pojo.AllocationManageDTO">
+		insert into allocationmanage
+		(
+			allocationaccountname,allocatid,projectid,refernumber,
+			serviceunit,filename,price,
+			capitaldistdepart,functionalcategory,economiccategory,
+			arrivaldate,level,surplusamount,
+			operatorid,operationtime,projectyearid
+		)
+		values(
+			#{allocationaccountname},#{allocatid},#{projectid},#{refernumber},
+			#{serviceunit},#{filename},#{price},
+			#{capitaldistdepart},#{functionalcategory},#{economiccategory},
+			STR_TO_DATE(#{arrivaldate},'%Y-%m-%d'),
+			#{level},#{surplusamount},#{operatorid},
+			STR_TO_DATE(#{operationtime},'%Y-%m-%d'), #{projectYearId}
+		)
+	</insert>
+	<select id="selectProjectNames" resultType="com.newhero.urbanconstruction.codetablemaintain.projectname.pojo.ProjectNameDTO" >
+		select
+		id,projectname
+		from dm_projectname
+		where isdelete=0  order by id desc
+	</select>
+	
+	<update id="updateAllocationManageDTO" parameterType="com.newhero.urbanconstruction.codetablemaintain.allocationmanage.pojo.AllocationManageDTO">
+		update allocationmanage
+		set
+			projectyearid=#{projectYearId},
+			<if test='projectid != null and projectid != ""'>
+				projectid=#{projectid},
+			</if>
+			allocationaccountname=#{allocationaccountname},
+			refernumber=#{refernumber},
+			serviceunit=#{serviceunit},
+			filename=#{filename},
+			price=#{price},
+			capitaldistdepart=#{capitaldistdepart},
+			functionalcategory=#{functionalcategory},
+			economiccategory=#{economiccategory},
+			arrivaldate=STR_TO_DATE(#{arrivaldate},'%Y-%m-%d'),
+			level=#{level},
+			surplusamount=#{surplusamount},
+			operatorid=#{operatorid},
+			operationtime=STR_TO_DATE(#{operationtime},'%Y-%m-%d')
+			where id=#{id}
+	</update>
+	
+	<select id="selectAllocationManageDTOById"  resultType="com.newhero.urbanconstruction.codetablemaintain.allocationmanage.pojo.AllocationManageDTO">
+		select am.id, am.projectYearId,am.allocatid,da.accountname,
+		am.projectid,dp.projectname,am.refernumber,
+		am.serviceunit,am.filename,am.price,
+		am.capitaldistdepart,am.functionalcategory,
+		am.economiccategory,am.arrivaldate,am.level,
+		am.surplusamount,am.allocationaccountname
+		from allocationmanage am
+        left join dm_allocationsaccount da on am.allocatid=da.id
+        left join dm_projectname dp on am.projectid=dp.id 
+		where  am.id=#{id}
+	</select>
+	
+	<update id="deleteAllocationManageDTO"  parameterType="com.newhero.urbanconstruction.codetablemaintain.allocationmanage.pojo.AllocationManageDTO">
+		update allocationmanage
+		set isdelete=1
+		where id=#{id}
+	</update>
+	<select id="getOutOfData"
+	resultType="com.newhero.urbanconstruction.codetablemaintain.allocationmanage.pojo.AllocationManageDTO">
+	select am.id,am.allocatid,da.accountname,
+	am.projectid,dp.projectname,am.refernumber,
+	am.serviceunit,am.filename,am.price,
+	am.capitaldistdepart,am.functionalcategory,
+	am.economiccategory,am.arrivaldate,am.level,
+	am.surplusamount
+	from allocationmanage am,dm_allocationsaccount da,dm_projectname dp
+	where am.allocatid=da.id and am.projectid=dp.id
+	and am.isdelete=0
+	</select>
+	<select id="getallocatname" parameterType="java.lang.String" resultType="com.newhero.urbanconstruction.codetablemaintain.allocationmanage.pojo.AllocationManageDTO">
+	select a.id,a.allocationaccountname from allocationmanage a 
+	left  join dm_allocationsaccount d
+	on a.allocatid=d.id
+	where d.accountname=#{allocationaccountname} and a.isdelete=0
+	</select>
+	
+</mapper>

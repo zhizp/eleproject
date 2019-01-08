@@ -1,0 +1,36 @@
+package com.newhero.urbanconstruction.codetablemaintain.investmenttype.pojo;
+
+public class InvestmentTypeDTO {
+
+	private Integer id;
+	private String investmenttype;
+	private String remark;
+	private Integer operatorid;
+	
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public String getInvestmenttype() {
+		return investmenttype;
+	}
+	public void setInvestmenttype(String investmenttype) {
+		this.investmenttype = investmenttype;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public Integer getOperatorid() {
+		return operatorid;
+	}
+	public void setOperatorid(Integer operatorid) {
+		this.operatorid = operatorid;
+	}
+	
+	
+}

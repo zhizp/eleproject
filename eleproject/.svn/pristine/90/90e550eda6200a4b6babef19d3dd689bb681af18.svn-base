@@ -1,0 +1,33 @@
+package com.newhero.urbanconstruction.sysmanager.role.pojo;
+/**
+ * 角色实体类
+ * 对应数据表sys_role
+ * author:zzp
+ */
+public class RoleDTO {
+
+	private String id;
+	private String roleName;
+	private Character state;
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getRoleName() {
+		return roleName;
+	}
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
+	public Character getState() {
+		return state;
+	}
+	public void setState(Character state) {
+		this.state = state;
+	}
+	
+	
+	
+}

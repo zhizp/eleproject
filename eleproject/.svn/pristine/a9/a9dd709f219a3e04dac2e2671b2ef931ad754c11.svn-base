@@ -1,0 +1,49 @@
+package com.newhero.urbanconstruction.codetablemaintain.unitinfo.pojo;
+
+public class UnitInfoDTO {
+	
+	private Integer id;
+	private Integer operatorid;
+	private String unitcode;
+	private String unitname;
+	private String unitshortname;
+	private String remark;
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public Integer getOperatorid() {
+		return operatorid;
+	}
+	public void setOperatorid(Integer operatorid) {
+		this.operatorid = operatorid;
+	}
+	public String getUnitname() {
+		return unitname;
+	}
+	public void setUnitname(String unitname) {
+		this.unitname = unitname;
+	}
+	public String getUnitshortname() {
+		return unitshortname;
+	}
+	public void setUnitshortname(String unitshortname) {
+		this.unitshortname = unitshortname;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public String getUnitcode() {
+		return unitcode;
+	}
+	public void setUnitcode(String unitcode) {
+		this.unitcode = unitcode;
+	}
+	
+
+}

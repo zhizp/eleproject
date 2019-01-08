@@ -1,0 +1,12 @@
+package com.newhero.urbanconstruction.sysmanager.role.dao;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.sysmanager.role.pojo.RoleDTO;
+/**
+ * role类Dao层接口
+ */
+public interface SysRoleDao {
+
+	public List<RoleDTO> roleList();
+}

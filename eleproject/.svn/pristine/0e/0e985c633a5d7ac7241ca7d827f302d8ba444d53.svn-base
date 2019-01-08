@@ -1,0 +1,28 @@
+package com.newhero.urbanconstruction.sysmanager.user.service;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.codetablemaintain.unitinfo.pojo.UnitInfoDTO;
+import com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+public interface SysUserService {
+	//显示用户列表
+	public List<UserDTO> userList();
+	
+	public UserDTO getSysUserById(String id);
+	/**添加用户*/
+	public int insertSysUser(UserDTO user);
+	/**修改用户信息*/
+	public int updateSysUserById(UserDTO user);
+	/**删除用户信息*/
+	public int delSysUserByIds(String[]  ids, int userid); 
+	/***/
+	public int updateSysUserPwdById(UserDTO user);
+	
+	public List<UnitInfoDTO> getUnitInfoListByCode(String code);
+	
+	public List<UserDTO> getUserList(BaseQueryVo dto);
+	
+	public List<String> getUserNameList();
+}

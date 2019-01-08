@@ -1,0 +1,56 @@
+package com.newhero.urbanconstruction.codetablemaintain.unitaccount.pojo;
+
+public class UnitAccountDTO {
+	private Integer id;
+	private Integer unitinfoid;
+	private String unitname;
+	private String bank;
+	private String accountnumber;
+	private String remark;
+	private Integer operatorid;
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	
+	public String getUnitname() {
+		return unitname;
+	}
+	public void setUnitname(String unitname) {
+		this.unitname = unitname;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public Integer getUnitinfoid() {
+		return unitinfoid;
+	}
+	public void setUnitinfoid(Integer unitinfoid) {
+		this.unitinfoid = unitinfoid;
+	}
+	public Integer getOperatorid() {
+		return operatorid;
+	}
+	public void setOperatorid(Integer operatorid) {
+		this.operatorid = operatorid;
+	}
+	public String getBank() {
+		return bank;
+	}
+	public void setBank(String bank) {
+		this.bank = bank;
+	}
+	public String getAccountnumber() {
+		return accountnumber;
+	}
+	public void setAccountnumber(String accountnumber) {
+		this.accountnumber = accountnumber;
+	}
+	
+	
+}

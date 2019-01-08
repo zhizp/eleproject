@@ -1,0 +1,23 @@
+package com.newhero.urbanconstruction.codetablemaintain.unitaccount.dao;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.codetablemaintain.unitaccount.pojo.UnitAccountDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+public interface UnitAccountDao {
+
+	public int getUnitAccountCountByKeyword(BaseQueryVo dto);
+	
+    public List<UnitAccountDTO> getUnitAccountListByKeyword(BaseQueryVo dto);
+	
+	
+	public UnitAccountDTO getUnitAccountById(Integer id);
+	
+	public int updateUnitAccountById(UnitAccountDTO unit);
+	
+	public int insertUnitAccount(UnitAccountDTO unit);
+	
+	public int delUnitAccountId(UnitAccountDTO unit);
+	
+}

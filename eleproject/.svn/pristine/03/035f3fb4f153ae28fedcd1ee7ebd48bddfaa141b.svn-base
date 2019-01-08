@@ -1,0 +1,62 @@
+package com.newhero.urbanconstruction.codetablemaintain.unitaccount.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.newhero.urbanconstruction.codetablemaintain.unitaccount.dao.UnitAccountDao;
+import com.newhero.urbanconstruction.codetablemaintain.unitaccount.pojo.UnitAccountDTO;
+import com.newhero.urbanconstruction.codetablemaintain.unitaccount.service.UnitAccountService;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+/**
+ * unitAccountService 接口的实现类
+ * 
+ */
+@Transactional
+@Service("unitAccountService")
+public class UnitAccountServiceImpl implements UnitAccountService {
+	@Resource
+	private UnitAccountDao unitAccountDao;
+	
+	@Override
+	public int getUnitAccountCountByKeyword(BaseQueryVo dto) {
+		return unitAccountDao.getUnitAccountCountByKeyword(dto);
+	}
+
+	@Override
+	public List<UnitAccountDTO> getUnitAccountListByKeyword(BaseQueryVo dto) {
+		return unitAccountDao.getUnitAccountListByKeyword(dto);
+	}
+
+	@Override
+	public UnitAccountDTO getUnitAccountById(Integer id) {
+		return unitAccountDao.getUnitAccountById(id);
+	}
+
+	@Override
+	public int updateUnitAccountById(UnitAccountDTO unit) {
+		return unitAccountDao.updateUnitAccountById(unit);
+	}
+
+	@Override
+	public int insertUnitAccount(UnitAccountDTO unit) {
+		return unitAccountDao.insertUnitAccount(unit);
+	}
+
+	@Override
+	public int delUnitAccountbyIds(String[] ids, int userid) {
+		int rs = 0;
+		for(String id:ids){
+			UnitAccountDTO unit = new UnitAccountDTO();
+			unit.setId(Integer.parseInt(id));
+			unit.setOperatorid(userid);
+			rs += unitAccountDao.delUnitAccountId(unit);
+		}
+		return rs;
+	}
+
+
+}

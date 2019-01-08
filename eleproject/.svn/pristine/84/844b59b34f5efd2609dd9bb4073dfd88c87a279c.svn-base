@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- namespace的值就是dao接口的完整路径，就这个demo而言namespace 就是userDao.java的完整路径-->
+<mapper namespace="com.newhero.urbanconstruction.importhistorydata.dao.HistorydataDao">
+	
+	<select id="selectAllHistoryData" resultType="com.newhero.urbanconstruction.importhistorydata.pojo.ImportdataDTO">
+	select  id ,projectname ,constructionunit ,payee ,appropriationcontent ,
+	contractprice ,evaluationprice ,totalappropriation ,lappropriationratio ,
+	owepayment ,applicationamount ,applicationradio ,remark ,state,approvaltime,approvalamount,
+	appropriationaccount,granttime	
+	from importdata
+	</select>
+	<update id="updateImportData" parameterType="com.newhero.urbanconstruction.importhistorydata.pojo.ImportdataDTO">
+	update importdata
+	set construction=(select id from dm_constructionunit where unitname = #{constructionid} and isdelete = 0)<!-- #{constructionid} -->,
+	project=(select id from dm_projectname where projectname = #{projectid} and isdelete = 0)<!-- #{projectid} -->,
+	costtype=(select id from dm_costtype where costtype = #{costtypeid} and isdelete = 0)<!-- #{costtypeid} -->,
+	segment=(select id from dm_segmentinfo where segmentname = #{segmentid} and isdelete = 0)<!-- #{segmentid} -->
+	where id=#{id}
+	</update>
+	
+	
+	
+	
+</mapper>

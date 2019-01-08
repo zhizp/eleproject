@@ -1,0 +1,86 @@
+package com.newhero.urbanconstruction.codetablemaintain.archivesmanage.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.transaction.Transactional;
+
+import org.springframework.stereotype.Service;
+
+import com.newhero.urbanconstruction.codetablemaintain.archivesmanage.dao.ArchivesManageDao;
+import com.newhero.urbanconstruction.codetablemaintain.archivesmanage.pojo.ArchivesManageDTO;
+import com.newhero.urbanconstruction.codetablemaintain.archivesmanage.service.ArchivesMnageService;
+import com.newhero.urbanconstruction.codetablemaintain.archivestype.pojo.ArchivesType;
+import com.newhero.urbanconstruction.codetablemaintain.projectname.pojo.ProjectNameDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+@Transactional
+@Service("archivesManageService")
+public class ArchivesManageServiceImpl implements ArchivesMnageService {
+	@Resource
+	private ArchivesManageDao archivesManageDao;
+	
+	
+	@Override
+	public List<ArchivesManageDTO> getAllArchivesManageDTO(BaseQueryVo dto) {
+		
+		return archivesManageDao.getAllArchivesManageDTO(dto);
+	}
+
+
+	@Override
+	public int selectCountArchivesManageByKeyword(BaseQueryVo dto) {
+		// TODO Auto-generated method stub
+		return archivesManageDao.selectCountArchivesManageByKeyword(dto);
+	}
+
+
+	@Override
+	public List<ProjectNameDTO> selectProjectNames() {
+		// TODO Auto-generated method stub
+		return archivesManageDao.selectProjectNames();
+	}
+
+
+	@Override
+	public List<ProjectYearDTO> selectProjectYears() {
+		// TODO Auto-generated method stub
+		return archivesManageDao.selectProjectYears();
+	}
+
+
+	@Override
+	public List<ArchivesType> selectArchivesType() {
+		// TODO Auto-generated method stub
+		return archivesManageDao.selectArchivesType();
+	}
+
+
+	@Override
+	public int insertArchivesManage(ArchivesManageDTO archivesManageDTO) {
+		// TODO Auto-generated method stub
+		return archivesManageDao.insertArchivesManage(archivesManageDTO);
+	}
+
+
+	@Override
+	public ArchivesManageDTO selectArchivesManageById(int id) {
+		// TODO Auto-generated method stub
+		return archivesManageDao.selectArchivesManageById(id);
+	}
+
+
+	@Override
+	public int updateArchivesManage(ArchivesManageDTO archivesManageDTO) {
+		// TODO Auto-generated method stub
+		return archivesManageDao.updateArchivesManage(archivesManageDTO);
+	}
+
+
+	@Override
+	public int deleteArchivesManage(ArchivesManageDTO archivesManageDTO) {
+		// TODO Auto-generated method stub
+		return archivesManageDao.deleteArchivesManage(archivesManageDTO);
+	}
+
+}

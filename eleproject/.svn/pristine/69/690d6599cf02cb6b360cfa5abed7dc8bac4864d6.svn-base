@@ -1,0 +1,54 @@
+package com.newhero.urbanconstruction.codetablemaintain.unitaccount.pojo;
+
+/**
+ * 单位账户实体类
+ * 对应数据表 dm_unitaccount
+ * @author Mjj
+ *
+ */
+public class unitAccount {
+	private String id;
+	private String code;
+	private String unitShortName;
+	private String bank;
+	private String accountNumber;
+	private String remark;
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	public String getUnitShortName() {
+		return unitShortName;
+	}
+	public void setUnitShortName(String unitShortName) {
+		this.unitShortName = unitShortName;
+	}
+	public String getBank() {
+		return bank;
+	}
+	public void setBank(String bank) {
+		this.bank = bank;
+	}
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	
+}

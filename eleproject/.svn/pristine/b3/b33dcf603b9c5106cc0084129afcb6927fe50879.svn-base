@@ -1,0 +1,226 @@
+package com.newhero.urbanconstruction.apply.pojo;
+
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.Date;
+
+/**
+ * 
+ * 申请拨款 实体类
+ * 对应数据表 appropriationapply
+ * @author lsf
+ *
+ **/
+public class AppropriationApply {
+	private Integer id;
+	
+	private Integer segmentinfoId;	//标注项目ID
+	private Integer segmentProjectId;	//标注项目ID
+	
+	private String constructionUnit;	//施工单位
+	private String designUnit;	//设计单位
+	private String supervisionUnit;		//监理单位
+	private String payee;		//收款单位
+	private String receivableAccount;		//收款账户
+	private String appropriationContent;		//收款内容
+	private String applicationDate;		//申请日期
+	private BigDecimal applicationAmount;		//申请金额
+	private String remark;		//备注
+	
+	private Integer isDelete;	//删除状态
+	private Integer operatorId;	//操作人员ID
+	private Date operationTime;	//操作时间
+	private Integer state;	//业务流程状态	0：未受理；1：未受理；2：为拨款；3：已拨款
+	
+	
+	private Integer acceptorId;	//受理、撤销受理人员ID
+	private Date acceptorTime;	//受理、撤销受理时间
+	private Integer approvalerId;	//审批、撤销审批人员ID
+	private String approvalTime;	//审批、撤销审批时间
+	private Integer granterId;	//拨款、撤销拨款人员ID
+	private String grantTime;	//拨款、撤销拨款时间
+	private String appropriationaccount;	//拨款账户
+	private BigDecimal approvalamount;	//审批金额
+	private String toapprovalamount;
+	private String receivablenumber;
+	private Integer source;//0本系统；1历史数据
+	private Integer allocationmanageid;//拨款管理表id
+	
+	public String getToapprovalamount(){
+		DecimalFormat df = new DecimalFormat("#####0.0000");
+		if(approvalamount!=null && !"".equals(approvalamount)) {
+			toapprovalamount = df.format(approvalamount);
+		}
+		return toapprovalamount;
+	}
+	
+	public String getReceivablenumber() {
+		return receivablenumber;
+	}
+
+	public void setReceivablenumber(String receivablenumber) {
+		this.receivablenumber = receivablenumber;
+	}
+
+	public Integer getSegmentinfoId() {
+		return segmentinfoId;
+	}
+	public void setSegmentinfoId(Integer segmentinfoId) {
+		this.segmentinfoId = segmentinfoId;
+	}
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public Integer getSegmentProjectId() {
+		return segmentProjectId;
+	}
+	public void setSegmentProjectId(Integer segmentProjectId) {
+		this.segmentProjectId = segmentProjectId;
+	}
+	public String getConstructionUnit() {
+		return constructionUnit;
+	}
+	public void setConstructionUnit(String constructionUnit) {
+		this.constructionUnit = constructionUnit;
+	}
+	public String getDesignUnit() {
+		return designUnit;
+	}
+	public void setDesignUnit(String designUnit) {
+		this.designUnit = designUnit;
+	}
+	public String getSupervisionUnit() {
+		return supervisionUnit;
+	}
+	public void setSupervisionUnit(String supervisionUnit) {
+		this.supervisionUnit = supervisionUnit;
+	}
+	public String getPayee() {
+		return payee;
+	}
+	public void setPayee(String payee) {
+		this.payee = payee;
+	}
+	public String getReceivableAccount() {
+		return receivableAccount;
+	}
+	public void setReceivableAccount(String receivableAccount) {
+		this.receivableAccount = receivableAccount;
+	}
+	public String getAppropriationContent() {
+		return appropriationContent;
+	}
+	public void setAppropriationContent(String appropriationContent) {
+		this.appropriationContent = appropriationContent;
+	}
+	public String getApplicationDate() {
+		return applicationDate;
+	}
+	public void setApplicationDate(String applicationDate) {
+		this.applicationDate = applicationDate;
+	}
+	public BigDecimal getApplicationAmount() {
+		return applicationAmount;
+	}
+	public void setApplicationAmount(BigDecimal applicationAmount) {
+		this.applicationAmount = applicationAmount;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public Integer getIsDelete() {
+		return isDelete;
+	}
+	public void setIsDelete(Integer isDelete) {
+		this.isDelete = isDelete;
+	}
+	public Integer getOperatorId() {
+		return operatorId;
+	}
+	public void setOperatorId(Integer operatorId) {
+		this.operatorId = operatorId;
+	}
+	public Date getOperationTime() {
+		return operationTime;
+	}
+	public void setOperationTime(Date operationTime) {
+		this.operationTime = operationTime;
+	}
+	public Integer getState() {
+		return state;
+	}
+	public void setState(Integer state) {
+		this.state = state;
+	}
+	public Integer getAcceptorId() {
+		return acceptorId;
+	}
+	public void setAcceptorId(Integer acceptorId) {
+		this.acceptorId = acceptorId;
+	}
+	public Date getAcceptorTime() {
+		return acceptorTime;
+	}
+	public void setAcceptorTime(Date acceptorTime) {
+		this.acceptorTime = acceptorTime;
+	}
+	public Integer getApprovalerId() {
+		return approvalerId;
+	}
+	public void setApprovalerId(Integer approvalerId) {
+		this.approvalerId = approvalerId;
+	}
+	public String getApprovalTime() {
+		return approvalTime;
+	}
+	public void setApprovalTime(String approvalTime) {
+		this.approvalTime = approvalTime;
+	}
+	public Integer getGranterId() {
+		return granterId;
+	}
+	public void setGranterId(Integer granterId) {
+		this.granterId = granterId;
+	}
+	public String getGrantTime() {
+		return grantTime+"";
+	}
+	public void setGrantTime(String grantTime) {
+		this.grantTime = grantTime;
+	}
+	public String getAppropriationaccount() {
+		return appropriationaccount;
+	}
+	public void setAppropriationaccount(String appropriationaccount) {
+		this.appropriationaccount = appropriationaccount;
+	}
+	public BigDecimal getApprovalamount() {
+		return approvalamount;
+	}
+	public void setApprovalamount(BigDecimal approvalamount) {
+		this.approvalamount = approvalamount;
+	}
+
+	public Integer getSource() {
+		return source;
+	}
+
+	public void setSource(Integer source) {
+		this.source = source;
+	}
+
+	public Integer getAllocationmanageid() {
+		return allocationmanageid;
+	}
+
+	public void setAllocationmanageid(Integer allocationmanageid) {
+		this.allocationmanageid = allocationmanageid;
+	}		
+	
+}

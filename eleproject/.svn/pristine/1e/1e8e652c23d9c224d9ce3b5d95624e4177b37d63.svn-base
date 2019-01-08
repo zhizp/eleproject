@@ -1,0 +1,85 @@
+package com.newhero.urbanconstruction.codetablemaintain.costtype.pojo;
+
+import java.util.Date;
+
+/**
+ * 费用类别实体类
+ * 对应数据表dm_costtype
+ * author:zzp
+ */
+public class CostTypeDTO {
+
+	private Integer id;
+	private Integer yearId;
+	private Integer constructionId;
+	private Integer projectNameId;
+	private String costType;
+	private String projectname;
+	private String remark;
+	private Integer isDelete;
+	private Integer operatorId;
+	private Date operationTime;
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public Integer getYearId() {
+		return yearId;
+	}
+	public void setYearId(Integer yearId) {
+		this.yearId = yearId;
+	}
+	public Integer getConstructionId() {
+		return constructionId;
+	}
+	public void setConstructionId(Integer constructionId) {
+		this.constructionId = constructionId;
+	}
+	public Integer getProjectNameId() {
+		return projectNameId;
+	}
+	public void setProjectNameId(Integer projectNameId) {
+		this.projectNameId = projectNameId;
+	}
+	public String getCostType() {
+		return costType;
+	}
+	public void setCostType(String costType) {
+		this.costType = costType;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public Integer getIsDelete() {
+		return isDelete;
+	}
+	public void setIsDelete(Integer isDelete) {
+		this.isDelete = isDelete;
+	}
+	public Integer getOperatorId() {
+		return operatorId;
+	}
+	public void setOperatorId(Integer operatorId) {
+		this.operatorId = operatorId;
+	}
+	public Date getOperationTime() {
+		return operationTime;
+	}
+	public void setOperationTime(Date operationTime) {
+		this.operationTime = operationTime;
+	}
+	public String getProjectname() {
+		return projectname;
+	}
+	public void setProjectname(String projectname) {
+		this.projectname = projectname;
+	}
+	
+	
+	
+}

@@ -1,0 +1,136 @@
+package com.newhero.urbanconstruction.importhistorydata.pojo;
+
+import java.math.BigDecimal;
+
+public class ImportdataDTO {
+	 private Integer id;  
+	 private String projectname; 
+	 private String constructionunit; 
+	 private String payee ;
+	 private String appropriationcontent ;
+	 private BigDecimal contractprice ;
+	 private BigDecimal evaluationprice ;
+	 private BigDecimal totalappropriation ;
+	 private Double lappropriationratio; 
+	 private BigDecimal owepayment ;
+	 private BigDecimal applicationamount ;
+	 private Double applicationradio ;
+	 private String remark ;
+	 private Integer state ;//业务流程状态	0：未受理；1：未受理；2：为拨款；3：已拨款
+	 
+	 private String constructionid;
+	 private String projectid;
+	 private String costtypeid;
+	 private String segmentid;
+	public Integer getId() { 
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public String getProjectname() {
+		return projectname;
+	}
+	public void setProjectname(String projectname) {
+		this.projectname = projectname;
+	}
+	public String getConstructionunit() {
+		return constructionunit;
+	}
+	public void setConstructionunit(String constructionunit) {
+		this.constructionunit = constructionunit;
+	}
+	public String getPayee() {
+		return payee;
+	}
+	public void setPayee(String payee) {
+		this.payee = payee;
+	}
+	public String getAppropriationcontent() {
+		return appropriationcontent;
+	}
+	public void setAppropriationcontent(String appropriationcontent) {
+		this.appropriationcontent = appropriationcontent;
+	}
+	public BigDecimal getContractprice() {
+		return contractprice;
+	}
+	public void setContractprice(BigDecimal contractprice) {
+		this.contractprice = contractprice;
+	}
+	public BigDecimal getEvaluationprice() {
+		return evaluationprice;
+	}
+	public void setEvaluationprice(BigDecimal evaluationprice) {
+		this.evaluationprice = evaluationprice;
+	}
+	public BigDecimal getTotalappropriation() {
+		return totalappropriation;
+	}
+	public void setTotalappropriation(BigDecimal totalappropriation) {
+		this.totalappropriation = totalappropriation;
+	}
+	public Double getLappropriationratio() {
+		return lappropriationratio;
+	}
+	public void setLappropriationratio(Double lappropriationratio) {
+		this.lappropriationratio = lappropriationratio;
+	}
+	public BigDecimal getOwepayment() {
+		return owepayment;
+	}
+	public void setOwepayment(BigDecimal owepayment) {
+		this.owepayment = owepayment;
+	}
+	public BigDecimal getApplicationamount() {
+		return applicationamount;
+	}
+	public void setApplicationamount(BigDecimal applicationamount) {
+		this.applicationamount = applicationamount;
+	}
+	public Double getApplicationradio() {
+		return applicationradio;
+	}
+	public void setApplicationradio(Double applicationradio) {
+		this.applicationradio = applicationradio;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public Integer getState() {
+		return state;
+	}
+	public void setState(Integer state) {
+		this.state = state;
+	}
+	public String getConstructionid() {
+		return constructionid;
+	}
+	public void setConstructionid(String constructionid) {
+		this.constructionid = constructionid;
+	}
+	public String getProjectid() {
+		return projectid;
+	}
+	public void setProjectid(String projectid) {
+		this.projectid = projectid;
+	}
+	public String getCosttypeid() {
+		return costtypeid;
+	}
+	public void setCosttypeid(String costtypeid) {
+		this.costtypeid = costtypeid;
+	}
+	public String getSegmentid() {
+		return segmentid;
+	}
+	public void setSegmentid(String segmentid) {
+		this.segmentid = segmentid;
+	}
+	 
+	 
+	 
+}

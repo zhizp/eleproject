@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newhero.urbanconstruction.codetablemaintain.archivesmanage.dao.ArchivesManageDao">
+	<sql id="ArchivesManage_List">
+		id,yearid,projectid,filedate,receiptdate,archivestitle,refernumber,archivestypeid,archivesprice,volumenumber,attachments,handlesituation,agent,handedate,civilservice,disbursementdate,remark,operatorid,operationtime
+	</sql>
+	<select id="getAllArchivesManageDTO" parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultType="com.newhero.urbanconstruction.codetablemaintain.archivesmanage.pojo.ArchivesManageDTO">
+		select
+		ar.id,ar.yearid,ar.projectid,
+		DATE_FORMAT(ar.filedate, '%Y-%m-%d') as filedate,
+		DATE_FORMAT(ar.receiptdate, '%Y-%m-%d') as receiptdate,
+		ar.archivestitle,ar.refernumber,
+		ar.archivestypeid,ar.archivesprice,ar.volumenumber,ar.attachments,ar.handlesituation,ar.agent,
+		DATE_FORMAT(ar.handedate, '%Y-%m-%d') as handedate,
+		ar.civilservice,
+		DATE_FORMAT(ar.disbursementdate, '%Y-%m-%d') as disbursementdate,
+		ar.remark,
+		pj.projectname,py.projectyear,at.archivestype
+		from archivesmanage ar,dm_projectname pj ,dm_projectyear py,dm_archivestype at
+		where ar.isdelete=0 and ar.yearid=py.id and ar.projectid=pj.id and ar.archivestypeid=at.id
+		<if test='querySelect=="0" and keyword != null'>
+		and py.projectyear like "%"#{keyword}"%"  
+		</if>
+		<if test='querySelect=="1" and keyword != null'>
+		and ar.civilservice like "%"#{keyword}"%"  
+		</if>
+		
+		LIMIT #{startRow},#{pageSize}
+	</select>
+	
+	<insert id="insertArchivesManage" parameterType="com.newhero.urbanconstruction.codetablemaintain.archivesmanage.pojo.ArchivesManageDTO">
+		insert into archivesmanage
+		(
+			yearid,projectid,filedate,receiptdate,
+			archivestitle,refernumber,archivestypeid,
+			archivesprice,volumenumber,attachments,
+			handlesituation,agent,handedate,civilservice,
+			disbursementdate,remark,operatorid,
+			operationtime
+		) values
+		(
+			#{yearid},#{projectid},
+			STR_TO_DATE(#{filedate},'%Y-%m-%d'),
+			STR_TO_DATE(#{receiptdate},'%Y-%m-%d'),
+			#{archivestitle},#{refernumber},#{archivestypeid},
+			#{archivesprice},#{volumenumber},#{attachments},
+			#{handlesituation},#{agent},
+			STR_TO_DATE(#{handedate},'%Y-%m-%d'),
+			#{civilservice},
+			STR_TO_DATE(#{disbursementdate},'%Y-%m-%d'),
+			#{remark},#{operatorid},
+			STR_TO_DATE(#{operationtime},'%Y-%m-%d')
+		)
+	</insert>
+	
+	<update id="updateArchivesManage" parameterType="com.newhero.urbanconstruction.codetablemaintain.archivesmanage.pojo.ArchivesManageDTO">
+		update archivesmanage
+		set
+			yearid=#{yearid},projectid=#{projectid},
+			filedate=STR_TO_DATE(#{filedate},'%Y-%m-%d'),
+			receiptdate=STR_TO_DATE(#{receiptdate},'%Y-%m-%d'),
+			archivestitle=#{archivestitle},refernumber=#{refernumber},
+			archivestypeid=#{archivestypeid},
+			archivesprice=#{archivesprice},volumenumber=#{volumenumber},
+			attachments=#{attachments},
+			handlesituation=#{handlesituation},agent=#{agent},
+			handedate=STR_TO_DATE(#{handedate},'%Y-%m-%d'),
+			civilservice=#{civilservice},
+			disbursementdate=STR_TO_DATE(#{disbursementdate},'%Y-%m-%d'),
+			remark=#{remark},
+			operatorid=#{operatorid},
+			operationtime=STR_TO_DATE(#{operationtime},'%Y-%m-%d')
+			where id=#{id}
+		
+	</update>
+	
+	<update id="deleteArchivesManage" parameterType="com.newhero.urbanconstruction.codetablemaintain.archivesmanage.pojo.ArchivesManageDTO">
+		update archivesmanage
+		set
+			isdelete=1,
+			operatorid=#{operatorid},operationtime=now()
+			where id=#{id}
+		
+	</update>
+	
+	<select id="selectCountArchivesManageByKeyword" parameterType="com.newhero.urbanconstruction.util.BaseQueryVo" resultType="java.lang.Integer">
+		select
+		count(*)
+		from archivesmanage where isdelete=0
+		<if test='keyword != null'>
+			and archivestitle like "%"#{keyword}"%"
+		</if>
+	</select>
+
+	<select id="selectProjectYears" resultType="com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO" >
+		select
+		id,projectyear
+		from dm_projectyear
+		where isdelete=0  order by id desc
+	</select>
+	
+	<select id="selectProjectNames" resultType="com.newhero.urbanconstruction.codetablemaintain.projectname.pojo.ProjectNameDTO" >
+		select
+		id,projectname
+		from dm_projectname
+		where isdelete=0  order by id desc
+	</select>
+	
+	
+	<select id="selectArchivesType" resultType="com.newhero.urbanconstruction.codetablemaintain.archivestype.pojo.ArchivesType" >
+		select
+		id,archivestype
+		from dm_archivestype
+		where isdelete=0  order by id desc
+	</select>
+	
+	<select id="selectArchivesManageById" resultType="com.newhero.urbanconstruction.codetablemaintain.archivesmanage.pojo.ArchivesManageDTO">
+		select ar.id,
+		ar.yearid,ar.projectid,
+		DATE_FORMAT(ar.filedate, '%Y-%m-%d') as filedate,
+		DATE_FORMAT(ar.receiptdate, '%Y-%m-%d') as receiptdate,
+		ar.archivestitle,ar.refernumber,
+		ar.archivestypeid,ar.archivesprice,ar.volumenumber,ar.attachments,ar.handlesituation,ar.agent,
+		DATE_FORMAT(ar.handedate, '%Y-%m-%d') as handedate,
+		ar.civilservice,
+		DATE_FORMAT(ar.disbursementdate, '%Y-%m-%d') as disbursementdate,
+		ar.remark,
+		pj.projectname,py.projectyear,at.archivestype
+		from archivesmanage ar,dm_projectname pj ,dm_projectyear py,dm_archivestype at
+		where ar.isdelete=0 and ar.yearid=py.id and ar.projectid=pj.id and ar.archivestypeid=at.id
+		and ar.id=#{id}
+	</select>
+	
+	<select id="getOutOfData"  resultType="com.newhero.urbanconstruction.codetablemaintain.archivesmanage.pojo.ArchivesManageDTO">
+		select
+		ar.id,ar.yearid,ar.projectid,
+		DATE_FORMAT(ar.filedate, '%Y-%m-%d') as filedate,
+		DATE_FORMAT(ar.receiptdate, '%Y-%m-%d') as receiptdate,
+		ar.archivestitle,ar.refernumber,
+		ar.archivestypeid,ar.archivesprice,ar.volumenumber,ar.attachments,ar.handlesituation,ar.agent,
+		DATE_FORMAT(ar.handedate, '%Y-%m-%d') as handedate,
+		ar.civilservice,
+		DATE_FORMAT(ar.disbursementdate, '%Y-%m-%d') as disbursementdate,
+		ar.remark,
+		pj.projectname,py.projectyear,at.archivestype
+		from archivesmanage ar,dm_projectname pj ,dm_projectyear py,dm_archivestype at
+		where ar.isdelete=0 and ar.yearid=py.id and ar.projectid=pj.id and ar.archivestypeid=at.id
+	</select>
+	
+
+
+
+</mapper>

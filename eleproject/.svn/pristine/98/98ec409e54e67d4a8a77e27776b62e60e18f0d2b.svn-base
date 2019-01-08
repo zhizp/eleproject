@@ -1,0 +1,82 @@
+package com.newhero.urbanconstruction.codetablemaintain.projectname.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.transaction.Transactional;
+
+import org.springframework.stereotype.Service;
+
+import com.newhero.urbanconstruction.codetablemaintain.constructionunit.pojo.ConstructionunitDTO;
+import com.newhero.urbanconstruction.codetablemaintain.investmenttype.pojo.InvestmentTypeDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectname.dao.ProjectNameDao;
+import com.newhero.urbanconstruction.codetablemaintain.projectname.pojo.ProjectNameDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectname.service.ProjectNameService;
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+/**
+ * ProjectNameService 接口实现类
+ * @author Mjj
+ */
+@Transactional
+@Service("projectNameService")
+public class ProjectNameServiceImpl implements ProjectNameService{
+	@Resource
+	private ProjectNameDao projectNameDao;
+	
+	public ProjectNameDTO getProjectNameId(int id){
+		return this.projectNameDao.selectProjectNameById(id);
+	}
+	
+	@Override
+	public void saveProjectName(ProjectNameDTO projectName){
+		this.projectNameDao.saveProjectName(projectName);
+	}
+	
+	@Override
+	public void updateProjectName(ProjectNameDTO projectName){
+		this.projectNameDao.updateProjectName(projectName);
+	}
+	
+	@Override
+	public void deleteProjectName(ProjectNameDTO projectName){
+		this.projectNameDao.deleteProjectName(projectName);
+	}
+	public int selectProjectNameCountByKeyword(BaseQueryVo dto) {
+		return projectNameDao.selectProjectNameCountByKeyword(dto);
+	}
+	public List<ProjectNameDTO> selectProjectNames(BaseQueryVo dto){
+		return projectNameDao.selectProjectNames(dto);
+	}
+	public List<ProjectYearDTO> selectProjectYears(){
+		return projectNameDao.selectProjectYears();
+	}
+	public List<InvestmentTypeDTO> selectInvestments(){
+		return projectNameDao.selectInvestments();
+	}
+	public List<ConstructionunitDTO> selectconstructions(){
+		return projectNameDao.selectconstructions();
+	}
+	
+	public List<ProjectNameDTO> selectProjectNameByName(String projectName){
+		return projectNameDao.selectProjectNameByName(projectName);
+	}
+
+	@Override
+	public int selectProjectNameCountFromCostType(int projectnameid) {
+		
+		return projectNameDao.selectProjectNameCountFromCostType(projectnameid);
+	}
+
+	@Override
+	public List<ProjectNameDTO> selectProjectNameByNameForHistory(String projectName) {
+		return projectNameDao.selectProjectNameByNameForHistory(projectName);
+	}
+
+	@Override
+	public List<ProjectNameDTO> selectProjectNameByNameForHistoryOfDifferentYearIdAndConstructionId(String projectyear,
+			String constructionunitname, String projectname) {
+		return projectNameDao.selectProjectNameByNameForHistoryOfDifferentYearIdAndConstructionId(projectyear, constructionunitname, projectname);
+	}
+}

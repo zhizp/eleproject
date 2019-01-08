@@ -1,0 +1,398 @@
+package com.newhero.urbanconstruction.apply.controller;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.net.URLEncoder;
+import java.text.DecimalFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.newhero.urbanconstruction.apply.pojo.AppropriationApply;
+import com.newhero.urbanconstruction.apply.pojo.AppropriationApprovalDTO;
+import com.newhero.urbanconstruction.apply.service.AppropriationApprovalService;
+import com.newhero.urbanconstruction.codetablemaintain.allocationmanage.pojo.AllocationManageDTO;
+import com.newhero.urbanconstruction.codetablemaintain.allocationmanage.service.AllocationManageService;
+import com.newhero.urbanconstruction.codetablemaintain.allocationsaccount.pojo.AllocationsAccountDTO;
+import com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentProjectDTO;
+import com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO;
+import com.newhero.urbanconstruction.sysmanager.user.service.SysUserService;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+import com.newhero.urbanconstruction.util.Constant;
+import com.newhero.urbanconstruction.util.Pagination;
+import com.newhero.urbanconstruction.util.ToolsUtil;
+/**
+ * 拨款审批模块
+ * @author mqr
+ *
+ */
+@Controller
+@RequestMapping("/appropriationApproval")
+public class AppropriationApprovalController {
+	@Resource
+	private AppropriationApprovalService appropriationApprovalService;
+	
+	@Resource 
+	private SysUserService sysUserService;
+	
+	@Resource
+	private AllocationManageService allocationManageService;
+	
+	@RequestMapping("/getAcceptData")
+	public String getNoacceptData(String state,String pn,String keyword,String querySelect,String rowsPerPage, HttpServletResponse response,HttpServletRequest request, Model model){
+		if(ToolsUtil.isEmpty(state)){
+			state = "0" ;
+		}
+		if(ToolsUtil.isEmpty(pn)){
+			pn = Constant.DEAULT_START_PAGE_NUM;
+		}
+		if(ToolsUtil.isEmpty(rowsPerPage)){
+			rowsPerPage = Constant.DEFAULT_PAGE_SIZE ;
+		}
+		// 分页信息
+		Pagination page = new Pagination();
+		//翻页、参数
+		BaseQueryVo dto = new BaseQueryVo();
+		
+		dto.setKeyword(keyword);
+		dto.setQuerySelect(querySelect);
+		dto.setState(Integer.parseInt(state)) ;
+		dto.setStartRow((Integer.parseInt(pn) - 1) * Integer.parseInt(rowsPerPage));
+		dto.setPageSize(Integer.parseInt(rowsPerPage));
+		int rowsCount = appropriationApprovalService.getAppropriationApprovalCountByState(dto) ;
+		
+		page.setRowsCount(rowsCount);
+		page.setRowsPerPage(Integer.parseInt(rowsPerPage));
+		page.setCurrentPage(Integer.parseInt(pn));
+		page.setUrl(request.getContextPath()+"/appropriationApproval/getAcceptData.do?state="+state+"&rowsPerPage="+rowsPerPage);
+		
+		List<AppropriationApprovalDTO> appropriationApprovalList = appropriationApprovalService.getAppropriationApprovalListByState(dto);
+		if(appropriationApprovalList.isEmpty()&&Integer.parseInt(pn)>1) {
+			dto.setStartRow((Integer.parseInt(pn) - 2) * Integer.parseInt(rowsPerPage));
+			appropriationApprovalList = appropriationApprovalService.getAppropriationApprovalListByState(dto);
+			page.setCurrentPage(Integer.parseInt(pn)-1);
+		}
+//		List<AllocationManageDTO> allocatList= allocationManageService.getallocatname(null);
+		List<AllocationsAccountDTO> AllocationsAccountList=appropriationApprovalService.selectAccountNames();
+		model.addAttribute("AllocationsAccountList", AllocationsAccountList);
+		model.addAttribute("appropriationApprovalList", appropriationApprovalList);
+//		model.addAttribute("allocatList", allocatList);
+		model.addAttribute("state", state);
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("querySelect", querySelect);
+		model.addAttribute("page",page);
+		return "appropriationapproval/AppropriationApprovalList";
+	}
+	
+	@RequestMapping(value = "/getTheApprovalProjectByApprovalCode", method = RequestMethod.POST)
+	@ResponseBody
+	public AppropriationApprovalDTO getTheApprovalProjectByApprovalCode(String id){
+		return appropriationApprovalService.getAppropriationApprovalListById(id);
+	}
+	
+	/**
+	 * ajax修改状态
+	 * @param id
+	 * @param model
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value="/updApprovalState", method = RequestMethod.POST)
+	public String updApprovalState(@RequestParam(value = "id") String id,String opid,int state,HttpServletResponse response,HttpServletRequest request) {
+		UserDTO sessUser = (UserDTO)request.getSession().getAttribute("USER_SESSION");
+		int rs = 0;
+		if(ToolsUtil.isNotEmpty(id) && ToolsUtil.isNotEmpty(opid)){
+			AppropriationApprovalDTO dto = new AppropriationApprovalDTO();
+			dto.setId(Integer.parseInt(id));
+			dto.setState(state);
+			switch(opid){
+			  	case "0":dto.setAcceptorid(sessUser.getId());
+					 	 dto.setAcceptortime(new Date());
+					     break;
+			  	case "1":dto.setApprovalerid(sessUser.getId());
+			 	         dto.setApprovaltime(new Date());
+			             break;
+			  	case "2":dto.setGranterid(sessUser.getId());
+	 	         		 dto.setGranttime(new Date());
+	                     break;
+			}
+			
+			rs = appropriationApprovalService.updApprovalState(dto);
+		}
+		return Integer.toString(rs);
+	}
+	@ResponseBody
+	@RequestMapping("/updateApprop")
+	public String updateApprop(AppropriationApply appropriationApply,HttpServletResponse response,HttpServletRequest request) {
+		UserDTO sessUser = (UserDTO)request.getSession().getAttribute("USER_SESSION");
+		int i=appropriationApprovalService.updateApprop(appropriationApply);
+		AppropriationApprovalDTO tempdto = appropriationApprovalService.getAppropriationApprovalById(appropriationApply.getId());
+		SegmentProjectDTO segmentProjectDTO=appropriationApprovalService.getSegmentProjectById(tempdto.getSegmentprojectid());
+		segmentProjectDTO.setOwepayment(segmentProjectDTO.getOwepayment().subtract(tempdto.getApprovalamount()));//欠拨金额-=审批金额
+		segmentProjectDTO.setTotalappropriation(segmentProjectDTO.getTotalappropriation().add(tempdto.getApprovalamount()));//累计拨款金额+=审批金额
+		segmentProjectDTO.setOperatorid(sessUser.getId());
+		int j=appropriationApprovalService.updateSegmentprojectBySP(segmentProjectDTO);
+		String result="0";
+		if(i==1 && j==1) {
+			result="1";
+		}
+		return result;
+	}
+	
+	@ResponseBody
+	@RequestMapping("/cacelapprop")
+	public String cacelapprop(AppropriationApply appropriationApply,HttpServletResponse response,HttpServletRequest request) {
+		UserDTO sessUser = (UserDTO)request.getSession().getAttribute("USER_SESSION");
+		AppropriationApprovalDTO tempdto = appropriationApprovalService.getAppropriationApprovalById(appropriationApply.getId());
+		SegmentProjectDTO segmentProjectDTO=appropriationApprovalService.getSegmentProjectById(tempdto.getSegmentprojectid());
+		segmentProjectDTO.setOwepayment(segmentProjectDTO.getOwepayment().add(tempdto.getApprovalamount()));//欠拨金额+=审批金额
+		segmentProjectDTO.setTotalappropriation(segmentProjectDTO.getTotalappropriation().subtract(tempdto.getApprovalamount()));//累计拨款金额-=审批金额
+		segmentProjectDTO.setOperatorid(sessUser.getId());
+		int i=appropriationApprovalService.cacelapprop(appropriationApply);
+		int j=appropriationApprovalService.updateSegmentprojectBySP(segmentProjectDTO);
+		String result="0";
+		if(i==1 && j==1) {
+			result="1";
+		}
+		return result;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/printWordByApprovalId", method = RequestMethod.POST)
+	public Map printWordByApprovalId( String id, HttpServletRequest request, HttpServletResponse response ) throws Exception {
+		boolean result=false;
+		Map<String, Object> map = new HashMap<String, Object>(); 
+		java.text.DecimalFormat decimalWyformat=new java.text.DecimalFormat("0.000000");
+		if(ToolsUtil.isNotEmpty(id)){
+			AppropriationApprovalDTO approvalDto = appropriationApprovalService.getAppropriationApprovalInfoById(Integer.parseInt(id));
+//			String  realpath= request.getServletContext().getRealPath("/image");
+		     //获得数据  
+		   
+		    //申请日期
+		    map.put("applicationdate", approvalDto.getApplicationdate()!=null?approvalDto.getApplicationdate():"");
+		    map.put("YY", approvalDto.getApplicationdate().substring(0, 4)!=null?approvalDto.getApplicationdate().substring(0, 4):"");
+		    map.put("MM", approvalDto.getApplicationdate().substring(5, 7)!=null?approvalDto.getApplicationdate().substring(5, 7):"");
+		    map.put("DD", approvalDto.getApplicationdate().substring(8, 10)!=null?approvalDto.getApplicationdate().substring(8, 10):"");
+		    //开户行
+		    map.put("receivableaccount", approvalDto.getReceivableAccount()!=null?approvalDto.getReceivableAccount():"");
+		    //银行账号
+		    map.put("receivablenumber", approvalDto.getReceivablenumber()!=null?approvalDto.getReceivablenumber():"");
+		    //项目年度
+		    map.put("year", approvalDto.getProjectyear()!=null?approvalDto.getProjectyear():"");
+		    //工程项目名称
+		    map.put("projectname", approvalDto.getProjectname()!=null?approvalDto.getProjectname():"");
+		    //项目建设单位
+		    map.put("unitname", approvalDto.getUnitname()!=null?approvalDto.getUnitname():"");
+		    //工程施工单位
+		    map.put("constructionunit", approvalDto.getConstructionUnit()!=null?approvalDto.getConstructionUnit():"");
+		    //工程监理单位
+		    map.put("supervisionunit", approvalDto.getSupervisionUnit()!=null?approvalDto.getSupervisionUnit():"");
+		    //designunit
+		    map.put("designunit", approvalDto.getDesignUnit()!=null?approvalDto.getDesignUnit():"");
+		    //收款单位全称
+		    map.put("payee", approvalDto.getPayee()!=null?approvalDto.getPayee():"");
+		    //申请拨款内容
+		    map.put("appropriationcontent", approvalDto.getAppropriationcontent()!=null?approvalDto.getAppropriationcontent():"");
+		    //发改委概算批复金额
+		    map.put("estimateamount", approvalDto.getEstimateamount()!=null? decimalWyformat.format(approvalDto.getEstimateamountbywy()):"");
+		    //累计拨付金额
+		    map.put("totalappropriation", approvalDto.getTotalappropriation()!=null? decimalWyformat.format(approvalDto.getTotalappropriationbywy()) : "");
+		    //项目合同或中标价款
+		    map.put("contractprice", approvalDto.getContractprice()!=null? decimalWyformat.format(approvalDto.getContractpricebywy()) : "");
+		    //欠付款
+		    map.put("owepayment", ((approvalDto.getSettlreviewamount()!=null && approvalDto.getTotalappropriation()!=null)? decimalWyformat.format(approvalDto.getSettlreviewamountbywy().subtract(approvalDto.getTotalappropriationbywy())) :""));
+		    //财政决算或决算评审价款
+		    map.put("evaluationprice", approvalDto.getSettlreviewamount()!=null? decimalWyformat.format(approvalDto.getSettlreviewamountbywy()):"");
+		    //申请价款
+		    map.put("applicationamount",approvalDto.getApplicationamount()!=null? decimalWyformat.format(approvalDto.getApplicationamountbywy()):"");
+		    //打印人
+		    UserDTO sessUser = (UserDTO)request.getSession().getAttribute("USER_SESSION");
+		    map.put("dayin", sessUser.getUsername()!=null?sessUser.getUsername():"");
+		    //制单人
+		    UserDTO user= sysUserService.getSysUserById(String.valueOf(approvalDto.getOperatorid()));
+		    map.put("zhidan", user.getUsername()!=null?user.getUsername():"");
+		    //编号 
+		    String num=id;
+		    int length = num.length();
+		    String str="";
+		    for(int i=1;i<=10-length;i++) {
+		    	str+="0";
+		    }
+		    map.put("number", str+num.toString()!=null?str+num.toString():"");
+		   /* try {
+		    	result=com.newhero.urbanconstruction.util.WordUtils.exportMillCertificateWord(request,response,map,"重点项目拨款申请表","apprivote.ftl");
+		    } catch (IOException e) {
+		        // TODO Auto-generated catch block
+		        e.printStackTrace();
+		    }   */ 
+		}
+		/*if(result) {
+			return "1";	
+		}else {
+			return "0";	
+		}*/
+		return map;
+//		return "appropriationapproval/printwordbyapprovalid";
+	}
+	
+	@RequestMapping(value = "/exportApproval")
+	public void exportApproval(HttpServletRequest request, HttpServletResponse response,String state) throws Exception{
+		
+		BaseQueryVo dto = new BaseQueryVo();
+		dto.setIsall(1);
+		dto.setState(Integer.parseInt(state)) ;
+		List<AppropriationApprovalDTO> list = appropriationApprovalService.getAppropriationApprovalListByState(dto);
+		
+		//设置输出头
+    	response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+    	String filename = "资金审批表.xls";// 设置下载时客户端Excel的名称
+    	//设置HTTP响应的头
+    	String t = request.getHeader("User-Agent");
+		if (t.indexOf("Firefox") > 0) {
+			response.setHeader("Content-disposition", "attachment;filename="
+					+ new String(filename.getBytes("gb2312"), "ISO8859-1"));
+		} else {
+			response.setHeader("Content-disposition", "attachment;filename="
+					+ URLEncoder.encode(filename, "UTF-8"));
+		}
+		
+		ServletOutputStream stream = response.getOutputStream();
+		
+		HSSFWorkbook work = new HSSFWorkbook();
+		
+		HSSFSheet sheet = work.createSheet("资金审批");
+		
+		HSSFRow row = sheet.createRow(0);
+		
+		HSSFCell cell1 = row.createCell(0);
+		cell1.setCellValue("序号");
+
+		HSSFCell cell2 = row.createCell(1);
+		cell2.setCellValue("申请表编号");
+		
+		HSSFCell cell3 = row.createCell(2);
+		cell3.setCellValue("项目");
+		
+		HSSFCell cell4 = row.createCell(3);
+		cell4.setCellValue("建设单位");
+		
+		HSSFCell cell5 = row.createCell(4);
+		cell5.setCellValue("收款单位简称");
+		
+		HSSFCell cell6 = row.createCell(5);
+		cell6.setCellValue("拨款内容");
+		
+		HSSFCell cell7 = row.createCell(6);
+		cell7.setCellValue("合同价（万元）");
+		
+		HSSFCell cell8 = row.createCell(7);
+		cell8.setCellValue("评审价（万元）");
+		
+		HSSFCell cell9 = row.createCell(8);
+		cell9.setCellValue("累计拨款（万元）");
+		
+		HSSFCell cell10 = row.createCell(9);
+		cell10.setCellValue("拨付比例");
+		
+		HSSFCell cell11 = row.createCell(10);
+		cell11.setCellValue("欠付款（万元）");
+		
+		HSSFCell cell12 = row.createCell(11);
+		cell12.setCellValue("申请金额（万元）");
+		
+		HSSFCell cell13 = row.createCell(12);
+		cell13.setCellValue("申请比例");
+		
+		HSSFCell cell14 = row.createCell(13);
+		cell14.setCellValue("备注");
+		
+		List<Date> listAppropriationDate = appropriationApprovalService.getApplicationDate();
+		List<Date> listGrantTime = appropriationApprovalService.getGrantDate();
+		List<String> listAppropriationAccount = appropriationApprovalService.getAppropriationAccount();
+		
+		DecimalFormat df = new DecimalFormat("0.000000");
+		
+		for(int i = 0; i < list.size(); i++){
+			AppropriationApprovalDTO approval = list.get(i);
+			HSSFRow row1 = sheet.createRow(i + 1);
+			row1.createCell(0).setCellValue(i + 1);
+			row1.createCell(1).setCellValue(approval.getId());
+			row1.createCell(2).setCellValue(approval.getProjectname());
+			row1.createCell(3).setCellValue(approval.getConstructionUnit());
+			row1.createCell(4).setCellValue(approval.getConstructionUnit());//收款单位简称
+			row1.createCell(5).setCellValue(approval.getAppropriationcontent());//拨款内容
+			
+			if(approval.getContractprice() != null){
+				row1.createCell(6).setCellValue(df.format(approval.getContractpricebywy()));//合同标价
+			}
+			if(approval.getSettlreviewamount() != null){
+				row1.createCell(7).setCellValue(df.format(approval.getSettlreviewamountbywy()));//评审价
+			}
+			
+			if(approval.getTotalappropriation() != null){
+				row1.createCell(8).setCellValue(df.format(approval.getTotalappropriationbywy()));//累计拨款
+			}
+			
+			if(approval.getTotalappropriation() != null && 
+					approval.getSettlreviewamount() != null && 
+					approval.getSettlreviewamount().compareTo(BigDecimal.ZERO) > 0
+					){
+				BigDecimal rate = approval.getTotalappropriation().divide(approval.getSettlreviewamount(), 2, RoundingMode.HALF_UP);
+				String strRate = "" + rate + "%";
+				row1.createCell(9).setCellValue(strRate);//拨付比例
+			}
+			if(approval.getOwepayment() != null){
+				row1.createCell(10).setCellValue(approval.getOwepayment().toString());//欠付款
+			}else{
+				row1.createCell(10).setCellValue("0.0000");
+			}
+			
+			if(approval.getApplicationamount() != null){
+				row1.createCell(11).setCellValue(df.format(approval.getApplicationamount()));//申请金额
+			}
+			
+			if(approval.getApplicationamount() != null && approval.getSettlreviewamount() != null
+					&& approval.getSettlreviewamount().compareTo(BigDecimal.ZERO) > 0){
+				BigDecimal rate = approval.getApplicationamount().divide(approval.getSettlreviewamount(), 2, RoundingMode.HALF_UP);
+				String strRate = "" + rate + "%";
+				row1.createCell(12).setCellValue(strRate);//申请比例
+			}
+			
+			row1.createCell(13).setCellValue(approval.getRemark());//备注
+			
+						
+		}
+		
+		work.write(stream);
+		
+		stream.flush();
+		stream.close();
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/getAccountNameListByCode", method = RequestMethod.POST)
+	public List<AllocationsAccountDTO>	getAccountNameListByCode(@RequestParam(value = "code") String code){
+//		System.out.println(code+1);
+		if(ToolsUtil.isEmpty(code)) code = null;
+		List<AllocationsAccountDTO> accountNameBycodeList = appropriationApprovalService.getAccountNameBycode(code);
+		return accountNameBycodeList;
+	}
+	
+}

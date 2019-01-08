@@ -1,0 +1,37 @@
+package com.newhero.urbanconstruction.codetablemaintain.archivestype.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import com.newhero.urbanconstruction.codetablemaintain.archivestype.dao.ArchivesTypeDaO;
+import com.newhero.urbanconstruction.codetablemaintain.archivestype.pojo.ArchivesType;
+import com.newhero.urbanconstruction.codetablemaintain.archivestype.service.ArchivesTypeService;
+
+@Service("archivesTypeService")
+
+public class ArchivesTypeServiceImpl implements ArchivesTypeService{
+	@Resource
+	private ArchivesTypeDaO archivesTypeDao;
+	
+	public int addCotegory(ArchivesType archivesType){
+		return archivesTypeDao.addCotegory(archivesType);
+	}
+
+	@Override
+	public List<ArchivesType> selectTheArchivesType() {
+		return archivesTypeDao.selectTheArchivesType();
+	}
+
+	@Override
+	public int deleteCotegory(String[] ids) {
+		return archivesTypeDao.deleteCotegory(ids);
+	}
+
+	@Override
+	public int updateCotegory(ArchivesType archivesType) {
+		return archivesTypeDao.updateCotegory(archivesType);
+	}
+}

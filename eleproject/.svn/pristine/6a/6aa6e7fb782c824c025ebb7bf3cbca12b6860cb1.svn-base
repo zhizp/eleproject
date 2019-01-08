@@ -1,0 +1,412 @@
+package com.newhero.urbanconstruction.importhistorydata.controller;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.newhero.urbanconstruction.apply.pojo.AppropriationApply;
+import com.newhero.urbanconstruction.apply.pojo.SegmentProjectReviewDTO;
+import com.newhero.urbanconstruction.apply.service.AppropriationApplyService;
+import com.newhero.urbanconstruction.apply.service.SegmentProjectService;
+import com.newhero.urbanconstruction.codetablemaintain.constructionunit.pojo.ConstructionunitDTO;
+import com.newhero.urbanconstruction.codetablemaintain.constructionunit.service.ConstructionService;
+import com.newhero.urbanconstruction.codetablemaintain.costtype.pojo.CostTypeDTO;
+import com.newhero.urbanconstruction.codetablemaintain.costtype.service.CostTypeService;
+import com.newhero.urbanconstruction.codetablemaintain.projectname.pojo.ProjectNameDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectname.service.ProjectNameService;
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.service.ProjectYearService;
+import com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentInfoDTO;
+import com.newhero.urbanconstruction.codetablemaintain.segmentinfo.service.SegmentInfoService;
+import com.newhero.urbanconstruction.importhistorydata.pojo.ImportdataDTO;
+import com.newhero.urbanconstruction.importhistorydata.service.HistorydataService;
+
+@Controller
+@RequestMapping("/historydataController")
+public class HistorydataController {
+
+	@Resource
+	private  HistorydataService historydataService;
+	
+	@Resource
+	private ProjectYearService projectYearService;
+	
+	@Resource
+	private ConstructionService constructionService;
+	
+	@Resource
+	private ProjectNameService projectNameService;
+	
+	@Resource
+	private CostTypeService costtypeService;
+	
+	@Resource
+	private SegmentInfoService segmentInfoService;
+	
+	@Resource
+	private AppropriationApplyService appropriationApplyService;
+	
+	@Resource
+	private SegmentProjectService segmnetProjectService;
+	
+	public HistorydataService getHistorydataService() {
+		return historydataService;
+	}
+	
+	@RequestMapping("/selectAllHistoryData")
+	@ResponseBody
+	public String selectAllHistoryData(){
+		List<ImportdataDTO> list= historydataService.selectAllHistoryData();
+		ImportdataDTO importdataDTO=new ImportdataDTO();
+		for(int i=0;i<list.size();i++) {
+			importdataDTO.setId(list.get(i).getId());
+			ImportdataDTO dataList = list.get(i);
+			String[] projects= list.get(i).getProjectname().split("\\s+");
+			String proPayee = list.get(i).getPayee();
+			ConstructionunitDTO constructionDTO = new ConstructionunitDTO();
+			ProjectYearDTO projectYearDTO = new ProjectYearDTO();
+			ProjectNameDTO projectNameDTO = new ProjectNameDTO();
+			CostTypeDTO costtypeDTO = new CostTypeDTO();
+			SegmentInfoDTO segmentInfoDTO = new SegmentInfoDTO(); 
+			ProjectYearDTO projectYearDTOCurrentTemp = new ProjectYearDTO(); 
+			AppropriationApply appropriationApply = new AppropriationApply();
+			
+			String projectYearTemp = "";
+			String constructionNameTemp = "";
+			String projectNameTemp = "";
+			String costtypeTemp = "";
+			String segmentInfoTemp = "";
+			
+			for(int j=0;j<projects.length;j++) {
+				if(projects[j]!=null && !"".equals(projects[j]) ) {
+					if(j == 0){
+						List<ProjectYearDTO> projectYearDTOTemp = projectYearService.selectProjectYearByNameForHistory(projects[j].split("年")[0]);
+						if(!projectYearDTOTemp.isEmpty()){
+							for(ProjectYearDTO dtoList : projectYearDTOTemp){
+								//暂时先严格按照一条数据来进行
+								if(dtoList.getIsdelete() == 1){
+									dtoList.setIsdelete(0);
+									projectYearService.redeleteProjectYearForHistory(dtoList);
+								}
+								projectYearDTOCurrentTemp = dtoList;
+							}
+						}else{
+							projectYearDTO.setProjectYear(projects[j].split("年")[0]);
+							System.out.println(projects[j]);
+							projectYearService.saveProjectYear(projectYearDTO);
+							System.out.println(projectYearDTO);
+							projectYearDTOCurrentTemp = projectYearDTO;
+						}
+						projectYearTemp = projects[j];
+					}
+					if(j==1) {
+						//importdataDTO.setConstructionid(projects[j]);
+						//先将unitname存入dm_constructionunit表  再更新importdata表的construction字段信息  
+						//需要存取<projectyearid & unitname>
+						if(projectYearDTOCurrentTemp != null){
+							constructionDTO.setYearId(projectYearDTOCurrentTemp.getId());
+						}else{
+							projectYearDTO.setProjectYear(projectYearTemp);
+							projectYearService.saveProjectYear(projectYearDTO);
+							List<ProjectYearDTO> projectYearDTOTemp = projectYearService.selectProjectYearByNameForHistory(projectYearTemp);
+							if(projectYearDTOTemp != null){
+								for(ProjectYearDTO projectYearDTOTempList : projectYearDTOTemp){
+									constructionDTO.setYearId(projectYearDTOTempList.getId());
+								}
+							}
+						}
+						constructionDTO.setUnitName(projects[j]);
+						constructionDTO.setUnitShortName(projects[j]);
+						//同一个项目年度下不能有相同的建设单位名称
+						
+						List<ConstructionunitDTO> constructionDTOList = 
+								constructionService.selectConstructionByNameForHistoryOfDifferentYearId(
+										constructionDTO.getUnitName(), projectYearTemp.split("年")[0]);
+						if(constructionDTOList.isEmpty()){
+							constructionService.saveConstruction(constructionDTO);
+						}else if(constructionDTOList.size() == 1){
+						}else if(constructionDTOList.size() > 1){	//>=
+							return String.valueOf("数据错误<重复>！");
+						}
+						//constructionService.saveConstruction(constructionDTO);
+						constructionNameTemp = projects[j];
+					}
+					if(j==2) {
+						//importdataDTO.setProjectid(projects[j]);
+						//先将projectname存入dm_projectname表  再更新importdata表的projectname字段信息  
+						//需要存取<projectyearid & constructionunitid & projectname>
+						if(projectYearDTOCurrentTemp != null){
+							projectNameDTO.setYearId(projectYearDTOCurrentTemp.getId());
+						}else{
+							projectYearDTO.setProjectYear(projectYearTemp);
+							projectYearService.saveProjectYear(projectYearDTO);
+							List<ProjectYearDTO> projectYearDTOTemp = projectYearService.selectProjectYearByNameForHistory(projectYearTemp);
+							if(projectYearDTOTemp != null){
+								for(ProjectYearDTO projectYearDTOTempList : projectYearDTOTemp){
+									projectNameDTO.setYearId(projectYearDTOTempList.getId());
+								}
+							}
+						}
+						if(!constructionNameTemp.equalsIgnoreCase("") && constructionNameTemp != null){
+							
+							List<ConstructionunitDTO> constructionList = 
+									constructionService.selectConstructionByNameForHistoryOfDifferentYearId(
+											constructionNameTemp, projectYearTemp.split("年")[0]);
+							if(constructionList.size() == 1){
+								projectNameDTO.setConstructionid(constructionList.get(0).getId());
+							}else{
+								return String.valueOf("数据错误<重复>！");
+							}
+						}else{
+							return String.valueOf("数据错误<重复>！");
+						}
+							
+							
+						projectNameDTO.setProjectname(projects[j]);
+						//
+						List<ProjectNameDTO> projectNameDTOTemp = 
+						projectNameService.selectProjectNameByNameForHistoryOfDifferentYearIdAndConstructionId(projectYearTemp.split("年")[0],
+								constructionNameTemp, projectNameDTO.getProjectname());
+						if(projectNameDTOTemp.isEmpty()){
+							projectNameService.saveProjectName(projectNameDTO);
+						}else{
+							//return String.valueOf("数据错误<重复>！");
+						}
+						//projectNameService.saveProjectName(projectNameDTO);
+						
+						projectNameTemp = projects[j];
+					}
+					if(j==3) {
+						//importdataDTO.setCosttypeid(projects[j]);
+						//先将costtype存入dm_costtype表  再更新importdata表的costtype字段信息  
+						//需要存取<projectyearid & constructionunitid & projectnameid & costtype>
+						if(projectYearTemp != null && !projectYearTemp.equals("")){
+							costtypeDTO.setYearId(projectYearDTOCurrentTemp.getId());
+						}else{
+							projectYearDTO.setProjectYear(projectYearTemp);
+							projectYearService.saveProjectYear(projectYearDTO);
+							List<ProjectYearDTO> projectYearDTOTemp = projectYearService.selectProjectYearByNameForHistory(projectYearTemp);
+							if(projectYearDTOTemp != null){
+								for(ProjectYearDTO projectYearDTOTempList : projectYearDTOTemp){
+									costtypeDTO.setYearId(projectYearDTOTempList.getId());
+								}
+							}
+						}
+						if(constructionNameTemp != null && !constructionNameTemp.equals("")){
+							
+							List<ConstructionunitDTO> constructionList = 
+									constructionService.selectConstructionByNameForHistoryOfDifferentYearId(
+											constructionNameTemp, projectYearTemp.split("年")[0]);
+							if(constructionList.size() == 1){
+								costtypeDTO.setConstructionId(constructionList.get(0).getId());
+							}else{
+								return String.valueOf("数据错误<重复>！");
+							}
+						}else{
+						}
+						if(projectNameTemp != null && !projectNameTemp.equals("")){
+							List<ProjectNameDTO> projectNameList = projectNameService.selectProjectNameByNameForHistory(projectNameTemp);
+							if(projectNameList != null){
+								for(ProjectNameDTO projectNameCurrentTemp : projectNameList){
+									costtypeDTO.setProjectNameId(projectNameCurrentTemp.getId());
+								}
+							}
+						}else{
+							return String.valueOf("数据错误<重复>！");
+						}
+						costtypeDTO.setCostType(projects[j]);
+						
+						List<CostTypeDTO> costTypeListTemp = costtypeService.selectCostTypeByNameForHistoryOfDifferentYearIdUnitIdProjectNameId(projectYearTemp.split("年")[0],
+								constructionNameTemp, projectNameTemp, costtypeDTO.getCostType());
+						if(costTypeListTemp.isEmpty()){
+							costtypeService.saveCostType(costtypeDTO);
+						}else{
+							//return String.valueOf("数据错误<重复>！");
+						}
+						
+						//costtypeService.saveCostType(costtypeDTO);
+						costtypeTemp = projects[j];
+					}
+					if(j==4) {
+						//importdataDTO.setSegmentid(projects[j]);
+						//先将segmentname存入dm_segmentinfo表  再更新importdata表的segment字段信息  
+						//需要存取<projectyearid & constructionunitid & projectname & costtypeid & segmentname>
+						if(projectYearDTOCurrentTemp != null){
+							segmentInfoDTO.setYearid(projectYearDTOCurrentTemp.getId());
+						}else{
+							projectYearDTO.setProjectYear(projectYearTemp);
+							projectYearService.saveProjectYear(projectYearDTO);
+							List<ProjectYearDTO> projectYearDTOTemp = projectYearService.selectProjectYearByNameForHistory(projectYearTemp);
+							for(ProjectYearDTO projectYearDTOTempList : projectYearDTOTemp){
+								segmentInfoDTO.setYearid(projectYearDTOTempList.getId());
+							}
+						}
+						if(constructionNameTemp != null && ! constructionNameTemp.equals("")){
+							List<ConstructionunitDTO> constructionList = 
+									constructionService.selectConstructionByNameForHistoryOfDifferentYearId(
+											constructionNameTemp, projectYearTemp.split("年")[0]);
+							if(constructionList.size() == 1){
+								segmentInfoDTO.setConstructionid(constructionList.get(0).getId());
+							}else{
+								return String.valueOf("数据错误<重复>！");
+							}
+						}else{
+							return String.valueOf("数据错误<重复>！");
+						}
+						if(projectNameTemp != null && !projectNameTemp.equals("")){
+							List<ProjectNameDTO> projectNameList = projectNameService.selectProjectNameByNameForHistory(projectNameTemp);
+							if(projectNameList != null){
+								for(ProjectNameDTO projectNameCurrentTemp : projectNameList){
+									segmentInfoDTO.setProjectnameid(projectNameCurrentTemp.getId());
+								}
+							}
+						}else{
+							return String.valueOf("数据错误<重复>！");
+						}
+						if(costtypeTemp != null && !costtypeTemp.equals("")){
+							List<CostTypeDTO> costtypeList = costtypeService.selectCostTypeByNameForHistory(costtypeTemp);
+							if(costtypeList != null){
+								for(CostTypeDTO costtypeCurrentTemp : costtypeList){
+									segmentInfoDTO.setCosttypeid(costtypeCurrentTemp.getId());
+								}
+							}
+						}else{
+							return String.valueOf("数据错误<重复>！");
+						}
+						segmentInfoDTO.setSegmentname(projects[j]);
+						
+						List<SegmentInfoDTO> segmentInfoListTemp = segmentInfoService.selectSegmentInfoByDifferentYearidUnitIdProjectNameIdCosttypeid(
+								projectYearTemp.split("年")[0], constructionNameTemp, projectNameTemp, 
+								costtypeTemp, segmentInfoDTO.getSegmentname());
+						if(segmentInfoListTemp.isEmpty()){
+							//segmentInfoDTO.setId(dataList.getId());
+							//segmentInfoService.insertSegmentInfoForHistroyNew(segmentInfoDTO);
+							segmentInfoService.insertSegmentInfoForHistroy(segmentInfoDTO);
+						}else{
+							//eturn String.valueOf("数据错误<重复>！");
+						}
+						
+						//segmentInfoService.insertSegmentInfoForHistroy(segmentInfoDTO);
+						segmentInfoTemp = projects[j];
+					}
+				}
+				
+				//向segmentproject表存储 segmentinfoid
+				if(segmentInfoTemp != null && !segmentInfoTemp.equals("")){
+					SegmentProjectReviewDTO segProDTOTemp = new SegmentProjectReviewDTO();
+					Integer id = segmentInfoService.getSegmentInfoByName(segmentInfoTemp).getId();
+					segProDTOTemp.setSegmentinfoid(id);
+					segProDTOTemp.setContractprice(dataList.getContractprice().doubleValue() * 10000.00);
+					segProDTOTemp.setTotalappropriation(dataList.getTotalappropriation().doubleValue() * 10000.00);
+					segProDTOTemp.setLappropriationratio(dataList.getLappropriationratio().doubleValue());
+					segProDTOTemp.setOwepayment(dataList.getOwepayment().doubleValue() * 10000.00);
+					segProDTOTemp.setProjectid(projectNameService.selectProjectNameByNameForHistory(
+							projectNameTemp).get(0).getId());
+					
+					//
+					String id1 = segmentInfoService.getSegmentInfoByName(segmentInfoTemp).getId().toString();
+					if(id1 != null && !id1.equals("")){
+						List<SegmentProjectReviewDTO> segProList =
+								segmnetProjectService.selectSegProjectBySegInfoId(id1);
+						//System.out.println("===================================: " + segProList.size());
+						if(segProList.isEmpty()){
+							segProDTOTemp.setSettlreviewamount(dataList.getEvaluationprice().doubleValue() * 10000.00);
+						}else if(segProList != null && !segProList.isEmpty()){
+							//return String.valueOf("数据错误<重复>！");
+						}
+					}
+					//
+					List<SegmentProjectReviewDTO> segProList = 
+					segmnetProjectService.selectSegProjectBySegInfoId(segProDTOTemp.getSegmentinfoid().toString());
+					if(segProList.isEmpty()){
+						segmnetProjectService.insertSegProject(segProDTOTemp);
+					}else if(segProList.size() == 1){
+						segProDTOTemp.setId(segProList.get(0).getId());
+						segmnetProjectService.updateSegProject(segProDTOTemp);	//segProList.get(0)
+					}else if(segProList.size() > 1){
+						//return String.valueOf("数据错误<重复>！");
+					}
+					//segmnetProjectService.insertSegProject(segProDTOTemp);
+				}
+				
+				if(proPayee!= null && !proPayee.equals("")){
+					//与历史数据的申请表id保持一致
+					appropriationApply.setId(dataList.getId());
+//					if(segmentInfoTemp != null && !segmentInfoTemp.equals("")){
+//						appropriationApply.setSegmentinfoId(segmentInfoService.getSegmentInfoByName(segmentInfoTemp).getId());
+//					}
+					if(segmentInfoTemp != null && !segmentInfoTemp.equals("")){
+						List<SegmentProjectReviewDTO> segProList = segmnetProjectService.selectSegProjectBySegInfoId(
+								segmentInfoService.getSegmentInfoByName(segmentInfoTemp).getId().toString());
+						if(!segProList.isEmpty() && segProList.size() == 1){
+//							System.out.println("============================" + segProList.get(0).getId());
+							appropriationApply.setSegmentProjectId(segProList.get(0).getId());
+						}
+					}
+					appropriationApply.setConstructionUnit(dataList.getConstructionunit());
+					appropriationApply.setPayee(proPayee);
+					appropriationApply.setAppropriationContent(dataList.getAppropriationcontent());
+					BigDecimal b1 = new BigDecimal(Double.toString(10000.00));
+					BigDecimal b2 = new BigDecimal(Double.toString(dataList.getApplicationamount().doubleValue()));
+					appropriationApply.setApplicationAmount(b1.multiply(b2));
+					appropriationApply.setRemark(dataList.getRemark());
+					appropriationApply.setIsDelete(0);
+					
+					appropriationApply.setState(dataList.getState());
+					appropriationApply.setApprovalTime(dataList.getApprovaltime());
+					appropriationApply.setApprovalamount(dataList.getApprovalamount());
+					appropriationApply.setAppropriationaccount(dataList.getAppropriationaccount());
+					appropriationApply.setGrantTime(dataList.getGranttime());
+//					appropriationApply.setDesignUnit(); //设计单位
+//					appropriationApply.setSupervisionUnit(); //监理单位
+//					appropriationApply.setReceivableAccount();
+//					appropriationApply.setReceivablenumber();
+//					appropriationApply.setApplicationDate();
+//					appropriationApply.setOperatorId();
+//					appropriationApply.setOperationTime();
+//					appropriationApply.setAcceptorId();
+//					appropriationApply.setAcceptorTime();
+//					appropriationApply.setApprovalerId();
+//					appropriationApply.setApprovalTime();
+//					appropriationApply.setGranterId();
+//					appropriationApply.setGrantTime();
+//					appropriationApply.setAppropriationaccount();
+//					appropriationApply.setApprovalamount();
+					List<AppropriationApply> applyTemp = null;
+					if(appropriationApply.getSegmentProjectId() != null && !appropriationApply.getSegmentProjectId().toString().equals("")){
+						applyTemp = appropriationApplyService.selectApplyBySegmentProjectId(appropriationApply.getSegmentProjectId().toString());
+					}
+					if(applyTemp != null && !applyTemp.isEmpty() && applyTemp.size() == 1){
+						if(applyTemp.get(0).getSegmentProjectId().equals(appropriationApply.getSegmentProjectId())){
+							//return String.valueOf("重复错误！");
+						}else{
+							//appropriationApplyService.insertApplyData(appropriationApply);
+							appropriationApplyService.insertApplyDataNew1(appropriationApply);
+						}
+					}else if(applyTemp != null && applyTemp.size() == 0){
+						System.out.println("===============000==============");
+						//appropriationApplyService.insertApplyDataNew(appropriationApply);
+						appropriationApplyService.insertApplyDataNew1(appropriationApply);
+					}/*else if(applyTemp == null){
+						appropriationApplyService.insertApplyDataNew1(appropriationApply);
+					}*/else{
+						System.out.println("===============111==============");
+						//return String.valueOf("数据错误<重复>！");
+					}
+					
+					//appropriationApplyService.insertApplyData(appropriationApply);
+				}
+			}
+			System.out.println("=======================================================");//+list.get(i).getProjectname()
+			historydataService.updateImportData(importdataDTO);
+		}
+		System.out.println(list.size());
+		return String.valueOf(list.size());
+	}
+	
+}

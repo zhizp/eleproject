@@ -1,0 +1,1013 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%> 
+<jsp:include page="/include/public.jsp"></jsp:include>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>申请拨款</title>
+		<meta name="keywords" content="" />
+		<meta name="description" content="" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<!-- basic styles -->
+		<link rel="stylesheet" href="${ctx}/views/assets/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace-rtl.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace-skins.min.css" />
+		<script src="${ctx}/views/assets/js/jquery-2.0.3.min.js"></script>
+		<link rel="stylesheet" href="${ctx}/views/assets/ZTree/zTreeStyle.css" />
+		<script src="${ctx}/views/assets/ZTree/jquery.ztree.core-3.5.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.mobile.custom.min.js"></script>
+		<script src="${ctx}/views/assets/js/bootstrap.min.js"></script>
+		<script src="${ctx}/views/assets/js/typeahead-bs2.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.ui.touch-punch.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.slimscroll.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.easy-pie-chart.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.sparkline.min.js"></script>
+		<script src="${ctx}/views/assets/js/flot/jquery.flot.min.js"></script>
+		<script src="${ctx}/views/assets/js/flot/jquery.flot.pie.min.js"></script>
+		<script src="${ctx}/views/assets/js/flot/jquery.flot.resize.min.js"></script>
+		<script src="${ctx}/views/assets/js/ace-elements.min.js"></script>
+		<script src="${ctx}/views/assets/js/ace.min.js"></script>
+		<script src="${ctx}/views/assets/js/ace-extra.min.js"></script>
+		<script type="text/javascript">
+		$(document).ready(function(){
+			$.fn.zTree.init($("#treeDemo"), setting);
+		});
+		function saveApply(){
+			var constructionunit = $("#Addconstructionunit").val().trim();
+			var designunit = $("#Adddesignunit").val().trim();
+			var supervisionunit = $("#Addsupervisionunit").val().trim();
+			var payee = $("#Addpayee").val().trim();
+			var receivableaccount = $("#Addreceivableaccount").val().trim();
+			var appropriationcontent = $("#Addappropriationcontent").val().trim();
+			var applicationDate = $("#AddapplyDate").val().trim();
+			var applicationamount = $("#Addapplicationamount").val().trim();
+			var remark = $("#Addremark").val().trim();
+			if(payee.length==0 ){
+				alert('收款单位不能为空！');
+				return false;
+			}
+			if(receivableaccount.length==0 ){
+				alert('收款账户不能为空！');
+				return false;
+			}
+			if(applicationamount.length==0 ){
+				alert('申请金额不能为空！');
+				return false;
+			}
+			/*'applicationDate':applicationDate,  */
+			$.ajax({
+				url:"${ctx}/appropriationApplyController/addApplyData",
+				type:"post",
+				data:{'constructionUnit':constructionunit,'designUnit':designunit,'supervisionUnit':supervisionunit,'payee':payee,'applicationAmount':applicationamount,'appropriationContent':appropriationcontent,'receivableaccount':receivableaccount,'remark':remark
+				},
+				dataType:"json",
+				success:function(data){
+					if(data.success){
+						alert("保存成功！");
+						window.close();
+	                	location.reload();
+					}else{
+						alert("保存失败！");
+					}
+					
+				},
+				error:function(){
+					alert("保存申请拨款信息失败！");
+				}
+			});
+		}
+		
+    function openupdata(){
+
+    	$("#openupdata").attr('data-target','');
+    	var constnum =0;
+    	var applytId="";
+    	$("input[name='selapplytId']").each(function () {
+    		if ($(this).is(':checked')) {
+    			constnum+= 1;
+    			applytId=$(this).val();
+    		} 
+    	});
+    	if(constnum >1){
+    		alert("请只选一个！");
+    		return false;
+    	}
+    	if(constnum <1){
+    		alert("请选一个申请信息！");
+    		return false;
+    	}
+    	$("#openupdata").attr('data-target',"#updateModal");
+       	$.ajax({
+               url:  "${ctx}/appropriationApplyController/getApplyDataById",
+               type: 'post',
+               data:{'id':applytId},
+               async: false,
+               dataType: 'json',
+               success: function (data) {
+					$("#updateid").val(data.id);
+					$("#updateconstructionunit").val(data.constructionUnit);
+					$("#updatedesignunit").val(data.designUnit);
+					$("#updatesupervisionunit").val(data.supervisionUnit);
+					$("#updatepayee").val(data.dpayee);
+					$("#updatereceivableaccount").val(data.receivableAccount);
+					$("#updateappropriationcontent").val(data.appropriationContent);
+					//$("#updateapplyDate").val();
+					$("#updateapplicationamount").val(data.receivableaccount);
+					$("#updateremark").val(data.remark);
+               }
+   		});
+    	
+    }
+    	
+    function updateApply(){
+    	var constructionunit = $("#updateconstructionunit").val().trim();
+		var designunit = $("#updatedesignunit").val().trim();
+		var supervisionunit = $("#updatesupervisionunit").val().trim();
+		var payee = $("#updatepayee").val().trim();
+		var receivableaccount = $("#updatereceivableaccount").val().trim();
+		var appropriationcontent = $("#updateappropriationcontent").val().trim();
+		//var applicationDate = $("#updateapplyDate").val().trim();
+		var applicationAmount = $("#updateapplicationamount").val().trim();
+		var remark = $("#updateremark").val().trim();
+       	$.ajax({
+               url:  "${ctx}/appropriationApplyController/updateApplyData",
+               type: 'POST',
+               data:{'constructionUnit':constructionunit,'designUnit':designunit,'supervisionUnit':supervisionunit,'payee':payee,'receivableAccount':receivableaccount,'appropriationContent':appropriationcontent,'applicationAmount':applicationAmount,'remark':remark
+				},
+               async: false,
+               dataType: 'json',
+               success: function (data) {
+               	alert("更新成功！");
+               	$("input[name='selapplytId']").attr('checked',false);
+               	window.close();
+               	location.reload();
+               },
+               error:function(data){
+               	alert("更新失败！");
+               }
+       
+   		});
+    }
+    
+    
+    function deleteApply(){
+    	var constid="";
+    	$("input[name='selapplytId']").each(function () {
+    		if ($(this).is(':checked')) {
+    			constid +=$(this).val()+',';
+    		} 
+    	});
+    	constid=constid.substring(0,constid.length-1);
+    	if(constid.length==0){
+    		alert("请选择一个申请");
+    		return false;
+    	}
+    	alert(constid);
+      	if(confirm("你确定要删除选中的申请？")){
+      	$.ajax({
+              url:  '${ctx}/appropriationApplyController/deleteApplyData',
+              type: 'POST',
+              data:{'id':constid},
+              async: false,
+              dataType: 'json',
+              success: function (data) {
+              	alert("删除成功！");
+              	$("input[name='selapplytId']").attr('checked',false);
+              	window.close();
+              	location.reload();
+              },
+              error:function(data){
+              	alert("删除失败！");
+              }
+      
+  		});
+      }
+    }
+    
+    function selectApplyByName(){
+    	var projectYear=$("#projectYear").val();
+    	var url="${ctx}/appropriationApplyController/selectProjectYearByName?projectYear="+projectYear;
+    	window.location.href=url;
+    }
+    
+    function updateProjectPrceBySegmentId(){
+    	var estimateamount = $("#estimateamount").val().trim();
+		var contractprice = $("#contractprice").val().trim();
+		var barrageprice = $("#barrageprice").val().trim();
+		var segmentinfoid = $("#segmentinfoid").val().trim();
+       	$.ajax({
+               url:  "${ctx}/appropriationApplyController/updateProjectPrceBySegmentId",
+               type: 'POST',
+               data:{'segmentinfoid':segmentinfoid,'estimateamount':estimateamount,'contractprice':contractprice,'barrageprice':barrageprice
+				},
+               async: false,
+               dataType: 'json',
+               success: function (data) {
+               	alert("更新成功！");
+               	location.reload();
+               },
+               error:function(data){
+               	alert("更新失败！");
+               }
+       
+   		});
+    }
+    function updateReviewBySegmentId(){
+    	var settlreviewamount = $("#settlreviewamount").val().trim();
+		var reviewnumber = $("#reviewnumber").val().trim();
+		var settlreviewinfo = $("#settlreviewinfo").val().trim();
+		var segmentinfoid = $("#segmentinfoid").val().trim();
+       	$.ajax({
+               url:  "${ctx}/appropriationApplyController/updateReviewBySegmentId",
+               type: 'POST',
+               data:{'segmentinfoid':segmentinfoid,'settlreviewamount':settlreviewamount,'reviewnumber':reviewnumber,'settlreviewinfo':settlreviewinfo
+				},
+               async: false,
+               dataType: 'json',
+               success: function (data) {
+               	alert("更新成功！");
+               	location.reload();
+               },
+               error:function(data){
+               	alert("更新失败！");
+               }
+       
+   		});
+    }
+    function updateRemarkBySegmentId(){
+    	var remark = $("#remark").val().trim();
+		var segmentinfoid = $("#segmentinfoid").val().trim();
+       	$.ajax({
+               url:  "${ctx}/appropriationApplyController/updateRemarkBySegmentId",
+               type: 'POST',
+               data:{'segmentinfoid':segmentinfoid,'remark':remark},
+               async: false,
+               dataType: 'json',
+               success: function (data) {
+               	alert("更新成功！");
+               	location.reload();
+               },
+               error:function(data){
+               	alert("更新失败！");
+               }
+       
+   		});
+    }
+    
+	
+		</script>
+		<script type="text/javascript">
+		
+		//ZTree
+		var setting = {
+		async:{
+			enable:true,
+			type:"post",
+			url:"${ctx}/projectYearController/getProjectYear",
+			contentType:"application/x-www-form-urlencoded",
+			autoParam:["id"]/*,
+			dataFilter:filter*/
+		},
+		 data:{
+			simpleData:{
+				enable:true,
+				idKey:"id",
+				rootId:0
+			},
+			key:{
+				name:"projectYear"
+			}
+		},
+		view:{
+			showLine: true,
+            showIcon: true,
+            selectedMulti: false,
+			dblClickExpand:false 
+		},
+		
+		/* $.ajax({
+			url:"${ctx}/infoCascade",
+			type:"post",
+			data:{},
+			dataType:"json",
+			success:function(){},
+			error:function(){}
+		}); */
+		callback:{
+			onClick : function(event, treeId, treeNode, clickFlag){			//展开树相关操作
+				functionToSon1(event, treeId, treeNode, clickFlag);
+				//functionToSon2(event, treeId, treeNode, clickFlag);
+				//likeOnClick();
+			},
+            beforeAsync : function(event, treeId, treeNode, clickFlag){
+            	
+            },
+            /* onMouseDown:function(event, treeId, treeNode, clickFlag){
+            	functionToSon2(event, treeId, treeNode, clickFlag);
+            }, */
+	        //捕获异步加载出现异常错误的事件回调函数 和 成功的回调函数  与上连接
+	         onAsyncSuccess : function(){}
+	        } 
+		}; //end setting
+		
+		//var runOne = true;
+		var treeNodeAddArray = new Array("id", "projectYear", "shortunitname");//定义全局
+		var treeNodeAddArray1 = new Array("id", "projectYear", "shortunitname");//定义全局
+		var treeNodeAddArray2 = new Array("id", "projectYear", "shortunitname");//定义全局
+		var treeNodeAddArrayArray = new Array("id", "projectYear", "shortunitname");
+		var treeNodeAddArraySecond = new Array("signOfClicked");
+		var treeNodeOfClicked= new Array("id", "projectYear", "shortunitname");
+		var treeNodeWarehouse = new Array();
+		//treeNodeWarehouse[0] = ("0", "0", "kuaiyaozhale!");
+		var treeNodeAdd = new Array();
+		var time = new Array();
+		var iWarehouseTimer = 0;
+		var switchTrueOrFalse = true;
+		function functionToSon1(event, treeId, treeNode, clickFlag){
+			if(treeNode.id){
+				var yearId = treeNode.id;//获取年度id
+			}else{
+				var yearId = 0;
+			}
+				//alert(yearId);//yearID获取没有错误
+					var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+					/*nodes = treeObj.getNodeByParam("yearId", treeNode.id, null);
+					id = nodes.yearId;
+					alert("nodes.yearId: " + nodes.yearId); */
+					$.ajax({
+						url:"${ctx}/mykyzlController/getConstUnitInfoByYearIds",//根据项目年度的id查询建设单位list
+						type:"post",
+						data:{"yearId":yearId},//传回yearId
+						dataType:"json",
+						async:false,
+						success:function(data){//返回的list数据
+							//treeNodeAddArray1级间不重复加载界限  treeNodeAddArray当前级重复点击不重复加载界限  treeNodeAddArray2中间转换数据容器							
+							/* for(var save in data){
+								var changeNodes = new Array();
+								changeNodes[save] = {unitId:data[save].id, projectYear:data[save].unitname}; //注意不同级别之间的属性的更改
+								treeNodeAddArray1[save] = changeNodes[save];
+							} *///进入就保存原有数据 为了级间点击事件的重复加载界限
+							if (data.length != 0) {
+								
+								var node = {"id":0, "projectYear":"0"};
+								treeObj.addNodes(treeNode, node);
+								alert(123);
+								
+								
+								
+								var nodes = treeObj.getNodes();
+								//treeObj.removeChildNodes(nodes);
+								for(var i in nodes){
+									treeObj.removeChildNodes(nodes[i]);
+								}
+								
+								alert(456);
+								
+								 for (var o in data){
+				                        var id = data[o].id;
+				                        var name1 = data[o].unitname;
+				               			treeNodeAdd[o] = {unitId:id, projectYear:name1};
+				               			
+				               			if((treeNodeAddArray[o].projectYear != treeNodeAdd[o].projectYear)
+				               					//&& (treeNodeAdd[o].projectYear != treeNodeAddArray2[o].projectYear))
+				               					//|| (treeNodeAddArray2 == null)
+				               					|| (treeNodeWarehouse == null)
+								 ){	//先根据赎罪判断有没有数据 
+				               				/* for(var toEnd in treeNodeOfClicked){
+				               					if(treeNodeOfClicked[toEnd].projectYear != treeNodeAdd[o].projectYear){
+				               						alert("no same.");
+				               					}
+				               				} */
+				               				alert("run to here 1!");
+				               				if(treeNodeWarehouse != null){
+				               					alert("run to here 2!");
+				               					//var switchTrueOrFalse = true;
+				               	 /* tiaochuxunhuan:while(switchTrueOrFalse ==  true){
+				               						for(var oNum in treeNodeWarehouse){
+					               						alert("run to here 3!");
+						               					if(treeNodeAdd[o].projectYear != treeNodeWarehouse[oNum].projectYear){
+						               						//treeObj.addNodes(treeNode, treeNodeAdd[o]);
+						               						switchTrueOrFalse = true;
+						               					}else{
+						               						continue tiaochuxunhuan;//while false goto 
+						               					}
+						               					// if(!switchTrueOrFalse){
+						               					//	treeObj.addNodes(treeNode, treeNodeAdd[o]);
+						               					//} 
+						               				}
+				               					 } */
+				               					 
+				               					 /* if(!(function(){
+				               						for(var oNum in treeNodeWarehouse){
+				               							if(treeNodeAdd[o].projectYear == treeNodeWarehouse[oNum].projectYear){
+				               								switchTrueOrFalse = false;
+				               								return switchTrueOrFalse;
+				               							}
+				               						} 
+				               					 })){
+				               						 break;//treeObj.addNodes(treeNode, treeNodeAdd[o]);
+				               					 }else{
+				               						 treeObj.addNodes(treeNode, treeNodeAdd[o]);
+				               					 } */
+				               					 
+				               					//if(switchTrueOrFalse){
+				               					//	treeObj.addNodes(treeNode, treeNodeAdd[o]);
+				               					//}else{}
+				               				}else{
+				               					treeObj.addNodes(treeNode, treeNodeAdd[o]);
+				               				}
+				               				
+				               				
+				               				treeObj.addNodes(treeNode, treeNodeAdd[o]);
+			  		               		    treeNodeAddArray[o] = treeNodeAdd[o];//将已经添加的节点数据添加进入数组
+			  		               		    
+			  		               		    //treeNodeOfClicked[o].signOfClicked = "1";
+			  		               		    //alert(treeNodeOfClicked);
+			  		               		    
+			  		               		    //加入仓库
+			  		               		    treeNodeWarehouse[iWarehouseTimer] = treeNodeAdd[o];
+			  		               		    iWarehouseTimer++;
+				               			}
+				                    }
+								 
+								 //console.log(treeNodeAdd[1]);
+								 //treeNodeAddArraySecond = treeNodeAdd[1];
+								 
+							} 
+							//treeNodeAddArray2 = treeNodeAddArray1;
+							
+						 $.ajax({
+							 success:function(data){
+								 //var node = [{"id":data.id, "projectYear":data.unitname, "click":functionToSon2(event, treeId, treeNode, clickFlag)}];
+									//node.click = functionToSon2(event, treeId, treeNode, clickFlag);
+									/* if(node){
+									    //触发默认数据的click事件
+									   $("#"+node.tId+"_a").click(function(){alert(123)});//触发ztree点击事件
+									} */
+									functionToSon2(event, treeId, treeNode, clickFlag);
+							 },
+							 error:function(){
+							 }
+						 });
+							//functionToSon2(event, treeId, treeNode, clickFlag);
+						},
+						error:function(count){}
+					});
+			//functionToSon2(event, treeId, treeNode, clickFlag);
+		 };
+		 
+		  var treeNodeAddArrayProject = new Array("id", "projectYear");
+		  var treeNodeAddProject = new Array();
+		  function functionToSon2(event, treeId, treeNode, clickFlag){
+			 // alert("2");
+			var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+			//var id = treeObj1.getSelectedNodes().id;
+			if(treeNode.unitId){
+				var id = treeNode.unitId;
+			}else{
+				var id = 0;
+			}
+			//alert("unit id: " + id);
+			//alert(id);
+			//console.log(treeNode);
+			$.ajax({
+				url:"${ctx}/mykyzlController/getProjectNameInfoByUnitId1",
+				type:"post",
+				data:{"unitId":id},
+				dataType:"json",
+				async:false,
+				success:function(data){
+					/* if(data.length != 0){
+						alert("data.length: " + data.length);
+					}else 
+					if(data.length == 0){
+						alert("data.length is 0.");
+					} */
+					if(data.length != 0) {
+	                     for (var o in data){
+	                        var id = data[o].id;
+	                        //alert("id: " + id);
+	                        var name1 = data[o].projectname;
+	               			treeNodeAddProject[o] = {projectId:id, projectYear:name1};
+	               			if(treeNodeAddArrayProject[o].projectYear != treeNodeAddProject[o].projectYear){	//先根据赎罪判断有没有数据 
+	               				//console.log(treeNodeAddArray[o]);
+	               				//treeNode1 = treeObj.getSelectedNodes();
+	               				treeObj.addNodes(treeNode, treeNodeAddProject[o]);
+  		               		    treeNodeAddArrayProject[o] = treeNodeAddProject[o];//将已经添加的节点数据添加进入数组
+  		               		    //console.log("get nodes length: " + treeObj.getSelectedNodes().length);
+	               			}
+	                    }
+					} 
+				},
+				error:function(){}
+			});
+			
+			functionToSon3(event, treeId, treeNode, clickFlag);
+		 }
+		  
+		  function functionToSon3(event, treeId, treeNode, clickFlag){
+				 // alert("2");
+				var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+				//var id = treeObj1.getSelectedNodes().id;
+				if(treeNode.projectId){
+					var id = treeNode.projectId;
+				}else{
+					var id = 0;
+				}
+				
+				//alert("treeNode's id: " + treeNode.projectYear + " " + id);
+				//alert(id);
+				//console.log(treeNode);
+				$.ajax({
+					url:"${ctx}/mykyzlController/getCostTypeListByProjId1",
+					type:"post",
+					data:{"projectId":id},
+					dataType:"json",
+					success:function(data){
+						/* if(data.length != 0){
+							alert("data.length: " + data.length);
+						}else 
+						if(data.length == 0){
+							alert("data.length is 0.");
+						} */
+						if(data.length != 0) {
+		                     for (var o in data){
+		                        var id = data[o].id;
+		                        //alert("id: " + id);
+		                        var name1 = data[o].costtype;
+		               			treeNodeAdd[o] = {costId:data[o].id, projectYear:name1};
+		               			if(treeNodeAddArray[o].projectYear != treeNodeAdd[o].projectYear){	//先根据赎罪判断有没有数据 
+		               				console.log(treeNodeAddArray[o]);
+		               				//treeNode1 = treeObj.getSelectedNodes();
+		               				treeObj.addNodes(treeNode, treeNodeAdd[o]);
+	  		               		    treeNodeAddArray[o] = treeNodeAdd[o];//将已经添加的节点数据添加进入数组
+	  		               		    //console.log("get nodes length: " + treeObj.getSelectedNodes().length);
+		               			}
+		                    }
+						} 
+						functionToSon4(event, treeId, treeNode, clickFlag);
+					},
+					error:function(){}
+				});
+			 };
+		  function functionToSon4(event, treeId, treeNode, clickFlag){
+			  
+			  if(treeNode.costId){
+				  var costId = treeNode.costId;  
+			  }else{
+				  var costId = 0;
+			  }
+				
+				//alert(yearId);//yearID获取没有错误
+					var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+					$.ajax({
+						url:"${ctx}/mykyzlController/getSegmentNumByCostTypeId1",//根据项目年度的id查询建设单位list
+						type:"post",
+						data:{"costId":costId},//传回yearId
+						dataType:"json",
+						success:function(data){//返回的list数据
+							if (data.length != 0) {
+								 for (var o in data){
+				                        var id = data[o].id;
+				                        var name1 = data[o].segmentname;
+				               			treeNodeAdd[o] = {segmentId:data[o].id, projectYear:name1};
+				               			if(treeNodeAddArray[o].projectYear != treeNodeAdd[o].projectYear){	//先根据赎罪判断有没有数据 
+				               				treeObj.addNodes(treeNode, treeNodeAdd[o]);
+			  		               		    treeNodeAddArray[o] = treeNodeAdd[o];//将已经添加的节点数据添加进入数组
+			  		               		    //treeNodeAddArrayArray[o] = treeNodeAdd[o];
+				               			}
+				                    }
+							} 
+						
+						$.ajax({
+							
+						});
+						
+						},
+						error:function(count){}
+					});
+		 };
+		
+		  function likeOnClick(){
+			  var tree=$.fn.zTree.getZTreeObj("treeDemo");
+			  var sel=tree.getNodeByParam('id','${topicId}');
+			  $("#"+sel.tId+"_a").click(function(){
+				  alert("test likeClick.");
+			  }); // 点击节点
+			  $("#"+sel.tId+"_check").click(); // 点击单选框
+		  }
+		  
+		  
+		
+		
+		/* var setting = {	}; 
+
+		 var zNodes =[
+			{ name:"父节点1 - 展开", open:true,
+				children: [
+					{ name:"父节点11 - 折叠",
+						children: [
+							{ name:"叶子节点111"},
+							{ name:"叶子节点112"},
+							{ name:"叶子节点113"},
+							{ name:"叶子节点114"}
+						]},
+					{ name:"父节点12 - 折叠",
+						children: [
+							{ name:"叶子节点121"},
+							{ name:"叶子节点122"},
+							{ name:"叶子节点123"},
+							{ name:"叶子节点124"}
+						]},
+					{ name:"父节点13 - 没有子节点", isParent:true}
+				]},
+			{ name:"父节点2 - 折叠",
+				children: [
+					{ name:"父节点21 - 展开", open:false,
+						children: [
+							{ name:"叶子节点211"},
+							{ name:"叶子节点212"},
+							{ name:"叶子节点213"},
+							{ name:"叶子节点214"}
+						]},
+					{ name:"父节点22 - 折叠",
+						children: [
+							{ name:"叶子节点221"},
+							{ name:"叶子节点222"},
+							{ name:"叶子节点223"},
+							{ name:"叶子节点224"}
+						]},
+					{ name:"父节点23 - 折叠",
+						children: [
+							{ name:"叶子节点231"},
+							{ name:"叶子节点232"},
+							{ name:"叶子节点233"},
+							{ name:"叶子节点234"}
+						]}
+				]},
+			{ name:"父节点3 - 没有子节点", isParent:true}
+
+		];
+ */
+		$(document).ready(function(){
+			$.fn.zTree.init($("#treeDemo"), setting);
+		});
+		</script>
+	</head>
+
+	<body>
+
+		<div class="main-container" id="main-container">
+			<script type="text/javascript">
+				try{ace.settings.check('main-container' , 'fixed')}catch(e){}
+			</script>
+
+			<div class="main-container-inner">
+				<a class="menu-toggler" id="menu-toggler" href="#">
+					<span class="menu-text"></span>
+				</a>
+				<div class="main-content">
+					<div class="breadcrumbs" id="breadcrumbs">
+						<script type="text/javascript">
+							try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+						</script>
+
+						<ul class="breadcrumb">
+							<li>
+								<i class="icon-home home-icon"></i>
+								<a href="#">首页</a>
+							</li>
+							<li class="active">申请拨款</li>
+						</ul><!-- .breadcrumb -->
+					</div>
+
+					<div class="page-content">
+						<div class="page-header">
+							<button class="btn btn-minier btn-success" data-toggle="modal" data-target="#AddModal"><i class="icon-file-alt"></i> 申请拨款</button>
+                            <button class="btn btn-minier btn-info" id="openupdata" onClick="openupdata()"data-toggle="modal" ><i class="icon-edit"></i> 修改申请</button>
+                            <button class="btn btn-minier btn-danger" onClick="deleteApply()"><i class="icon-trash"></i> 删除申请单</button>
+                            <!-- <button class="btn btn-minier btn-yellow"><i class="icon-print"></i> 打印申请表</button> -->
+						</div><!-- /.page-header -->
+						<div style="background:#e8ecef; width:20%; height:500px; float:left">
+                        	<div class="zTreeDemoBackground left">
+								<ul id="treeDemo" class="ztree"></ul>
+							</div>  	
+                        </div>
+                      <div style="width:78%; float:right">
+                        <!-- <div class="row" style="float:left; margin:0 0 0 20px;overflow: hidden;border: 1px #ccc dashed;"> -->
+						<div class="row" style="background:#f0f0f0;height:100px;border:1px #999 dashed;position: relative;">
+                        	<div class="col-xs-12" style="padding-left:0;">
+                            	<div style="width:25px;height:98px;float:left;display:block;line-height:20px;text-align:center;background:#cacaca;padding-top:8px;">
+                                	项目信息
+                                </div>
+                            	<div style="float:left; margin:10px 0 0 10px;">
+                                    <span>投资分类：</span>
+                                    <select disabled="disabled" style="width:200px;font-size:12px;padding:0px;height:20px;margin-right:20px;">
+                                        <option>绿化</option>
+                                        <option>养护</option>
+                                    </select>
+                                   <input type="hidden" id="segmentinfoid" name="segmentinfoid" />
+                                    <span>合同中标价格：</span>
+                                    <input type="text"  id="contractprice" name="contractprice"  style="width:200px;height:20px;" />
+                                    <p></p>
+                                    <span style="color:#aaaaaa;">欠拨金额：</span>
+                                    <input type="text" style="width:200px;height:20px;margin-right:20px;"disabled="disabled" />
+                                    <span style="color:#aaaaaa;">累计拨款金额：</span>
+                                    <input type="text" style="width:200px;height:20px;margin-right:20px;"disabled="disabled" />
+                                    <span style="color:#aaaaaa;">累计拨款比例：</span>
+                                    <input type="text" style="width:200px;height:20px;" disabled="disabled"/>
+                                    
+                                    <p></p>
+                                    <span>拦标价格：</span>
+                                    <input type="text" id="barrageprice" name="barrageprice" style="width:200px;height:20px;margin-right:20px;" />
+                                     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;概算金额：</span>
+                                    <input type="text"  id="estimateamount" name="estimateamount"  style="width:200px;height:20px;margin-right:20px;" />
+                                    <button class="btn btn-minier btn-info" onclick="updateProjectPrceBySegmentId()"></i> 保存</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="background:#f0f0f0;height:100px;border:1px #999 dashed;position: relative;">
+                        	<div class="col-xs-12" style="padding-left:0;">
+                            	<div style="width:25px;height:98px;float:left;display:block;line-height:20px;text-align:center;background:#cacaca;padding-top:8px;">
+                                	评审信息
+                                </div>
+                            	<div style="float:left; margin:30px 0 0 10px;">
+                                    <span>结算评审金额：</span>
+                                    <input type="text" id="settlreviewamount" name="settlreviewamount" style="width:173px;height:20px;margin-right:20px;" />
+                                    <span>评审文号：</span>
+                                    <input type="text" id="reviewnumber" name="reviewnumber" style="width:173px;height:20px;margin-right:20px;" />
+                                    <p></p>
+                                    <span>结算评审信息：</span>
+                                    <input type="text" id="settlreviewinfo" name="settlreviewinfo" style="width:440px;height:20px;margin-right:20px;" />
+                                	<button class="btn btn-minier btn-info"  >保存</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="background:#f0f0f0;height:98px;border:1px #999 dashed;position:relative;border-top:0;border-bottom:0;">
+                        	<div class="col-xs-12" style="padding-left:0;" >
+                                <div style="width:25px;height:98px;float:left;display:block;line-height:20px;text-align:center;background:#cacaca;padding-top:8px;">
+                                	备注信息
+                                </div>
+                                <div style="float:left; margin:10px 0 0 10px;">
+                                	<textarea name="txt" clos="250" rows="3" warp="virtual" style="max-height:83px; max-width:520px;"></textarea>
+                                <button class="btn btn-minier btn-info" style="margin-top:54px;" >保存</button>
+                                </div>
+                            </div>
+                        </div>
+						<div class="row">
+							<div class="table-responsive">
+                            	<div class="tabbable">
+                                    <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab4" style="height:41px;">
+                                        <li class="active">
+                                            <a data-toggle="tab" href="#home4">拨款申请明细记录</a>
+                                        </li>
+
+                                    </ul>
+
+                                    <div class="tab-content">
+                                        <div id="home4" class="tab-pane active">
+                                            <table id="sample-table-2" class="table table-striped table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="center">
+                                                            <label>
+                                                                <input type="checkbox" class="ace" />
+                                                                <span class="lbl"></span>
+                                                            </label>
+                                                        </th>
+                                                        <th>序号</th>
+                                                        <th>编号</th>
+                                                        <th>申请日期</th>
+                                                        <th>收款单位</th>
+                                                        <th>审批金额</th>
+                                                        <th>拨款账户</th>
+                                                        <th>拨款日期</th>
+                                                        <th align="center">状态</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                <c:forEach var="list" items="${applylist}" varStatus="status">  
+                                                    <tr>
+                                                        <td class="center">
+                                                            <label>
+                                                                <input type="checkbox" name="selapplytId"  value="${list.id}" class="ace" />
+                                                                <span class="lbl"></span>
+                                                            </label>
+                                                        </td>
+                                                        <td> ${ status.index + 1}</td>
+                                                        <td>${list.id }</td>
+                                                        <td>${list.applicationDate }</td>
+                                                        <td>${list.payee }</td>
+                                                        <td>${list.approvalamount }</td>
+                                                        <td>${list.appropriationaccount }</td>
+                                                        <td>${list.grantTime }</td>
+                                                        <td align="center" style="color:#C00;">${list.state }</td>
+                                                    </tr>
+                                                    </c:forEach>
+                                                    <tr>
+                                                        <td colspan="10">
+                                                            每页显示
+                                                            <select size="1" style="padding:0">
+                                                                <option value="10" selected="selected">10</option>
+                                                                <option value="25">25</option>
+                                                                <option value="50">50</option>
+                                                                <option value="100">100</option>
+                                                            </select>
+                                                            条数据，共3条数据
+                                                            
+                                                            <ul class="pagination" style="float:right; margin:0; padding:0">
+                                                                <li class="prev disabled"><a href="#"><i class="icon-double-angle-left"></i></a></li>
+                                                                <li class="active"><a href="#">1</a></li>
+                                                                <li><a href="#">2</a></li>
+                                                                <li><a href="#">3</a></li>
+                                                                <li class="next"><a href="#"><i class="icon-double-angle-right"></i></a></li>
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div id="profile4" class="tab-pane">
+                                            <table id="sample-table-2" class="table table-striped table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="center">
+                                                            <label>
+                                                                <input type="checkbox" class="ace" />
+                                                                <span class="lbl"></span>
+                                                            </label>
+                                                        </th>
+                                                        <th>序号</th>
+                                                        <th>编号</th>
+                                                        <th>项目年度</th>
+                                                        <th>备注</th>
+                                                        <th class="center">操作</th>
+                                                        
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="center">
+                                                            <label>
+                                                                <input type="checkbox" class="ace" />
+                                                                <span class="lbl"></span>
+                                                            </label>
+                                                        </td>
+            
+                                                        <td>
+                                                            1
+                                                        </td>
+                                                        <td>20186111614</td>
+                                                        <td>年度项目名称一</td>
+                                                        <td>备注信息</td>
+                                                        <td class="center">
+                                                            <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons"><a class="green" href="#">
+                                                                    <i class="icon-pencil bigger-130"></i>
+                                                                </a>
+            
+                                                                <a class="red" href="#">
+                                                                    <i class="icon-trash bigger-130"></i>
+                                                                </a>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="10">
+                                                            每页显示
+                                                            <select size="1" style="padding:0">
+                                                                <option value="10" selected="selected">10</option>
+                                                                <option value="25">25</option>
+                                                                <option value="50">50</option>
+                                                                <option value="100">100</option>
+                                                            </select>
+                                                            条数据，共5条数据
+                                                            
+                                                            <ul class="pagination" style="float:right; margin:0; padding:0">
+                                                                <li class="prev disabled"><a href="#"><i class="icon-double-angle-left"></i></a></li>
+                                                                <li class="active"><a href="#">1</a></li>
+                                                                <li><a href="#">2</a></li>
+                                                                <li><a href="#">3</a></li>
+                                                                <li class="next"><a href="#"><i class="icon-double-angle-right"></i></a></li>
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <!-- /.col -->
+						</div><!-- /.row -->
+					  </div>
+					</div><!-- /.page-content -->
+				</div><!-- /.main-content -->
+
+			</div><!-- /.main-container-inner -->
+
+			<a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
+				<i class="icon-double-angle-up icon-only bigger-110"></i>
+			</a>
+		</div><!-- /.main-container -->
+
+		<!-- basic scripts -->
+		<!--AddModal-->
+        
+        <div class="modal fade" id="AddModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:400px; margin:0 auto;margin-top:50px;">
+                <div class="modal-content">
+                    <div class="modal-header" style="background:#555555;padding:5px;">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color:#fff; font-size:18px;">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel" style="font-size:12px; color:#fff;">申请拨款</h4>
+                    </div>
+                    <div class="modal-body">
+                    	<div style="width:280px;; text-align:right; margin:0 auto">
+                            <span>施工单位：</span>
+                           <input type="text" id="Addconstructionunit" name="constructionunit"  style="width:200px;" /><p></p>
+                            <p></p>
+                            <span>设计单位：</span>
+                           <input type="text" id="Adddesignunit" name="designunit" style="width:200px;" /><p></p>
+                            <p></p>
+                            <span>监理单位：</span>
+                           <input type="text" id="Addsupervisionunit" name="supervisionunit" style="width:200px;" /><p></p>
+                            <p></p>
+                            <span style="color:#C00;">*</span>
+                            <span>收款单位：</span>
+                            <input type="text" id="Addpayee" name="payee" style="width:200px;" /><p></p>
+                            <p></p>
+                            <span style="color:#C00;">*</span>
+                            <span>收款账户：</span>
+                            <input type="text" id="Addreceivableaccount" name="receivableaccount" style="width:200px;" /><p></p>
+                            <p></p>
+                            <span>拨款内容：</span><input type="text" id="Addappropriationcontent" name="appropriationcontent" style="width:200px;" /><p></p>
+                            <span style="color:#C00;">*</span><span>申请日期：</span><input id="AddapplyDate" name="applicationDate" type="text" style="width:200px;" /><p></p>
+                            <span style="color:#C00;">*</span><span>申请金额：</span><input type="text" id="Addapplicationamount" name="applicationAmount" style="width:200px;" /><p></p>
+                            <span>备注：</span><input type="text" id="Addremark" name="remark" style="width:200px;" />
+                            
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="text-align:center">
+                    	<button type="button" onClick="saveApply()" class="btn btn-xs btn-primary">保存</button>
+                        <button type="button" class="btn btn-xs btn-grey">重置</button>
+                        <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">关闭</button>
+                        
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+		
+		<!--updateModal-->
+        
+        <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:400px; margin:0 auto;margin-top:50px;">
+                <div class="modal-content">
+                    <div class="modal-header" style="background:#555555;padding:5px;">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color:#fff; font-size:18px;">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel" style="font-size:12px; color:#fff;">申请拨款</h4>
+                    </div>
+                    <div class="modal-body">
+                    	<div style="width:280px;; text-align:right; margin:0 auto">
+                    		<input type="hidden" id="updateid" name="id"  style="width:200px;" />
+                            <span>施工单位：</span>
+                           	<input type="text" id="updateconstructionunit" name="constructionUnit"  style="width:200px;" /><p></p>
+                            <p></p>
+                            <span>设计单位：</span>
+                           <input type="text" id="updatedesignunit" name="designUnit" style="width:200px;" /><p></p>
+                            <p></p>
+                            <span>监理单位：</span>
+                           <input type="text" id="updatesupervisionunit" name="supervisionUnit" style="width:200px;" /><p></p>
+                            <p></p>
+                            <span style="color:#C00;">*</span>
+                            <span>收款单位：</span>
+                            <input type="text" id="updatepayee" name="payee" style="width:200px;" /><p></p>
+                            <p></p>
+                            <span style="color:#C00;">*</span>
+                            <span>收款账户：</span>
+                            <input type="text" id="updatereceivableaccount" name="receivableAccount" style="width:200px;" /><p></p>
+                            <p></p>
+                            <span>拨款内容：</span><input type="text" id="updateappropriationcontent" name="appropriationContent" style="width:200px;" /><p></p>
+                            <span style="color:#C00;">*</span><span>申请日期：</span><input id="updateapplyDate" name="applicationDate" type="text" style="width:200px;" /><p></p>
+                            <span style="color:#C00;">*</span><span>申请金额：</span><input type="text" id="updateapplicationamount" name="applicationAmount" style="width:200px;" /><p></p>
+                            <span>备注：</span><input type="text" id="updateremark" name="remark" style="width:200px;" />
+                            
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="text-align:center">
+                    	<button type="button" onClick="updateApply()" class="btn btn-xs btn-primary">保存</button>
+                        <button type="button" class="btn btn-xs btn-grey">重置</button>
+                        <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">关闭</button>
+                        
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+		
+</body>
+</html>
+

@@ -1,0 +1,59 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%> 
+<jsp:include page="/include/public.jsp"></jsp:include>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>北戴河城市建设资金管理系统</title>
+		<meta name="keywords" content="" />
+		<meta name="description" content="" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link href="${ctx}/views/assets/css/bootstrap.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace-rtl.min.css" />
+		<link rel="stylesheet" href="${ctx}/views/assets/css/ace-skins.min.css" />
+		<script src="${ctx}/views/assets/js/ace-extra.min.js"></script>
+        <script src="${ctx}/views/assets/js/jquery-2.0.3.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery-ui-1.10.3.custom.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.ui.touch-punch.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.slimscroll.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.easy-pie-chart.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.sparkline.min.js"></script>
+		<script src="${ctx}/views/assets/js/ace-elements.min.js"></script>
+		<script src="${ctx}/views/assets/js/ace.min.js"></script>
+		<script src="${ctx}/views/assets/js/jquery.mobile.custom.min.js"></script>
+		<script src="${ctx}/views/assets/js/bootstrap.min.js"></script>
+		<script src="${ctx}/views/assets/js/typeahead-bs2.min.js"></script>
+		
+        <script type="text/javascript">
+            $(document).ready(function(){
+                var height = $(window).height()-89; 
+                var width = $(window).width()-189;
+                $("#indexImg").css("width",width);
+                $("#indexImg").css("height",height);
+                
+            });
+        </script>
+        
+	</head>
+	
+<frameset rows="45,*" cols="*"  frameborder="NO" border="0" framespacing="0">
+<frame src="${ctx }/views/top.jsp" name="topFrame" scrolling="NO" noresize >
+	<frameset cols="190,850*">
+		<frame name="leftFrame" src="${ctx }/views/leftmenu.jsp">
+		<frame name="mainFrame" src="${ctx }/views/maincontent.jsp">
+	</frameset>
+</frameset>
+<noframes>
+</noframes>
+<body onload="Response.AddHeader('P3P','CP=CAO PSA OUR'); ">
+
+		
+</body>
+</html>
+
+
+

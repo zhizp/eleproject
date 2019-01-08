@@ -1,0 +1,254 @@
+package com.newhero.urbanconstruction.codetablemaintain.constructionunit.controller;
+
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.newhero.urbanconstruction.codetablemaintain.constructionunit.pojo.ConstructionunitDTO;
+import com.newhero.urbanconstruction.codetablemaintain.constructionunit.service.ConstructionService;
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO;
+import com.newhero.urbanconstruction.common.SupportAction;
+import com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+import com.newhero.urbanconstruction.util.Constant;
+import com.newhero.urbanconstruction.util.Pagination;
+import com.newhero.urbanconstruction.util.ToolsUtil;
+
+import net.sf.json.JSONObject;
+
+@Controller
+@RequestMapping(value = "/construction")
+public class ConstructionController extends SupportAction {
+	@Resource 
+	private ConstructionService constructionService;	
+
+	public ConstructionService getConstructionService() {
+		return constructionService;
+	}
+
+	/**
+     * 向用户登录页面跳转
+     */
+    @RequestMapping(value = "/toConstruction")
+    public String toConstruction(){
+        return  "dm_CodeTable/Construction";
+    }
+
+    /**
+     * 用户登录，根据用户登录名和密码判断数据库中是否有此用户
+     * @param user
+     * @param model
+     * @param session
+     * @return
+     * @throws IOException 
+     */
+    @RequestMapping(value = "/saveConstruction")
+    @ResponseBody
+    public void saveConstruction(HttpServletResponse response,HttpServletRequest request,ConstructionunitDTO constructionunitDTO) throws IOException{
+    	UserDTO user=(UserDTO)this.getUser(request, response);
+    	constructionunitDTO.setOperatorid(user.getId());
+    	constructionService.saveConstruction(constructionunitDTO);
+    	Map<String, Object> rt = new HashMap<String, Object>();
+    	rt.put("success", true);
+		JSONObject object = JSONObject.fromObject(rt);
+		String res = object.toString();
+		response.getWriter().write(res);
+    }
+    
+    /**
+     * 用户登录，根据用户登录名和密码判断数据库中是否有此用户
+     * @param user
+     * @param model
+     * @param session
+     * @return
+     * @throws IOException 
+     */
+    @RequestMapping(value = "/updateConstruction")
+    @ResponseBody
+    public void updateConstruction(HttpServletResponse response,HttpServletRequest request,ConstructionunitDTO constructionunitDTO) throws IOException{
+    	UserDTO user=(UserDTO)this.getUser(request, response);
+    	constructionunitDTO.setOperatorid(user.getId());
+    	constructionService.updateConstruction(constructionunitDTO);
+    	Map<String, Object> rt = new HashMap<String, Object>();
+    	rt.put("success", true);
+		JSONObject object = JSONObject.fromObject(rt);
+		String res = object.toString();
+		response.getWriter().write(res);
+    }
+    
+    /**
+     * 用户登录，根据用户登录名和密码判断数据库中是否有此用户
+     * @param user
+     * @param model
+     * @param session
+     * @return
+     * @throws IOException 
+     */
+    @RequestMapping(value = "/deleteConstruction")
+    @ResponseBody
+    public void deleteConstruction(HttpServletResponse response,HttpServletRequest request,String id) throws IOException{
+    	UserDTO user=(UserDTO)this.getUser(request, response);
+    	ConstructionunitDTO constructionunitDTO=new ConstructionunitDTO();
+    	constructionunitDTO.setOperatorid(user.getId());
+    	Map<String, Object> rt = new HashMap<String, Object>();
+    	if(ToolsUtil.isNotEmpty(id)){
+			String[] ids = id.split(",");
+			for(String cid:ids) {
+				constructionunitDTO.setId(Integer.valueOf(cid));
+				int i = constructionService.selectCountProjectNameByConstructionId(Integer.valueOf(cid));
+				if(i>0) {
+					rt.put("del", true);
+					break;
+				}else {
+					constructionService.deleteConstruction(constructionunitDTO);
+				}
+				
+			}
+		}
+    	
+    	rt.put("success", true);
+		JSONObject object = JSONObject.fromObject(rt);
+		String res = object.toString();
+		response.getWriter().write(res);
+    }
+    
+    @RequestMapping(value = "/selectConstructions")
+    public String selectConstructions(String pn,String rowsPerPage, String keyword,HttpServletResponse response,HttpServletRequest request,Model model) throws IOException{
+    	if(ToolsUtil.isEmpty(pn)){
+			pn = Constant.DEAULT_START_PAGE_NUM ;
+		}
+		if(ToolsUtil.isEmpty(rowsPerPage)){
+			rowsPerPage = Constant.DEFAULT_PAGE_SIZE ;
+		}
+		if(ToolsUtil.isEmpty(pn)) keyword = null;
+		// 分页信息
+		Pagination page = new Pagination();
+		//翻页、参数
+		BaseQueryVo dto = new BaseQueryVo();
+		
+		dto.setKeyword(keyword);
+		dto.setStartRow((Integer.parseInt(pn) - 1) * Integer.parseInt(rowsPerPage));
+		dto.setPageSize(Integer.parseInt(rowsPerPage));
+		int rowsCount = constructionService.selectConstructionCountByKeyword(dto) ;
+		page.setRowsCount(rowsCount);
+		page.setRowsPerPage(Integer.parseInt(rowsPerPage));
+		page.setCurrentPage(Integer.parseInt(pn));
+		page.setUrl(request.getContextPath()+"/construction/selectConstructions?rowsPerPage="+rowsPerPage);
+    	List<ConstructionunitDTO> constructionList=constructionService.selectConstructions(dto);
+    	if(constructionList.isEmpty()&&Integer.parseInt(pn)>1) {
+    		dto.setStartRow((Integer.parseInt(pn) - 2) * Integer.parseInt(rowsPerPage));
+    		constructionList=constructionService.selectConstructions(dto);
+    		page.setCurrentPage(Integer.parseInt(pn)-1);
+    	}
+    	
+    	List<ProjectYearDTO> projectYearList=constructionService.selectProjectYears();
+        model.addAttribute("constructionList", constructionList);
+        model.addAttribute("projectYearList", projectYearList);
+        model.addAttribute("keyword",keyword);
+		model.addAttribute("page",page);
+        return  "dm_CodeTable/Construction";
+    }
+    @RequestMapping(value = "/selectConstructionByName")
+    public String selectConstructionByName(@RequestParam("unitname") String unitname,Model model) throws IOException{
+    	List<ConstructionunitDTO> constructionList=new ArrayList<ConstructionunitDTO>();
+    	if(null !=unitname) {
+    		constructionList=constructionService.selectConstructionByName(unitname);
+    	}
+    	model.addAttribute("constructionList", constructionList);
+    	return  "dm_CodeTable/Construction";
+    }
+    @ResponseBody
+    @RequestMapping(value = "/selectConstructionById")
+    public ConstructionunitDTO selectConstructionById(@RequestParam(value = "id") String id,Model model) throws IOException{
+    	 ConstructionunitDTO constructionunitDTO=constructionService.selectConstructionById(Integer.parseInt(id));
+     	List<ProjectYearDTO> projectYearList=constructionService.selectProjectYears();
+        model.addAttribute("projectYearList", projectYearList);
+    	 return constructionunitDTO;
+    }
+	
+    @RequestMapping(value = "/getOutData")
+    public void getOutData(HttpServletResponse response,HttpServletRequest request) throws Exception {
+    	BaseQueryVo dto = new BaseQueryVo();
+    	dto.setIsall(1);
+    	List<ConstructionunitDTO> constructionsList = constructionService.selectConstructions(dto);
+    	//设置输出头
+    	response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+    	String filename = "建设单位信息表.xls";// 设置下载时客户端Excel的名称
+    	//设置HTTP响应的头
+    	String t = request.getHeader("User-Agent");
+		if (t.indexOf("Firefox") > 0) {
+			response.setHeader("Content-disposition", "attachment;filename="
+					+ new String(filename.getBytes("gb2312"), "ISO8859-1"));
+		} else {
+			response.setHeader("Content-disposition", "attachment;filename="
+					+ URLEncoder.encode(filename, "UTF-8"));
+		}
+
+    	ServletOutputStream stream = response.getOutputStream();
+
+    	//创建工作薄
+    	HSSFWorkbook workbook = new HSSFWorkbook();
+    	//创建工作标签页(sheet)
+    	HSSFSheet sheet = workbook.createSheet("建设单位表");
+
+    	//创建表头
+    	HSSFRow row = sheet.createRow(0);
+
+    	HSSFCell cell = row.createCell(0);
+    	cell.setCellValue("序号");
+
+    	HSSFCell cell2 = row.createCell(1);
+    	cell2.setCellValue("编号");
+
+
+    	HSSFCell cell3 = row.createCell(2);
+    	cell3.setCellValue("单位名称");
+
+
+    	HSSFCell cell4 = row.createCell(3);
+    	cell4.setCellValue("单位简称");
+
+    	HSSFCell cell5 = row.createCell(4);
+    	cell5.setCellValue("简要信息");
+    	
+    	HSSFCell cell6 = row.createCell(5);
+    	cell6.setCellValue("备注");
+
+    	//创建数据行
+    	for(int i = 0;i<constructionsList.size();i++) {
+    	ConstructionunitDTO constructionunitDTO= constructionsList.get(i);
+    	HSSFRow newrow = sheet.createRow(i+1);
+    	newrow.createCell(0).setCellValue(i+1);
+    	newrow.createCell(1).setCellValue(constructionunitDTO.getId());
+    	newrow.createCell(2).setCellValue(constructionunitDTO.getUnitName());
+    	newrow.createCell(3).setCellValue(constructionunitDTO.getUnitShortName());
+    	newrow.createCell(4).setCellValue(constructionunitDTO.getBriefInfo());
+    	newrow.createCell(5).setCellValue(constructionunitDTO.getRemark());
+    	}
+
+    	workbook.write(stream);
+
+    	stream.flush();
+    	stream.close();
+
+    	
+    }
+}

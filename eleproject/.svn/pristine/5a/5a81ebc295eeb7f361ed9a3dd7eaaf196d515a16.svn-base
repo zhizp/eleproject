@@ -1,0 +1,7 @@
+package com.newhero.urbanconstruction.common.pojo;
+
+public class UnitAccountCasDTO {
+
+	private Integer id;
+	
+}

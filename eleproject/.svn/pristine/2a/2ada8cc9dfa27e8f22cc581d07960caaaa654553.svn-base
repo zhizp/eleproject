@@ -1,0 +1,10 @@
+package com.newhero.urbanconstruction.sysmanager.role.service;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.sysmanager.role.pojo.RoleDTO;
+
+public interface SysRoleService {
+	//显示角色列表
+	public List<RoleDTO> roleList();
+}

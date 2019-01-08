@@ -1,0 +1,41 @@
+package com.newhero.urbanconstruction.codetablemaintain.segmentinfo.dao;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO;
+import com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentInfoDTO;
+import com.newhero.urbanconstruction.codetablemaintain.segmentinfo.pojo.SegmentProjectDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+public interface SegmentInfoDao {
+
+	public int getSegmentInfoCountByKeyword(BaseQueryVo dto);
+	
+    public List<SegmentInfoDTO> getSegmentInfoListByKeyword(BaseQueryVo dto);
+	
+	
+	public SegmentInfoDTO getSegmentInfoById(Integer id);
+	
+	public int updateSegmentInfoById(SegmentInfoDTO unit);
+	
+	public int insertSegmentInfo(SegmentInfoDTO unit);
+	
+	public int insertSegmentProject(SegmentProjectDTO segmentProject);
+	
+	public int delSegmentInfoId(SegmentInfoDTO unit);
+	
+	public List<ProjectYearDTO> selectUsedProjectYears();
+	
+	public int countApp(int id);
+	
+	public SegmentInfoDTO getSegmentInfoByName(String segmentName);
+	
+	//
+	public List<SegmentInfoDTO> selectSegmentInfoByDifferentYearidUnitIdProjectNameIdCosttypeid(@Param("projectyear") String projectyear,
+			@Param("unitname") String unitname,
+			@Param("projectname") String projectname,
+			@Param("costtype") String costtype,
+			@Param("segmentname") String segmentname);
+}

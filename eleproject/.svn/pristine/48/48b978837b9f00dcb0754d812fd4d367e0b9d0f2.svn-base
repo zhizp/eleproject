@@ -1,0 +1,58 @@
+package com.newhero.urbanconstruction.importhistorydata.controller;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.newhero.urbanconstruction.importhistorydata.pojo.ImportdataDTO;
+import com.newhero.urbanconstruction.importhistorydata.service.HistorydataService;
+
+@Controller
+@RequestMapping("/historydataController")
+public class HistorydataController {
+
+	@Resource
+	private  HistorydataService historydataService;
+	
+	public HistorydataService getHistorydataService() {
+		return historydataService;
+	}
+	
+	@RequestMapping("/selectAllHistoryData")
+	public String selectAllHistoryData(){
+		List<ImportdataDTO> list= historydataService.selectAllHistoryData();
+		ImportdataDTO importdataDTO=new ImportdataDTO();
+		for(int i=0;i<list.size();i++) {
+			importdataDTO.setId(list.get(i).getId());
+			String[] projects= list.get(i).getProjectname().split("\\s+");
+			for(int j=0;j<projects.length;j++) {
+				if(projects[j]!=null && !"".equals(projects[j]) ) {
+					if(j==1) {
+						importdataDTO.setConstructionid(projects[j]);
+					}
+					if(j==2) {
+						importdataDTO.setProjectid(projects[j]);
+					}
+					if(j==3) {
+						importdataDTO.setCosttypeid(projects[j]);
+					}
+					if(j==4) {
+						importdataDTO.setSegmentid(projects[j]);
+					}
+				}
+			}
+			System.out.println("=======================================================");//+list.get(i).getProjectname()
+			historydataService.updateImportData(importdataDTO);
+			//historydataService.insertintoproject();
+		}
+		System.out.println(list.size());
+		return String.valueOf(list.size());
+	}
+	
+	
+	
+}

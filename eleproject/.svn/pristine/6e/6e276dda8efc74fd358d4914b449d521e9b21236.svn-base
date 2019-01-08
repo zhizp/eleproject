@@ -1,0 +1,167 @@
+package com.newhero.urbanconstruction.importhistorydata.pojo;
+
+import java.math.BigDecimal;
+
+public class ImportdataDTO {
+	 private Integer id;  
+	 private String projectname; 
+	 private String constructionunit; 
+	 private String payee ;
+	 private String appropriationcontent ;
+	 private BigDecimal contractprice ;
+	 private BigDecimal evaluationprice ;
+	 private BigDecimal totalappropriation ;
+	 private Double lappropriationratio; 
+	 private BigDecimal owepayment ;
+	 private BigDecimal applicationamount ;
+	 private Double applicationradio ;
+	 private String remark ;
+	 private Integer state ;//业务流程状态	0：未受理；1：未受理；2：为拨款；3：已拨款
+	 
+	 private Integer constructionid;
+	 private Integer projectid;
+	 private Integer costtypeid;
+	 private Integer segmentid;
+	 private String approvaltime;
+	 private BigDecimal approvalamount;
+	 private String appropriationaccount;
+	 private String granttime;
+	 
+	 
+	 
+	public Integer getId() { 
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public String getProjectname() {
+		return projectname;
+	}
+	public void setProjectname(String projectname) {
+		this.projectname = projectname;
+	}
+	public String getConstructionunit() {
+		return constructionunit;
+	}
+	public void setConstructionunit(String constructionunit) {
+		this.constructionunit = constructionunit;
+	}
+	public String getPayee() {
+		return payee;
+	}
+	public void setPayee(String payee) {
+		this.payee = payee;
+	}
+	public String getAppropriationcontent() {
+		return appropriationcontent;
+	}
+	public void setAppropriationcontent(String appropriationcontent) {
+		this.appropriationcontent = appropriationcontent;
+	}
+	public BigDecimal getContractprice() {
+		return contractprice;
+	}
+	public void setContractprice(BigDecimal contractprice) {
+		this.contractprice = contractprice;
+	}
+	public BigDecimal getEvaluationprice() {
+		return evaluationprice;
+	}
+	public void setEvaluationprice(BigDecimal evaluationprice) {
+		this.evaluationprice = evaluationprice;
+	}
+	public BigDecimal getTotalappropriation() {
+		return totalappropriation;
+	}
+	public void setTotalappropriation(BigDecimal totalappropriation) {
+		this.totalappropriation = totalappropriation;
+	}
+	public Double getLappropriationratio() {
+		return lappropriationratio;
+	}
+	public void setLappropriationratio(Double lappropriationratio) {
+		this.lappropriationratio = lappropriationratio;
+	}
+	public BigDecimal getOwepayment() {
+		return owepayment;
+	}
+	public void setOwepayment(BigDecimal owepayment) {
+		this.owepayment = owepayment;
+	}
+	public BigDecimal getApplicationamount() {
+		return applicationamount;
+	}
+	public void setApplicationamount(BigDecimal applicationamount) {
+		this.applicationamount = applicationamount;
+	}
+	public Double getApplicationradio() {
+		return applicationradio;
+	}
+	public void setApplicationradio(Double applicationradio) {
+		this.applicationradio = applicationradio;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public Integer getState() {
+		return state;
+	}
+	public void setState(Integer state) {
+		this.state = state;
+	}
+	public Integer getConstructionid() {
+		return constructionid;
+	}
+	public void setConstructionid(Integer constructionid) {
+		this.constructionid = constructionid;
+	}
+	public Integer getProjectid() {
+		return projectid;
+	}
+	public void setProjectid(Integer projectid) {
+		this.projectid = projectid;
+	}
+	public Integer getCosttypeid() {
+		return costtypeid;
+	}
+	public void setCosttypeid(Integer costtypeid) {
+		this.costtypeid = costtypeid;
+	}
+	public Integer getSegmentid() {
+		return segmentid;
+	}
+	public void setSegmentid(Integer segmentid) {
+		this.segmentid = segmentid;
+	}
+	public String getApprovaltime() {
+		return approvaltime;
+	}
+	public void setApprovaltime(String approvaltime) {
+		this.approvaltime = approvaltime;
+	}
+	public BigDecimal getApprovalamount() {
+		return approvalamount;
+	}
+	public void setApprovalamount(BigDecimal approvalamount) {
+		this.approvalamount = approvalamount;
+	}
+	public String getAppropriationaccount() {
+		return appropriationaccount;
+	}
+	public void setAppropriationaccount(String appropriationaccount) {
+		this.appropriationaccount = appropriationaccount;
+	}
+	public String getGranttime() {
+		return granttime;
+	}
+	public void setGranttime(String granttime) {
+		this.granttime = granttime;
+	}
+	 
+	 
+	 
+}

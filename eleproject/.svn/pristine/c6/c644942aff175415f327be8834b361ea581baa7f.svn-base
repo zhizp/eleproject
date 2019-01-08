@@ -1,0 +1,25 @@
+package com.newhero.urbanconstruction.common.pojo;
+
+public class CostTypeCasDTO {
+
+	private Integer id;
+	
+	private String costtype;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getCosttype() {
+		return costtype;
+	}
+
+	public void setCosttype(String costtype) {
+		this.costtype = costtype;
+	}
+	
+}

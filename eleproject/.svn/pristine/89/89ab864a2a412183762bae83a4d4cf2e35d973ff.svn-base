@@ -1,0 +1,22 @@
+package com.newhero.urbanconstruction.codetablemaintain.archivesmanage.dao;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.codetablemaintain.archivesmanage.pojo.ArchivesManageDTO;
+import com.newhero.urbanconstruction.codetablemaintain.archivestype.pojo.ArchivesType;
+import com.newhero.urbanconstruction.codetablemaintain.projectname.pojo.ProjectNameDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+public interface ArchivesManageDao {
+	public List<ArchivesManageDTO>getAllArchivesManageDTO(BaseQueryVo dto);
+	public int selectCountArchivesManageByKeyword(BaseQueryVo dto);
+	public List<ProjectNameDTO> selectProjectNames();
+	public List<ProjectYearDTO> selectProjectYears();
+	public List<ArchivesType> selectArchivesType();
+	public int insertArchivesManage(ArchivesManageDTO archivesManageDTO);
+	public ArchivesManageDTO selectArchivesManageById(int id);
+	public int updateArchivesManage(ArchivesManageDTO archivesManageDTO);
+	public int deleteArchivesManage(ArchivesManageDTO archivesManageDTO);
+	public List<ArchivesManageDTO>getOutOfData();
+}

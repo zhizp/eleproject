@@ -1,0 +1,67 @@
+package com.newhero.urbanconstruction.codetablemaintain.investmenttype.service.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.newhero.urbanconstruction.codetablemaintain.investmenttype.dao.InvestmentTypeDao;
+import com.newhero.urbanconstruction.codetablemaintain.investmenttype.pojo.InvestmentTypeDTO;
+import com.newhero.urbanconstruction.codetablemaintain.investmenttype.service.InvestmentTypeService;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+/**
+ * investmentTypeService 接口的实现类
+ * 
+ */
+@Transactional
+@Service("investmentTypeService")
+public class InvestmentTypeServiceImpl implements InvestmentTypeService {
+
+	@Resource
+	private InvestmentTypeDao investmentTypeDao;
+
+	@Override
+	public List<InvestmentTypeDTO> getInvestmentTypeListByKeyword(BaseQueryVo dto) {
+		return investmentTypeDao.getInvestmentTypeListByKeyword(dto);
+	}
+
+	@Override
+	public int getInvestmentTypeCountByKeyword(BaseQueryVo dto) {
+		return investmentTypeDao.getInvestmentTypeCountByKeyword(dto);
+	}
+	
+	public InvestmentTypeDTO getInvestmentTypeById(Integer id){
+		return investmentTypeDao.getInvestmentTypeById(id);
+	}
+
+	@Override
+	public int updateInvestmentTypeById(InvestmentTypeDTO invest) {
+		return investmentTypeDao.updateInvestmentTypeById(invest);
+	}
+
+	@Override
+	public int insertInvestmentType(InvestmentTypeDTO invest) {
+		return investmentTypeDao.insertInvestmentType(invest);
+	}
+
+	@Override
+	public int delInvestmentTypeIds(String[] ids, int userid) {
+		int rs = 0;
+		for(String id:ids){
+			InvestmentTypeDTO invest = new InvestmentTypeDTO();
+			invest.setId(Integer.parseInt(id));
+			invest.setOperatorid(userid);
+			rs += investmentTypeDao.delInvestmentTypeId(invest);
+		}
+		return rs;
+	}
+	
+	public int checkInvest(String id) {
+		return investmentTypeDao.checkInvest(id);
+	}
+
+}

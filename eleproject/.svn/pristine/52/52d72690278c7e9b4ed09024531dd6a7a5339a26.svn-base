@@ -1,0 +1,7 @@
+package com.newhero.urbanconstruction.codetablemaintain.archivestype.dao;
+
+import com.newhero.urbanconstruction.codetablemaintain.archivestype.pojo.ArchivesType;
+
+public interface ArchivesTypeDaO {
+	public int addCotegory(ArchivesType dto);
+}

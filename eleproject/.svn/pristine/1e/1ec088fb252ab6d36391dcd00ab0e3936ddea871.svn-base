@@ -1,0 +1,27 @@
+package com.newhero.urbanconstruction.codetablemaintain.constructionunit.dao;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.newhero.urbanconstruction.codetablemaintain.constructionunit.pojo.ConstructionunitDTO;
+import com.newhero.urbanconstruction.codetablemaintain.projectyear.pojo.ProjectYearDTO;
+import com.newhero.urbanconstruction.util.BaseQueryVo;
+
+public interface ConstructionDao {
+
+	public List<ConstructionunitDTO> selectConstructions(BaseQueryVo dto);
+	public int selectConstructionCountByKeyword(BaseQueryVo dto);
+	public List<ProjectYearDTO> selectProjectYears();
+	public List<ConstructionunitDTO> selectConstructionByName(String unitname);
+	//
+	public List<ConstructionunitDTO> selectConstructionByNameForHistory(String unitname);
+	//
+	public List<ConstructionunitDTO> selectConstructionByNameForHistoryOfDifferentYearId(@Param("unitname") String unitname,
+			@Param("projectyear") String projectyear);
+	public ConstructionunitDTO selectConstructionById(int id);
+	public void saveConstruction(ConstructionunitDTO constructionunitDTO);
+	public void updateConstruction(ConstructionunitDTO constructionunitDTO);
+	public void deleteConstruction(ConstructionunitDTO constructionunitDTO);
+	public int selectCountProjectNameByConstructionId(int id);
+}

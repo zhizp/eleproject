@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.newhero.urbanconstruction.codetablemaintain.archivestype.dao.ArchivesTypeDaO">
+	
+	<!-- selectTheArchivesType -->
+	<select id="selectTheArchivesType" resultType="com.newhero.urbanconstruction.codetablemaintain.archivestype.pojo.ArchivesType">
+		select id, archivestype, remark, isdelete, operatorid
+		from dm_archivestype
+		where isdelete=0
+	</select>
+	
+	<!-- selectByKeyword -->
+	<select id="selectByKeyword" parameterType="com.newhero.urbanconstruction.codetablemaintain.archivestype.pojo.ArchivesType" 
+		resultType="com.newhero.urbanconstruction.codetablemaintain.archivestype.pojo.ArchivesType">
+		select id, archivestype, remark
+		from dm_archivestype
+		where 
+		<if test='keyword != null and keyword != ""'>
+			archivestype like "%"#{keyword}"%" and
+		</if>
+		isdelete=0
+	</select>
+	
+	<!-- addCotegory -->
+	<insert id="addCotegory" parameterType="com.newhero.urbanconstruction.codetablemaintain.archivestype.pojo.ArchivesType">
+		insert into 
+		dm_archivestype
+		(
+			archivestype,
+			remark,
+			isdelete,
+			operatorid,
+			operationtime
+		)
+		values
+		(
+			#{archivesType},
+			#{remark},
+			0,
+			#{operatorid},
+			now()
+		)
+	</insert>
+	
+	<!-- updateArchivesType -->
+	<update id="updateCotegory" parameterType="com.newhero.urbanconstruction.codetablemaintain.archivestype.pojo.ArchivesType">
+		update dm_archivestype
+		<set>
+			<if test='archivesType != null and archivesType != ""'>
+				archivestype = #{archivesType},
+			</if>
+			<if test='remark != null and remark != ""'>
+				remark = #{remark},
+			</if>
+			<if test='operatorid != null and operatorid != ""'>
+				operatorid = #{operatorid},
+			</if>
+			operationtime = now()
+		</set>
+		where id=#{id}
+	</update>
+	
+	<!-- deleteArchivesType -->
+	<update id="deleteCotegory" parameterType="java.lang.String">
+		update dm_archivestype
+		<set>
+			isdelete = 1
+		</set>
+		where id in 
+					<foreach item="item" open="(" close=")" separator="," collection="array" index="index">
+						#{item}
+					</foreach>
+	</update>
+	
+</mapper>

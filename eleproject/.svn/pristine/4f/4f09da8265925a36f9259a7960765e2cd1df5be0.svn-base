@@ -1,0 +1,29 @@
+package com.newhero.urbanconstruction.sysmanager.role.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.newhero.urbanconstruction.sysmanager.role.dao.SysRoleDao;
+import com.newhero.urbanconstruction.sysmanager.role.pojo.RoleDTO;
+import com.newhero.urbanconstruction.sysmanager.role.service.SysRoleService;
+/**
+ * sysRoleService 接口的实现类
+ * 
+ */
+@Transactional
+@Service("sysRoleService")
+public class SysRoleServiceImpl implements SysRoleService {
+
+	@Resource
+	private SysRoleDao sysRoleDao;
+	@Override
+	public List<RoleDTO> roleList() {
+		// TODO Auto-generated method stub
+		return sysRoleDao.roleList();
+	}
+
+}

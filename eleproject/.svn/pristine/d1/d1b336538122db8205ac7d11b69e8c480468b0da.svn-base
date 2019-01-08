@@ -1,0 +1,178 @@
+package com.newhero.urbanconstruction.apply.controller;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.newhero.urbanconstruction.apply.service.KyzlService;
+import com.newhero.urbanconstruction.common.pojo.ConstructionUnitCasDTO;
+import com.newhero.urbanconstruction.common.pojo.CostTypeCasDTO;
+import com.newhero.urbanconstruction.common.pojo.ProjectNameCasDTO;
+import com.newhero.urbanconstruction.common.pojo.SegmentInfoCasDTO;
+import com.newhero.urbanconstruction.common.pojo.UnitAccountCasDTO;
+
+@Controller
+@RequestMapping(value = "/mykyzlController")
+public class KyzlController {
+	@Resource 
+	private KyzlService kyzlService;
+	/**
+	 * ajax根据用户年度ID查询建设单位列表
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("null")
+	@ResponseBody
+	@RequestMapping(value="/getConstUnitInfoByYearIds", method = RequestMethod.POST)
+	public List<ConstructionUnitCasDTO> getConstructionUnitInfoByYearId1(@RequestParam(value = "yearId") Integer yearId ) {
+		Integer id = yearId;
+		if(id == null && id == 0){
+			return null;
+		}
+		List<ConstructionUnitCasDTO> list = kyzlService.getConstructionUnitInfoByYearId1(id);
+		return list;
+	}
+	
+	/**
+	 * ajax根据用户年度ID查询建设单位数量
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("null")
+	@ResponseBody
+	@RequestMapping(value="/getConstructionUnitNumByYearId1", method = RequestMethod.POST)
+	public int getConstructionUnitNumByYearId1(@RequestParam(value = "yearId") Integer yearId ) {
+		Integer id = yearId;
+		if(id == null && id == 0){
+			return 0;
+		}
+		int count = kyzlService.getConstructionUnitNumByYearId1(id);
+		return count;
+	}
+	
+	/**
+	 * ajax根据建设单位ID查询项目名称列表
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("null")
+	@ResponseBody
+	@RequestMapping(value="/getProjectNameInfoByUnitId1", method = RequestMethod.POST)
+	public List<ProjectNameCasDTO> getProjectNameInfoByUnitId1(@RequestParam(value = "unitId") Integer unitId ) {
+		Integer id = unitId;
+		if(id == null && id == 0){
+			return null;
+		}
+		List<ProjectNameCasDTO> list = kyzlService.getProjectNameInfoByUnitId1(id);
+		return list;
+	}
+	
+	/**
+	 * ajax根据建设单位ID查询项目名称数量
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("null")
+	@ResponseBody
+	@RequestMapping(value="/getProjectNameNumByUnitId1", method = RequestMethod.POST)
+	public int getProjectNameNumByUnitId1(@RequestParam(value = "unitId") Integer unitId ) {
+		Integer id = unitId;
+		if(id == null && id == 0){
+			return 0;
+		}
+		int count = kyzlService.getProjectNameNumByUnitId1(id);
+		return count;
+	}
+	
+	/**
+	 * ajax根据项目名称ID查询费用类别列表
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("null")
+	@ResponseBody
+	@RequestMapping(value="/getCostTypeListByProjId1", method = RequestMethod.POST)
+	public List<CostTypeCasDTO> getCostTypeListByProjId1(@RequestParam(value = "projectId") Integer projectId ) {
+		Integer id = projectId;
+		if(id == null && id == 0){
+			return null;
+		}
+		List<CostTypeCasDTO> list = kyzlService.getCostTypeListByProjId1(id);
+		return list;
+	}
+	
+	/**
+	 * ajax根据项目名称ID查询费用类别数量
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("null")
+	@ResponseBody
+	@RequestMapping(value="/getCostTypeNumByProjId1", method = RequestMethod.POST)
+	public int getCostTypeNumByProjId1(@RequestParam(value = "projectId") Integer projectId ) {
+		Integer id = projectId;
+		if(id == null && id == 0){
+			return 0;
+		}
+		int count = kyzlService.getCostTypeNumByProjId1(id);
+		return count;
+	}
+	
+	/**segmentinfo
+	 * ajax根据费用类别ID查询标段信息列表
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("null")
+	@ResponseBody
+	@RequestMapping(value="/getSegmentNumByCostTypeId1", method = RequestMethod.POST)
+	public List<SegmentInfoCasDTO> getSegmentNumByCostTypeId1(@RequestParam(value = "costId") Integer costId ) {
+		Integer id = costId;
+		if(id == null && id == 0){
+			return null;
+		}
+		List<SegmentInfoCasDTO> list = kyzlService.getSegmentNumByCostTypeId1(id);
+		return list;
+	}
+	
+	/**segmentinfo
+	 * ajax根据费用类别ID查询标段信息数量
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("null")
+	@ResponseBody
+	@RequestMapping(value="/getSegmentListByCostTypeId1", method = RequestMethod.POST)
+	public int getSegmentListByCostTypeId1(@RequestParam(value = "costId") Integer costId ) {
+		Integer id = costId;
+		if(id == null && id == 0){
+			return 0;
+		}
+		int count = kyzlService.getSegmentListByCostTypeId1(id);
+		return count;
+	}
+	
+	/**
+	 * ajax根据单位信息ID查询单位账户列表
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("null")
+	@ResponseBody
+	@RequestMapping(value="/getUnitAccountListByUnitInfoId1", method = RequestMethod.POST)
+	public List<UnitAccountCasDTO> getUnitAccountListByUnitInfoId(@RequestParam(value = "unitInfoId") Integer unitInfoId ) {
+		Integer id = unitInfoId;
+		if(id == null && id == 0){
+			return null;
+		}
+		List<UnitAccountCasDTO> list = kyzlService.getUnitAccountListByUnitInfoId1(id);
+		return list;
+	}
+	
+}

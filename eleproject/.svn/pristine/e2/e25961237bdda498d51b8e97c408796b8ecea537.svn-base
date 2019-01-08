@@ -1,0 +1,40 @@
+package com.newhero.urbanconstruction.codetablemaintain.urbanincometype.pojo;
+
+/**
+ * 城建资金收入类别实体类
+ * 对应数据表 dm_urbanincometype
+ * @author Mjj
+ *
+ */
+public class UrbanIncomeType {
+	private String id;
+	private String code;
+	private String incomeCategory;
+	private String remark;
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	public String getIncomeCategory() {
+		return incomeCategory;
+	}
+	public void setIncomeCategory(String incomeCategory) {
+		this.incomeCategory = incomeCategory;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	
+}

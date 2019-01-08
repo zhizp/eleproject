@@ -1,0 +1,12 @@
+package com.newhero.urbanconstruction.importhistorydata.service;
+
+import java.util.List;
+
+import com.newhero.urbanconstruction.importhistorydata.pojo.ImportdataDTO;
+
+public interface HistorydataService {
+	/**查询所有的历史数据*/
+	public List<ImportdataDTO> selectAllHistoryData();
+	/**拆分项目字段，更新历史数据表*/
+	public int updateImportData(ImportdataDTO importdataDTO);
+}
