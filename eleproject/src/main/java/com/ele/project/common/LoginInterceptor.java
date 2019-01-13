@@ -16,7 +16,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 	@Autowired
     HttpSession session;
 	//不拦截的页面
-    private static final String[] IGNORE_URI={"/loginAction/login","/loginAction/logout","/loginAction/toLogin", "/archivesTypeController/toArchivesType"};   //过滤的路径
+    private static final String[] IGNORE_URI={"/loginController/login","/loginController/logout","/loginController/main"};   //过滤的路径
 
 	
 	@Override

@@ -21,11 +21,11 @@
         <property name="prefix" value="/views/" />  
         <property name="suffix" value=".jsp" />  
     </bean> 
-  
+  <!--
 	 <mvc:interceptors>
 	     <mvc:interceptor>
 	         <mvc:mapping path="/**"/>
-	         <mvc:exclude-mapping path="/**/font/*"/>
+	         <mvc:exclude-mapping path="/**/fonts/*"/>
 	         <mvc:exclude-mapping path="/**/assets/**/*"/>
 	         <mvc:exclude-mapping path="/**/*.css"/>
 	         <mvc:exclude-mapping path="/**/*.js"/>
@@ -33,10 +33,16 @@
 	         <mvc:exclude-mapping path="/**/*.gif"/>
 	         <mvc:exclude-mapping path="/**/*.jpg"/>
 	         <mvc:exclude-mapping path="/**/*.jpeg"/>
-	        <bean class="com.ele.project.common.LoginInterceptor"></bean>
+	         <mvc:exclude-mapping path="/**/*.ttf"/>
+	         <mvc:exclude-mapping path="/**/*.woff"/>
+	         <mvc:exclude-mapping path="/**/*.eot"/>
+	         <mvc:exclude-mapping path="/**/*.svg"/>
+	         <mvc:exclude-mapping path="/**/*.woff2"/>
+	         <mvc:exclude-mapping path="/**/*.otf"/>
+	         <bean class="com.ele.project.common.LoginInterceptor"></bean> 
 	     </mvc:interceptor>
 	 </mvc:interceptors> 
     
-    
+    -->
     
 </beans>

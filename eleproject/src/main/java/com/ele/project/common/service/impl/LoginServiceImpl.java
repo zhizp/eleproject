@@ -2,6 +2,8 @@ package com.ele.project.common.service.impl;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,7 +14,7 @@ import com.ele.project.sysmanager.user.pojo.UserDTO;
 @Transactional
 @Service("loginService")
 public class LoginServiceImpl implements LoginService {
-
+	@Resource
 	private LoginDao loginDao;
 	
 	public UserDTO selectUser(UserDTO user) {

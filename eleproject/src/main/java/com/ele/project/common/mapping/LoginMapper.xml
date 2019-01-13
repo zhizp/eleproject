@@ -2,19 +2,33 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ele.project.common.dao.LoginDao">
 	<resultMap id="BaseResultMap" type="com.ele.project.sysmanager.user.pojo.UserDTO">
-		<!-- <id column="guid" property="guid" jdbcType="VARCHAR" />
-		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="userid" property="userid" jdbcType="VARCHAR" />
 		<result column="username" property="username" jdbcType="VARCHAR" />
-		<result column="password" property="password" jdbcType="VARCHAR" />
-		<result column="phone" property="phone" jdbcType="VARCHAR" />
-		<result column="state" property="state" jdbcType="INTEGER" />
-		<result column="roleId" property="roleId" jdbcType="VARCHAR" /> -->
+		<result column="logon_name" property="logon_name" jdbcType="VARCHAR" />
+		<result column="user_pwd" property="user_pwd" jdbcType="VARCHAR" />
+		<result column="e_mail" property="e_mail" jdbcType="VARCHAR" />
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="orgid" property="orgid" jdbcType="VARCHAR" />
+		<result column="officephone" property="officephone" jdbcType="VARCHAR" />
+		<result column="idx" property="idx" jdbcType="INTEGER" />
+		<result column="deptid" property="deptid" jdbcType="VARCHAR" />
+		<result column="usernumber" property="usernumber" jdbcType="VARCHAR" />
+		<result column="sex" property="sex" jdbcType="VARCHAR" />
+		<result column="nation" property="nation" jdbcType="VARCHAR" />
+		<result column="nativeplace" property="nativeplace" jdbcType="VARCHAR" />
+		<result column="education" property="education" jdbcType="VARCHAR" />
+		<result column="university" property="university" jdbcType="VARCHAR" />
+		<result column="major" property="major" jdbcType="VARCHAR" />
+		<result column="remarks" property="remarks" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="VARCHAR" />
+		<result column="ts" property="ts" jdbcType="DATE" />
+		<result column="rs" property="rs" jdbcType="VARCHAR" />
 	</resultMap>
-	<select id="selectUser" resultMap="com.ele.project.sysmanager.user.pojo.UserDTO" parameterType="com.ele.project.sysmanager.user.pojo.UserDTO">
+	<select id="selectUser" resultMap="BaseResultMap" parameterType="com.ele.project.sysmanager.user.pojo.UserDTO">
 		select * from ele_s_user where username = #{username} and user_pwd=#{user_pwd}
 	</select>
 	
-	<select id="getUserDTOByName" resultMap="com.ele.project.sysmanager.user.pojo.UserDTO">
+	<select id="getUserDTOByName" resultMap="BaseResultMap">
 		select * from ele_s_user where username = #{username}
 	</select>
 	<!-- 

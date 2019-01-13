@@ -17,6 +17,8 @@
     <script src="${ctx}/common/element.js"></script>
     <script src="${ctx}/common/store.modern.min.js"></script>
     <script src="${ctx}/js/base.js"></script>
+    <link rel="stylesheet" href="${ctx}/layui/css/layui.css"/>
+    <script src="${ctx}/layui/layui.all.js"></script>
 
     <style>
         body {
@@ -75,14 +77,19 @@
         <div style="width: 350px; height: 320px; float:right; position:relative; top:70px;">
             <el-tabs type="border-card" style="height: 100%">
                 <el-tab-pane label="账户登录">
-                    <el-input size="large" v-model="username" placeholder="用户名" :value="username"
-                              style="margin: 20px auto;">
-                        <template slot="prepend"><i class="fa fa-user"></i></template>
-                    </el-input>
-                    <el-input size="large" v-model="password" placeholder="密码" type="password" :value="password">
-                        <template slot="prepend"><i class="fa fa-lock"></i></template>
-                    </el-input>
-                    <el-button @click="tologin" size="large" type="danger" style="margin-top:30px; width: 100%">登 录
+                    <el-form :model="form" :rules="rules" ref="form" >
+		                    	<el-form-item  prop="username">
+			                    	<el-input size="large" v-model="form.username" placeholder="用户名" auto-complete="off" style="margin: 20px auto;margin-bottom:0px;">
+			                        	<template slot="prepend"><i class="fa fa-user"></i></template>
+			                        </el-input>
+		                        </el-form-item>
+		                        <el-form-item  prop="user_pwd">
+				                    <el-input size="large" v-model="form.user_pwd" placeholder="密码" type="password" auto-complete="off" style="margin-top:20px;">
+				                        <template slot="prepend"><i class="fa fa-lock"></i></template>
+				                    </el-input>
+			                    </el-form-item>
+                    </el-form>
+                    <el-button @click="tologin('form')"  size="large" type="danger" style="margin-top:30px; width: 100%">登 录
                     </el-button>
                 </el-tab-pane>
                 <%--<el-tab-pane label="扫码登录">扫码登录</el-tab-pane>--%>
@@ -99,33 +106,45 @@
         el: "#app",
         data: function () {
             return {
-                username: "",
-                password: ""
+                form: {
+                	username: '',
+                	user_pwd: ''
+                },
+                rules: {
+                	username: [ { required:true,message: '请输入用户名'}],
+                	user_pwd: [ { required:true,message: '请输入密码'}]
+                }
             }
         },
         methods: {
-            tologin: function () {
-                this.$http.post("loginAction/login", {username: this.username, user_pwd: this.password})
-                        .then(function (result) {
-                            var rs = result.bodyText;
-                            if (rs.indexOf("error") < 0) {
-                                //store.set("token", token.guid);
-                                this.loginok();
+        	tologin: function (form) {
+                        vo.$refs[form].validate(function(valid) {
+                            if (valid) {
+                            	var formData = JSON.stringify(vo.form);
+                		        var url="${ctx}/loginController/login";
+                                vo.$http.post(url,formData ).then(function(res){
+                                	if(res.body.success){
+                                        vo.$message({
+                                            message: '登录成功！',
+                                            duration:1000,
+                                            type: 'success',
+                                            onClose:function(){
+                                                location.href='${ctx}/loginController/main';//?token=" + token;
+                                            }
+                                        });
+                                    }else{
+                                        vo.$message({
+                                            message: '用户名或密码不正确，请重新输入！',
+                                            duration:1000,
+                                            type: 'error'
+                                        });
+                                    }
+                                });
                             } else {
-                                //alert("报错:" + token);
-                                alert("用户名或密码不正确，请重新输入！");
-                                //store.remove("token");
+                                return false;
                             }
-                        }, function (error) {
-                            console.info("error", error);
                         });
             },
-            loginok: function () {
-            	//var token = store.get("token");
-                // if (token) {
-                    window.location = "main";//?token=" + token;
-                // }
-            }
         }
     });
 

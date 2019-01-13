@@ -6,7 +6,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>信息中心内部ERP</title>
+    <title>OA管理系统</title>
     <%--<link rel="stylesheet" href="${ctx}/common/bootstrap-3.3.7.min.css">--%>
     <link rel="stylesheet" href="${ctx}/common/font-awesome.css">
     <link rel="stylesheet" href="${ctx}/common/element.css">
@@ -99,9 +99,9 @@
     <el-row style="line-height: 60px; background-color: #0171C3">
         <el-col :span="12"
                 style="text-align: left; color:#fff; font-family: 'Microsoft YaHei UI'; font-size: 18pt; text-indent: 0.5em;position: relative; z-index: 999;text-shadow: 2px 3px 2px #333;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
-            <img src="${ctx}/image/logo_icon.png">
-            <span>河北财政信息系统一体化平台</span>
-            <span style="padding-left:0.5em;font-size:17pt;font-weight:bold">信息中心ERP</span>
+            <%-- <img src="${ctx}/image/logo_icon.png"> --%>
+            <span>OA办公权限管理平台</span>
+            <!-- <span style="padding-left:0.5em;font-size:17pt;font-weight:bold">信息中心ERP</span> -->
         </el-col>
         <el-col :span="12" style="text-align: right">
             <img src="${ctx}/image/logo_bg.png" style="position: absolute; left: 360px;">
@@ -122,8 +122,8 @@
                 <div class="app_userinfo" style="height:42px;background-color:rgb(1, 113, 195);color:#fff;">
                     <i class="fa fa-user-circle" style="font-size: 24pt;padding-left: 20px;padding-right: 14px;"> </i>
                     <ul style="display: inline-block">
-                        <li id="username">{{userinfo.username}}</li>
-                        <li>登录日期：{{userinfo.date}}</li>
+                        <li id="username">{{user.username}}</li>
+                        <li>登录日期：{{user.nowdate}}</li>
                     </ul>
                 </div>
                 <!-- 左侧菜单begin -->
@@ -198,10 +198,11 @@
         data: function () {
             return {
                 init: null,
-                userinfo: {
+                user: {
                     username: "",
-                    userdept: "",
-                    date: ""
+                    /* userdept: "", */
+                    nowdate: "",
+                    userid:""
                 },
                 token: store.get("token"),
                 showMenu: true,
@@ -238,9 +239,9 @@
                 this.getSysUrl();//打开默认子系统
                 //打开待办页面
                 var key = 'ebe8412a-cf5e-4a8a-9530-af89995f9e93';
-                this.tabs.push({key: key, text: '待办', open: true, closable:false,uri: 'job/waitlist' + "?token=" + this.token});
-                this.activeTab = key;
-                this.activeName = key;
+                //this.tabs.push({key: key, text: '待办', open: true, closable:false,uri: 'job/waitlist' + "?token=" + this.token});
+                //this.activeTab = key;
+                //this.activeName = key;
             })
         },
         methods: {
@@ -257,23 +258,19 @@
                 this.token = store.get("token");
             },
             getSysUrl: function (sys) {
-                this.$http.get("getSysUrl", {
-                    params: {
-                        "token": this.token,
-                        "sys": sys
-                    }
-                }).then(function (res) {
-                    //console.info(res);
-                    this.bindTreeData(res);
-                });
+                vm.$http.get("${ctx}/initController/ptinit",
+                        {   params: {"sys": sys }
+                        }).then(function(res){
+                        	this.bindTreeData(res);
+                 }); 
             },
             bindTreeData: function (res) {
                 this.init = res.body;
                 this.init.menus.subs.sort(function(a,b){return a.idx*1<b.idx*1?-1:a.idx*1>b.idx*1?1:0});
                 this.menus = this.init.menus;
-                this.userinfo.username = this.init.user.USERNAME;
-                this.userinfo.userdept = this.init.user.ORGNAME;
-                this.userinfo.date = this.init.info.date;
+                this.user.username = this.init.user.username;
+                this.user.nowdate = this.init.info.date;
+                this.user.userid = this.init.user.userid;
             },
             openSys: function () {
                 this.getSysUrl("hbzdk");//手动切换子系统
@@ -334,7 +331,6 @@
                 }
             },
             handleShowMsg: function (evt) {
-                // console.info(evt.$vnode.key, evt);
                 if (evt.$vnode.key == "m22") {
                     this.$message({
                         message: '恭喜你，这是一条成功消息',
@@ -349,18 +345,7 @@
                 }
             },
             handleLogout: function () {
-                var t = store.get("token");
-                store.remove("token");
-                //self.location.href = "api/logout?token=" + t;
-
-                this.$http.get("api/logout", {
-                    params: {
-                        "token": t
-                    }
-                }).then(function (res) {
-                    //console.info(res);
-                    self.location.href = "login";
-                });
+                self.location.href = "${ctx}/loginController/logout";
             },
             handleCollapseMenu: function () {
                 this.isCollapse = !this.isCollapse
@@ -372,7 +357,7 @@
                 });
                if (!has) {
                     if (this.tabs.length < 10) {
-                        this.tabs.push({key: key, text: '修改密码', open: true, closable:false,uri: 'sysManage/updatePwd' + "?token=" + this.token});
+                        this.tabs.push({key: key, text: '修改密码', open: true, closable:false,uri: 'userController/updatePwd' + "?userid=" + vm.user.userid});
                         this.activeTab = key;
                         this.activeName = key;
                     } else {

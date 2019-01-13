@@ -9,11 +9,11 @@ import java.util.Date;
  */
 public class UserDTO {
 
-    private String guid;//
+    private String userid;//
 	private String username;//用户名
 	private String logon_name;//登录名
 	private String user_pwd;//密码
-	private Integer e_mail;//邮箱
+	private String e_mail;//邮箱
 	private String enabled;//停用启用:0-启用、1-停用
 	private String mobile;//手机号
 	private String orgid;//组织机构
@@ -31,11 +31,13 @@ public class UserDTO {
 	private String state;//状态：0-在岗、1-离岗
 	private Date ts;//数据行时间戳
 	private String rs;//数据行状态。0：不可用，1：可用
-	public String getGuid() {
-		return guid;
+
+	
+	public String getUserid() {
+		return userid;
 	}
-	public void setGuid(String guid) {
-		this.guid = guid;
+	public void setUserid(String userid) {
+		this.userid = userid;
 	}
 	public String getUsername() {
 		return username;
@@ -55,10 +57,10 @@ public class UserDTO {
 	public void setUser_pwd(String user_pwd) {
 		this.user_pwd = user_pwd;
 	}
-	public Integer getE_mail() {
+	public String getE_mail() {
 		return e_mail;
 	}
-	public void setE_mail(Integer e_mail) {
+	public void setE_mail(String e_mail) {
 		this.e_mail = e_mail;
 	}
 	public String getEnabled() {

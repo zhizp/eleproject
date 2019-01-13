@@ -1,8 +1,9 @@
 package com.ele.project.common.controller;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -11,8 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ele.project.common.SupportAction;
@@ -20,10 +21,8 @@ import com.ele.project.common.service.LoginService;
 import com.ele.project.sysmanager.user.pojo.UserDTO;
 import com.ele.project.util.MD5;
 
-import net.sf.json.JSONObject;
-
 @Controller
-@RequestMapping(value = "/loginAction")
+@RequestMapping(value = "/loginController")
 public class LoginController extends SupportAction {
 	@Resource 
 	private LoginService loginService;	
@@ -48,22 +47,29 @@ public class LoginController extends SupportAction {
      * @return
      * @throws IOException 
      */
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public Map<String, Object> login(HttpServletResponse response,HttpServletRequest request,UserDTO user) throws IOException{
+    @RequestMapping(value = "/login")
+    @ResponseBody
+    public Map<String, Object> login(HttpServletRequest req,@RequestBody Map<String, Object> paramsMap) throws IOException{
     	Map<String, Object> result = new HashMap<String, Object>();
     	try {
+		 UserDTO user=new UserDTO();
 	     //获取用户名和密码
-	     String username=user.getUsername();
-	     String password=user.getUser_pwd();
-	     user.setUsername(username);
-	     user.setUser_pwd(MD5.getMD5(password.getBytes()));
+		 if(paramsMap.containsKey("username")){
+			 user.setUsername(paramsMap.get("username").toString());
+         }
+		 if(paramsMap.containsKey("user_pwd")){
+			 user.setUser_pwd(MD5.getMD5(paramsMap.get("user_pwd").toString().getBytes()));
+		 }
 	     UserDTO returnUser = loginService.selectUser(user);
-	     List<UserDTO> list = loginService.getUserDTOByName(username);
-	     
-	     result.put("success", true);
-		 result.put("guid", returnUser.getGuid());
-		 request.getSession().setAttribute("USER_SESSION", returnUser);
-	     request.setAttribute("user", returnUser);
+	     //List<UserDTO> list = loginService.getUserDTOByName(username);
+	     if(returnUser!=null) {
+	    	 result.put("success", true);
+			 result.put("userid", returnUser.getUserid());
+			 req.getSession().setAttribute("user", returnUser);
+			 req.setAttribute("user", returnUser);
+	     }else {
+	    	 result.put("success", false);
+	     }
     	}catch(Exception e) {
     		e.printStackTrace();
 			result.put("success", false);
@@ -75,35 +81,18 @@ public class LoginController extends SupportAction {
     /**
      * 向主页面跳转
      */
-    @RequestMapping(value = "/toIndex")
+    @RequestMapping(value = "/main")
     public String toIndex(HttpServletResponse response,HttpServletRequest request){
-    	System.out.println("loginAction/toIndex/进入主页");
-    	UserDTO user=(UserDTO)request.getSession().getAttribute("USER_SESSION");
+    	UserDTO user=(UserDTO)request.getSession().getAttribute("user");
 //    	String menuState=loginService.selectMenuState(user);
 //    	request.getSession().setAttribute("menuState", menuState);
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    	String nowdate=sdf.format(new Date());
+    	request.setAttribute("nowdate", nowdate);
     	request.getSession().setAttribute("user", user);
-        return  "index";
+        return  "main";
     }
-    /**
-     * 
-     * @param menuid 0:年度;1:建设单位;
-     * @param response
-     * @param request
-     * @return
-     */
-    @RequestMapping(value = "/toLeftMenu")
-    public String toLeftMenu(String menuid, HttpServletResponse response,HttpServletRequest request){
-    	UserDTO user=(UserDTO)request.getSession().getAttribute("USER_SESSION");
-//    	String menuSatate=loginService.selectMenuState(user);
-//    	request.setAttribute("menuSatate", menuSatate);
-    	request.setAttribute("menuid", "1");
-        return  "leftmenu";
-    }
-
-    @RequestMapping(value = "/main")
-    public String toMain(){
-        return "main";
-    }
+    
     
     @RequestMapping(value = "/logout")
     public String logout(HttpSession session){

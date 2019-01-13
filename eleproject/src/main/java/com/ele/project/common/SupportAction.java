@@ -27,7 +27,7 @@ public class SupportAction {
   }
   
   protected Object getUser(HttpServletRequest request,HttpServletResponse response) {
-	return request.getSession().getAttribute("USER_SESSION");  
+	return request.getSession().getAttribute("user");  
   }
 
 
