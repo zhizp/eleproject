@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ele.project.sysmanager.user.dao.SysUserDao">
+	
+	<update id="updatePwd" parameterType="Map">
+		update ele_s_user set user_pwd=#{user_pwd} where userid=#{userid}
+	</update>
+
+	<select id="queryUserList" resultType="Map" parameterType="Map">
+		select * from ele_s_user where rs="1" 
+		<if test="username !=null">
+			and username=#{username}
+		</if>
+		<if test="login_name !=null">
+			and login_name=#{login_name}
+		</if>
+	</select>
+	<select id="queryUserListCount" parameterType="Map">
+		select  count(*) from ele_s_user where rs="1" 
+		<if test="username !=null">
+			and username=#{username}
+		</if>
+		<if test="login_name !=null">
+			and login_name=#{login_name}
+		</if>
+	</select>
+	<insert id="saveUser" parameterType="Map">
+		insert into ele_s_user(
+		         userid
+				,username
+				,login_name
+				,user_pwd
+				,e_mail
+				,enabled
+				,mobile
+				,orgid
+				,officephone
+				,idx
+				,deptid
+				,usernumber
+				,sex
+				,nation
+				,nativeplace
+				,education
+				,university
+				,major
+				,remarks
+				,state
+				,ts
+				,rs
+		) values(
+				#{userid}
+				,#{username}
+				,#{login_name}
+				,#{user_pwd}
+				,#{e_mail}
+				,'0'
+				,#{mobile}
+				,#{orgid}
+				,#{officephone}
+				,#{idx}
+				,#{deptid}
+				,#{usernumber}
+				,#{sex}
+				,#{nation}
+				,#{nativeplace}
+				,#{education}
+				,#{university}
+				,#{major}
+				,#{remarks}
+				,#{state}
+				,now()
+				,'1'
+		)
+	</insert>
+</mapper>

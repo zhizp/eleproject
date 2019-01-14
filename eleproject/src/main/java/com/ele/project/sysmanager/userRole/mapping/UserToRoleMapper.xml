@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ele.project.sysmanager.userRole.dao.UserToRoleDao">
+	
+	<select id="getRoleById" resultType="Map" parameterType="java.lang.String">
+		select a.*,b.name from ERP_S_USERROLE a 
+		left join ERP_S_ROLE b on a.role_id=b.role_id
+		 where a.userid=#{userid} 
+	</select>
+	<insert id="addUserToRole" parameterType="com.ele.project.sysmanager.userRole.pojo.UserToRoleDTO">
+		insert into ele_s_userrole(
+		ur_id,
+		userid,
+		roleid
+		)values(
+		#{ur_id},
+		#{userid},
+		#{roleid}
+		)
+	</insert>
+	<delete id="deleteUserToRole" parameterType="java.lang.String">
+	delete from ele_s_userrole where userid=#{userid}
+	</delete>
+</mapper>

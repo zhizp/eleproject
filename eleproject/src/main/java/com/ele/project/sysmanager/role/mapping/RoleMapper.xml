@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ele.project.sysmanager.role.dao.RoleDao">
+	<select id="getRolesList" parameterType="Map">
+		select role_id ,name ,code_name ,description ,isadmin ,createtime ,modify_time ,admin_level ,idx ,rs ,ts 
+		from ele_s_role where rs='1'
+		<if test='name!=null and name !=""'>
+			and name like "%"#{name}"%"
+		</if>
+	</select>
+	<select id="getRolesListCount" parameterType="Map">
+		select count(1)
+		from ele_s_role where rs='1'
+		<if test='name!=null and name !=""'>
+			and name like "%"#{name}"%"
+		</if>
+	</select>
+	<insert id="addRole" parameterType="Map">
+	insert into ele_s_role(
+		role_id
+		,name
+		,code_name
+		,description
+		,isadmin
+		,createtime
+		,modify_time
+		,admin_level
+		,idx
+		,rs
+		,ts
+	)values(
+		 #{role_id}
+		,#{name}
+		,#{code_name}
+		,#{description}
+		,#{isadmin}
+		,#{createtime}
+		,#{modify_time}
+		,#{admin_level}
+		,#{idx}
+		,'1'
+		,now()
+	)
+	</insert>
+</mapper>
