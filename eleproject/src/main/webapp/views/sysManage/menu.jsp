@@ -97,7 +97,7 @@
 			    <el-dialog ref="dlgEdit" title="编辑菜单" size="small" :visible.sync="dialogEditFormVisible" 
 					:modal-append-to-body="false" :close-on-click-modal="false">
 					<el-form :model="editForm" :rules="rules" ref="editForm" >
-					   	<el-form-item label="菜单名称" :label-width="formLabelWidth" prop="name">
+					   	<el-form-item label="菜单名称" :label-width="formLabelWidth" prop="name" style="margin-bottom:15px;">
 					      <el-input size="small" v-model="editForm.name" auto-complete="off" ></el-input>
 					    </el-form-item>
 					    <el-form-item label="URL" :label-width="formLabelWidth" prop="url">
@@ -108,7 +108,7 @@
 					       <el-input v-model="editForm.parentid" v-show="false" >
 					      </el-input>
 					    </el-form-item>
-					    <el-form-item label="排序号" :label-width="formLabelWidth" prop="displayorder"  >
+					    <el-form-item label="排序号" :label-width="formLabelWidth" prop="displayorder"  style="margin-bottom:15px;">
 					      <el-input size="small" v-model="editForm.displayorder" auto-complete="off"></el-input>
 					    </el-form-item>
 					    <el-form-item label="菜单描述" :label-width="formLabelWidth"  prop="remarks">
@@ -133,10 +133,10 @@
             <!-- 新增 begin -->	  
 		  <el-dialog ref="dlgAdd" title="新增菜单" size="small" :visible.sync="dialogAddFormVisible" :modal-append-to-body="false" :close-on-click-modal="false">
 		  <el-form :model="form" :rules="rules" ref="form" >
-		    <el-form-item label="菜单名称" :label-width="formLabelWidth" prop="name">
+		    <el-form-item label="菜单名称" :label-width="formLabelWidth" prop="name" style="margin-bottom:15px;">
 		      <el-input  size="small" v-model="form.name" auto-complete="off" ></el-input>
 		    </el-form-item>
-		    <el-form-item label="URL" :label-width="formLabelWidth" prop="url">
+		    <el-form-item label="URL" :label-width="formLabelWidth" prop="url" >
 		      <el-input  size="small" v-model="form.url" auto-complete="off"></el-input>
 		    </el-form-item>
 		    <el-form-item label="父级菜单" :label-width="formLabelWidth" >
@@ -144,10 +144,10 @@
 		       <el-input v-model="form.parentid" v-show="false" >
 		      </el-input>
 		    </el-form-item>
-		    <el-form-item label="排序号" :label-width="formLabelWidth" prop="displayorder"  >
+		    <el-form-item label="排序号" :label-width="formLabelWidth" prop="displayorder"  style="margin-bottom:15px;">
 		      <el-input  size="small" v-model.number="form.displayorder" auto-complete="off"></el-input>
 		    </el-form-item>
-		    <el-form-item label="菜单描述" :label-width="formLabelWidth"  prop="remarks">
+		    <el-form-item label="菜单描述" :label-width="formLabelWidth"  prop="remarks" >
 		      <el-input  type="textarea"  :rows="3" v-model="form.remarks" auto-complete="off" ></el-input>
 		    </el-form-item>
 			  <%--<el-form-item label="菜单图标" :label-width="formLabelWidth"  prop="MENUICON">--%>
@@ -248,7 +248,7 @@
   	          },
          bindTreeData: function () {
             	 vo.$http.get("${ctx}/menuController/queryMenuTree",
-							 {   params: {"token":vo.token}
+							 {  /*  params: {"token":vo.token} */
 	 						    }).then(function(res){ 
 					 vo.treeData=res.body;
 					 vo.fullscreenLoading=false; 
@@ -256,7 +256,7 @@
 		},
  		 bindTableData:function(){//表格数据
  				
-				 vo.$http.get("${ctx}/menuController/getMenuPage",
+				  vo.$http.get("${ctx}/menuController/getMenuPage",
 						 {   params: {  
 								/* "token":vo.token, */
 						  		"pagesize":vo.page.pagesize,
@@ -269,7 +269,7 @@
 						 vo.tableData=res.body.list; 
 						 vo.tableLoading=false;
 					
-				});  
+				});   
 			},
 		handleCurrentChange:function(val){//当前页改变
 			vo.page.currentpage=val;//当前页

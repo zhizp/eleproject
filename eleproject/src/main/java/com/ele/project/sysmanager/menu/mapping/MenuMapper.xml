@@ -19,8 +19,10 @@
 	<select id="getAllMenuList" resultType="Map">
 		select * from ELE_S_MENU a where a.rs=1 and a.parentid='00' and rownum &lt;2
 	</select>
-	<select id="getMenuList" parameterType="Map">
-		select * from ELE_S_MENU where rs=1 
+	<select id="getMenuList" parameterType="Map" resultType="Map">
+		select menu_id ,name ,url ,parentid ,displayorder ,menuicon ,operator_organization ,
+		operator_department ,operator ,operate_date ,ts ,rs ,remarks ,idx  
+		from ELE_S_MENU where rs=1 
 		 <choose>
              <when test="menu_id!=null and menu_id!=''">
                  and menu_id = #{menu_id}
@@ -44,7 +46,7 @@
 		</if>
 		order by t.parentid
 	</select>
-	<select id="getMenuPageCount" parameterType="Map">
+	<select id="getMenuPageCount" parameterType="Map" resultType="java.lang.Integer">
 		select count(1)
 		from ELE_S_MENU t 
 		left join ELE_S_MENU p on t.parentid=p.menu_id

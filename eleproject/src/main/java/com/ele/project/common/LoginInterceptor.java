@@ -16,7 +16,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 	@Autowired
     HttpSession session;
 	//不拦截的页面
-    private static final String[] IGNORE_URI={"/loginController/login","/loginController/logout","/loginController/main"};   //过滤的路径
+    private static final String[] IGNORE_URI={"/login","/logout","/main"};   //过滤的路径
 
 	
 	@Override
@@ -59,7 +59,7 @@ public class LoginInterceptor implements HandlerInterceptor {
           //如果用户不为空，表示已经有登录的用户信息，放行
           if(u==null){
 //              System.out.println("没有对象信息,请重新登录");
-              response.sendRedirect(request.getContextPath()+"/loginAction/toLogin");
+              response.sendRedirect(request.getContextPath()+"/toLogin");
               flag=false;
           }else {
         	  flag=true;

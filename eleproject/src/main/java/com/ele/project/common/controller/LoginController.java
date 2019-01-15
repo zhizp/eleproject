@@ -22,7 +22,7 @@ import com.ele.project.sysmanager.user.pojo.UserDTO;
 import com.ele.project.util.MD5;
 
 @Controller
-@RequestMapping(value = "/loginController")
+@RequestMapping(value = "/")
 public class LoginController extends SupportAction {
 	@Resource 
 	private LoginService loginService;	
@@ -101,8 +101,6 @@ public class LoginController extends SupportAction {
         //重定向到登录页面的跳转方法
         return "redirect:toLogin";
     }
-    
-    
     
     
     

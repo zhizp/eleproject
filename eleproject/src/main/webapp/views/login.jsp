@@ -121,7 +121,7 @@
                         vo.$refs[form].validate(function(valid) {
                             if (valid) {
                             	var formData = JSON.stringify(vo.form);
-                		        var url="${ctx}/loginController/login";
+                		        var url="${ctx}/login";
                                 vo.$http.post(url,formData ).then(function(res){
                                 	if(res.body.success){
                                         vo.$message({
@@ -129,7 +129,7 @@
                                             duration:1000,
                                             type: 'success',
                                             onClose:function(){
-                                                location.href='${ctx}/loginController/main';//?token=" + token;
+                                                location.href='${ctx}/main';//?token=" + token;
                                             }
                                         });
                                     }else{

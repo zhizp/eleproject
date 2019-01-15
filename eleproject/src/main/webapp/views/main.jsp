@@ -286,8 +286,7 @@
                 var key = evt.$vnode.key;
                 var text = evt.$el.innerText;
                 var uri = evt.$el.attributes["uri"].value;
-                alert(uri);
-                var arg = "?token=" + this.token;
+                var arg = "";/* "?token=" + this.token; */
                 var has = this.tabs.some(function (p) {
                     if (p.key === key) return true
                 });
@@ -346,7 +345,7 @@
                 }
             },
             handleLogout: function () {
-                self.location.href = "${ctx}/loginController/logout";
+                self.location.href = "${ctx}/logout";
             },
             handleCollapseMenu: function () {
                 this.isCollapse = !this.isCollapse

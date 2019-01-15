@@ -22,7 +22,8 @@ import com.ele.project.util.PageDTO;
 import com.ele.project.util.PageUtils;
 import com.ele.project.util.StringUtil;
 
-@Controller("/menuController")
+@Controller
+@RequestMapping("/menuController")
 public class MenuController {
 	private static Logger logger = LoggerFactory.getLogger(UserController.class);
 	
@@ -109,7 +110,7 @@ public class MenuController {
             	 List<Map<String, Object>> childlist=new ArrayList<Map<String, Object>>();
              	 Map<String, Object> returnMap =new HashMap<String, Object>();
              	 String MENU_ID=list.get(i).get("menu_id").toString();
-             	 returnMap.put("label", list.get(i).get("remark"));
+             	 returnMap.put("label", list.get(i).get("name"));
              	 returnMap.put("menu_id", MENU_ID);
 //             	 list.remove(list.get(i));//移除已使用的
              	 //子菜单
@@ -137,9 +138,9 @@ public class MenuController {
 	      
     	  Map<String, Object> paramsMap = PageUtils.getParameters(req);
 	      Map<String, Object> returnMap = new HashMap<String, Object>();
-	      List<Map<String, Object>> returnList=null;
+	      List<Map<String, Object>> returnList=new ArrayList<Map<String, Object>>();
 	      int count=0;
-	      PageDTO page =null;
+	      PageDTO page =new PageDTO();
 	      try {
 	         
 	    	  returnList = menuService.getMenuPage(paramsMap);
