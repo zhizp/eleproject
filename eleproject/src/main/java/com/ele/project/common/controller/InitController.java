@@ -134,8 +134,8 @@ public class InitController {
         //String in_userid = CacheUtils.hget(token, "GUID");//平台用户id
         //String in_usercode = CacheUtils.hget(token, "LOGON_NAME");//平台用户logon_name
         
-        List<Map<String, Object>> returnlist = menuService.getMenuListByUserId(user.getLogon_name(), "");//查询当前用户所有权限
-        returnlist = queryChildMenuNavByRoleId(returnlist, "0", user.getLogon_name());
+        List<Map<String, Object>> returnlist = menuService.getMenuListByUserId(user.getLogin_name(), "");//查询当前用户所有权限
+        returnlist = queryChildMenuNavByRoleId(returnlist, "0", user.getLogin_name());
         //将有子菜单和没有子菜单的数据分离开
         for (int i = 0; i < returnlist.size(); i++) {
             if (returnlist.get(i).containsKey("subs")) {

@@ -53,9 +53,9 @@ public class LoginController extends SupportAction {
     	Map<String, Object> result = new HashMap<String, Object>();
     	try {
 		 UserDTO user=new UserDTO();
-	     //获取用户名和密码
-		 if(paramsMap.containsKey("username")){
-			 user.setUsername(paramsMap.get("username").toString());
+	     //获取登录名和密码
+		 if(paramsMap.containsKey("login_name")){
+			 user.setLogin_name(paramsMap.get("login_name").toString());
          }
 		 if(paramsMap.containsKey("user_pwd")){
 			 user.setUser_pwd(MD5.getMD5(paramsMap.get("user_pwd").toString().getBytes()));

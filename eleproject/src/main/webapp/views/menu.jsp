@@ -72,10 +72,10 @@
 		            	v-loading.fullscreen.lock="tableLoading"  highlight-current-row 
 				              @row-click="handleCurrentRow">
 		                  <el-table-column  type="index" label="序号" width="80" align="center"></el-table-column>
-						  <el-table-column prop="NAME" label="菜单名称" min-width="200"> </el-table-column>
-						  <el-table-column prop="URL" label="URL" min-width="200"> </el-table-column>
-						  <el-table-column prop="PNAME" label="父级菜单" min-width="200"> </el-table-column>
-						  <el-table-column prop="REMARK" label="菜单描述" min-width="300"> </el-table-column>
+						  <el-table-column prop="name" label="菜单名称" min-width="200"> </el-table-column>
+						  <el-table-column prop="url" label="URL" min-width="200"> </el-table-column>
+						  <el-table-column prop="pname" label="父级菜单" min-width="200"> </el-table-column>
+						  <el-table-column prop="remarks" label="菜单描述" min-width="300"> </el-table-column>
 		            </el-table>
 		        </el-col>
 		    </el-row>
@@ -97,22 +97,22 @@
 			    <el-dialog ref="dlgEdit" title="编辑菜单" size="small" :visible.sync="dialogEditFormVisible" 
 					:modal-append-to-body="false" :close-on-click-modal="false">
 					<el-form :model="editForm" :rules="rules" ref="editForm" >
-					   	<el-form-item label="菜单名称" :label-width="formLabelWidth" prop="NAME">
-					      <el-input size="small" v-model="editForm.NAME" auto-complete="off" ></el-input>
+					   	<el-form-item label="菜单名称" :label-width="formLabelWidth" prop="name">
+					      <el-input size="small" v-model="editForm.name" auto-complete="off" ></el-input>
 					    </el-form-item>
-					    <el-form-item label="URL" :label-width="formLabelWidth" prop="URL">
-					      <el-input size="small" v-model="editForm.URL" auto-complete="off"></el-input>
+					    <el-form-item label="URL" :label-width="formLabelWidth" prop="url">
+					      <el-input size="small" v-model="editForm.url" auto-complete="off"></el-input>
 					    </el-form-item>
 					    <el-form-item label="父级菜单" :label-width="formLabelWidth" >
-					      <el-input size="small" v-model="editForm.PARENTNAME" disabled  >
-					       <el-input v-model="editForm.PARENTID" v-show="false" >
+					      <el-input size="small" v-model="editForm.parentname" disabled  >
+					       <el-input v-model="editForm.parentid" v-show="false" >
 					      </el-input>
 					    </el-form-item>
-					    <el-form-item label="排序号" :label-width="formLabelWidth" prop="DISPLAYORDER"  >
-					      <el-input size="small" v-model="editForm.DISPLAYORDER" auto-complete="off"></el-input>
+					    <el-form-item label="排序号" :label-width="formLabelWidth" prop="displayorder"  >
+					      <el-input size="small" v-model="editForm.displayorder" auto-complete="off"></el-input>
 					    </el-form-item>
-					    <el-form-item label="菜单描述" :label-width="formLabelWidth"  prop="REMARK">
-					      <el-input  size="small" type="textarea"  :rows="3" v-model="editForm.REMARK" auto-complete="off"></el-input>
+					    <el-form-item label="菜单描述" :label-width="formLabelWidth"  prop="remarks">
+					      <el-input  size="small" type="textarea"  :rows="3" v-model="editForm.remarks" auto-complete="off"></el-input>
 					    </el-form-item>
 						<%--<el-form-item label="菜单图标" :label-width="formLabelWidth"  prop="MENUICON">--%>
 						<%--<el-upload v-model="editForm.MENUICON" class="avatar-uploader" :action="action" name="file" ref="file"--%>
@@ -133,22 +133,22 @@
             <!-- 新增 begin -->	  
 		  <el-dialog ref="dlgAdd" title="新增菜单" size="small" :visible.sync="dialogAddFormVisible" :modal-append-to-body="false" :close-on-click-modal="false">
 		  <el-form :model="form" :rules="rules" ref="form" >
-		    <el-form-item label="菜单名称" :label-width="formLabelWidth" prop="NAME">
-		      <el-input  size="small" v-model="form.NAME" auto-complete="off" ></el-input>
+		    <el-form-item label="菜单名称" :label-width="formLabelWidth" prop="name">
+		      <el-input  size="small" v-model="form.name" auto-complete="off" ></el-input>
 		    </el-form-item>
-		    <el-form-item label="URL" :label-width="formLabelWidth" prop="URL">
-		      <el-input  size="small" v-model="form.URL" auto-complete="off"></el-input>
+		    <el-form-item label="URL" :label-width="formLabelWidth" prop="url">
+		      <el-input  size="small" v-model="form.url" auto-complete="off"></el-input>
 		    </el-form-item>
 		    <el-form-item label="父级菜单" :label-width="formLabelWidth" >
-		      <el-input  size="small" v-model="form.PARENTNAME" disabled  >
-		       <el-input v-model="form.PARENTID" v-show="false" >
+		      <el-input  size="small" v-model="form.parentname" disabled  >
+		       <el-input v-model="form.parentid" v-show="false" >
 		      </el-input>
 		    </el-form-item>
-		    <el-form-item label="排序号" :label-width="formLabelWidth" prop="DISPLAYORDER"  >
-		      <el-input  size="small" v-model.number="form.DISPLAYORDER" auto-complete="off"></el-input>
+		    <el-form-item label="排序号" :label-width="formLabelWidth" prop="displayorder"  >
+		      <el-input  size="small" v-model.number="form.displayorder" auto-complete="off"></el-input>
 		    </el-form-item>
-		    <el-form-item label="菜单描述" :label-width="formLabelWidth"  prop="REMARK">
-		      <el-input  type="textarea"  :rows="3" v-model="form.REMARK" auto-complete="off" ></el-input>
+		    <el-form-item label="菜单描述" :label-width="formLabelWidth"  prop="remarks">
+		      <el-input  type="textarea"  :rows="3" v-model="form.remarks" auto-complete="off" ></el-input>
 		    </el-form-item>
 			  <%--<el-form-item label="菜单图标" :label-width="formLabelWidth"  prop="MENUICON">--%>
 			  <%--<el-upload v-model="form.MENUICON" class="avatar-uploader" :action="action" name="file" ref="file"--%>
@@ -191,29 +191,27 @@
    			  imageUrlAdd: '',//新增上传图片
    			  imageUrlUpdate: '',//编辑上传图片
    			  image:"",
-   			  imgpath:"${pageContext.request.contextPath}/resources/upload/menu/",
-   			  action:"${pageContext.request.contextPath}/menu/uploadMenuicon?token="+store.get('token'),//"https://jsonplaceholder.typicode.com/posts/",//
+   			  imgpath:"${ctx}/resources/upload/menu/",
+   			  action:"${ctx}/menuController/uploadMenuicon?token="+store.get('token'),//"https://jsonplaceholder.typicode.com/posts/",//
    			  currentRow:null,
    			  currentRowIdTree:"",//树当前行id，用于查询表格数据
    			  form: {
-   		        	NAME: '',
-   		        	URL: '',
-   		        	PARENTNAME:'',
-   		        	PARENTID: '',
-   		        	DISPLAYORDER:0,
-   		        	REMARK:'',
-   		        	MENUICON:''
-   		           
+   		        	name: '',
+   		        	url: '',
+   		        	parentname:'',
+   		        	parentid: '',
+   		        	displayorder:0,
+   		        	remarks:'',
+   		        	menuicon:''
    		        },
    		        editForm: {
-   		        	NAME: '',
-   		        	URL: '',
-   		        	PARENTNAME:'',
-   		        	PARENTID: '',
-   		        	DISPLAYORDER:0,
-   		        	REMARK:'',
-   		        	MENUICON:''
-   		           
+   		        	name: '',
+   		        	url: '',
+   		        	parentname:'',
+   		        	parentid: '',
+   		        	displayorder:0,
+   		        	remarks:'',
+   		        	menuicon:''
    		        },
 		        page:{
 		        	total:0 ,
@@ -221,17 +219,17 @@
 		        	currentpage:1
 		        },
    		        rules: {
-   		        	NAME: [
+   		        	name: [
    		 	              { required: true, message: '请输入菜单名称'}
    		 	             ],
-   		 	        REMARK: [
+   		 	        remarks: [
    	 	              		{ required: true, message: '请输入菜单描述'}
    	 	            	]  ,
-   	 	           DISPLAYORDER: [ 	    
+   	 	           	displayorder: [ 	    
    	 	        	   			{ required: true, message: '排序号不能为空'} /* ,
    	 	                       	{ type: 'number', message: '排序号必须为数字值'}  */
    	 			 	            ]  
-   		 	          }
+ 		 	        }
             }
         },
         mounted: function () {
@@ -249,7 +247,7 @@
   	            	vo.$refs.form.resetFields();
   	          },
          bindTreeData: function () {
-            	 vo.$http.get("${pageContext.request.contextPath}/menu/queryMenuTree",
+            	 vo.$http.get("${ctx}/menuController/queryMenuTree",
 							 {   params: {"token":vo.token}
 	 						    }).then(function(res){ 
 					 vo.treeData=res.body;
@@ -258,12 +256,12 @@
 		},
  		 bindTableData:function(){//表格数据
  				
-				 vo.$http.get("${pageContext.request.contextPath}/menu/getMenuPage",
+				 vo.$http.get("${ctx}/menuController/getMenuPage",
 						 {   params: {  
-								"token":vo.token,
+								/* "token":vo.token, */
 						  		"pagesize":vo.page.pagesize,
 						        "currentpage":vo.page.currentpage,
-						        "MENU_ID":vo.currentRowIdTree
+						        "menu_id":vo.currentRowIdTree
 						    }}).then(function(res){ 
 						    	
 						 vo.page.currentpage=res.body.currentpage;
@@ -285,10 +283,10 @@
 	      },
 		handleCurrentRow:function(row) {//点击表格行
 	    	//给选中行赋值
-		       vo.currentRowId = row.MENU_ID;
+		       vo.currentRowId = row.menu_id;
 		       //给“新增”的父级菜单字段赋值 
-	    	   vo.addXjParentId=row.MENU_ID;
-	    	   vo.addXjParentName=row.NAME;
+	    	   vo.addXjParentId=row.menu_id;
+	    	   vo.addXjParentName=row.name;
  		        },
 	    handleNodeClick:function(data) {// 单击树节点
 	    	//给树选中行赋值
@@ -305,8 +303,8 @@
 		   
 	    	  vo.dialogAddFormVisible = true;
 	    	  vo.resetForm();	// 重置表单
-	    	  vo.form.PARENTID=vo.addXjParentId;
-	    	  vo.form.PARENTNAME=vo.addXjParentName;
+	    	  vo.form.parentid=vo.addXjParentId;
+	    	  vo.form.parentname=vo.addXjParentName;
 	    	  vo.imageUrlAdd ="";
 			},
 		HandleSave:function(form){
@@ -315,10 +313,10 @@
 		        	vo.form["token"] = vo.token; 
 					var formData = JSON.stringify(vo.form);
 					  
-					var url="${pageContext.request.contextPath}/menu/saveMenu";
+					var url="${ctx}/menuController/saveMenu";
 				  	vo.$http.post(url,formData ).then(function(res){  
 				   
-				  		if(res.ok){
+				  		if(res.body.rt){
 				  			 vo.$message({
 					              message: '保存成功！',
 					              duration:1000,
@@ -336,7 +334,7 @@
 				  			vo.$message({
 					              message: '保存失败！',
 					              duration:1000,
-					              type: 'success'
+					              type: 'error'
 					            });
 				  		}
 						    	 
@@ -350,14 +348,14 @@
 		 handleEdit:function(index, row) {
 			 if( vo.judeCurrentRowIsNull('编辑')){
 			 	 vo.dialogEditFormVisible = true;
-				 vo.$http.get("${pageContext.request.contextPath}/menu/getOneMenuList",
-						 {   params: { "token":vo.token,"MENUID":vo.currentRowId}
+				 vo.$http.get("${ctx}/menuController/getOneMenuList",
+						 {   params: { "token":vo.token,"menu_id":vo.currentRowId}
 					    }).then(function(res){  
 					    	vo.editForm=res.body;
-					    	vo.imageUrlUpdate =res.body.MENUICON;
-					    	if(res.body.PARENTID=="0"){
-						    	  vo.editForm.PARENTID="0";
-						    	  vo.editForm.PARENTNAME="无";
+					    	vo.imageUrlUpdate =res.body.menuicon;
+					    	if(res.body.parentid=="0"){
+						    	  vo.editForm.parentid="0";
+						    	  vo.editForm.parentname="无";
 						    	  //vo.editForm.DISPLAYORDER=parseInt(res.body.DISPLAYORDER);
 					    	}
 					    	
@@ -369,10 +367,10 @@
 				 vo.$refs[editForm].validate(function(valid) {
 			          if (valid) {
 			        	vo.editForm["token"] = vo.token;
-			        	vo.editForm["MENU_ID"] = vo.currentRowId;
+			        	vo.editForm["menu_id"] = vo.currentRowId;
 						var formData = JSON.stringify(vo.editForm);
 						  
-						var url="${pageContext.request.contextPath}/menu/updateMenu";
+						var url="${ctx}/menuController/updateMenu";
 					  	vo.$http.post(url,formData ).then(function(res){  
 					   
 					  		if(res.ok){
@@ -407,7 +405,7 @@
 			  handleDelete:function() {
 				  if( vo.judeCurrentRowIsNull('删除')){
 		    	  //判断是否有子菜单，若有则先删除子菜单
-		    	   vo.$http.get("${pageContext.request.contextPath}/menu/getMenuList",
+		    	   vo.$http.get("${ctx}/menuController/getMenuList",
 								 {   params: { "token":vo.token,"PARENTID":vo.currentRowId }
 				        }).then(function(res){ 
 				        	 
@@ -424,8 +422,8 @@
 								              cancelButtonText: '取消',
 								              type: 'warning'
 								            }).then(function(){
-								            	 vo.$http.get("${pageContext.request.contextPath}/menu/deleteMenu",
-														 {   params: { "token":vo.token,"MENU_ID":vo.currentRowId }
+								            	 vo.$http.get("${ctx}/menuController/deleteMenu",
+														 {   params: { "token":vo.token,"menu_id":vo.currentRowId }
 										        }).then(function(res){ 
 										        	
 													  		if(res.ok){

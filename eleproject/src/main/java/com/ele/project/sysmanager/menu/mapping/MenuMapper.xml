@@ -2,14 +2,91 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ele.project.sysmanager.menu.dao.MenuDao">
 	<select id="getMenuListByUserId" resultType="java.util.Map" parameterType="Map">
-		select distinct * from ERP_S_MENU bm start with bm.menu_id in(
-                 select rm.menu_id from ERP_S_USERROLE t 
-                 left join ERP_S_USER u on t.user_guid=u.guid
-                 left join ERP_S_ROLETOMENU rm on t.role_id=rm.role_id 
-                 where  u.logon_name=#{logon_name} )		
-		<if test="parentid !=null">
-			and bm.parentid=${parentid}
-		</if>
-		connect by prior  bm.parentid = bm.menu_id order by bm.displayorder
+		SELECT * FROM ELE_S_MENU bm WHERE bm.menu_id IN(SELECT
+			    rm.menu_id
+			  FROM
+			    ELE_S_USERROLE t
+			    LEFT JOIN ELE_S_USER u
+			      ON t.userid = u.userid
+			    LEFT JOIN ELE_S_ROLETOMENU rm
+			      ON t.role_id = rm.role_id
+			  WHERE u.login_name = #{login_name}
+			  <if test="parentid !=null and parentid !=''">
+			   AND bm.parentid = #{parentid}
+			   </if>
+			   ) ORDER BY bm.displayorder
 	</select>
+	<select id="getAllMenuList" resultType="Map">
+		select * from ELE_S_MENU a where a.rs=1 and a.parentid='00' and rownum &lt;2
+	</select>
+	<select id="getMenuList" parameterType="Map">
+		select * from ELE_S_MENU where rs=1 
+		 <choose>
+             <when test="menu_id!=null and menu_id!=''">
+                 and menu_id = #{menu_id}
+             </when>
+             <when test="parentid!=null and parentid!=''">
+                 and parentid = #{parentid}
+             </when>
+             <otherwise>
+                 
+             </otherwise>
+         </choose>
+		order by displayorder
+	</select>
+	<select id="getMenuPage" parameterType="Map" resultType="Map">
+		select t.menu_id , t.name , t.url, t.remarks, t.parentid,p.name pName
+		from ELE_S_MENU t 
+		left join ELE_S_MENU p on t.parentid=p.menu_id
+		where t.rs=1
+		<if test="menu_id!=null and menu_id!=''">
+			and (t.parentid=#{menu_id} or t.menu_id=#{menu_id})
+		</if>
+		order by t.parentid
+	</select>
+	<select id="getMenuPageCount" parameterType="Map">
+		select count(1)
+		from ELE_S_MENU t 
+		left join ELE_S_MENU p on t.parentid=p.menu_id
+		where t.rs=1
+		<if test="menu_id!=null and menu_id!=''">
+			and (t.parentid=#{menu_id} or t.menu_id=#{menu_id})
+		</if>
+		order by t.parentid
+	</select>
+	
+	<insert id="addMenu" parameterType="Map">
+		insert into ELE_S_MENU(
+			menu_id
+			,name
+			,url
+			,parentid
+			,displayorder
+			,menuicon
+			,operator_organization
+			,operator_department
+			,operator
+			,operate_date
+			,ts
+			,rs
+			,remarks
+			,idx
+		)
+		values(
+			#{menu_id}
+			,#{name}
+			,#{url}
+			,#{parentid}
+			,#{displayorder}
+			,#{menuicon}
+			,#{operator_organization}
+			,#{operator_department}
+			,#{operator}
+			,#{operate_date}
+			,now()
+			,#{rs}
+			,#{remarks}
+			,#{idx}
+		)
+	</insert>
 </mapper>

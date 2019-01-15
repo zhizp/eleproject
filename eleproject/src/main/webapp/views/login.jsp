@@ -79,7 +79,7 @@
                 <el-tab-pane label="账户登录">
                     <el-form :model="form" :rules="rules" ref="form" >
 		                    	<el-form-item  prop="username">
-			                    	<el-input size="large" v-model="form.username" placeholder="用户名" auto-complete="off" style="margin: 20px auto;margin-bottom:0px;">
+			                    	<el-input size="large" v-model="form.login_name" placeholder="用户名" auto-complete="off" style="margin: 20px auto;margin-bottom:0px;">
 			                        	<template slot="prepend"><i class="fa fa-user"></i></template>
 			                        </el-input>
 		                        </el-form-item>
@@ -107,11 +107,11 @@
         data: function () {
             return {
                 form: {
-                	username: '',
+                	login_name: '',
                 	user_pwd: ''
                 },
                 rules: {
-                	username: [ { required:true,message: '请输入用户名'}],
+                	login_name: [ { required:true,message: '请输入用户登录名'}],
                 	user_pwd: [ { required:true,message: '请输入密码'}]
                 }
             }

@@ -4,7 +4,7 @@
 	<resultMap id="BaseResultMap" type="com.ele.project.sysmanager.user.pojo.UserDTO">
 		<result column="userid" property="userid" jdbcType="VARCHAR" />
 		<result column="username" property="username" jdbcType="VARCHAR" />
-		<result column="logon_name" property="logon_name" jdbcType="VARCHAR" />
+		<result column="login_name" property="login_name" jdbcType="VARCHAR" />
 		<result column="user_pwd" property="user_pwd" jdbcType="VARCHAR" />
 		<result column="e_mail" property="e_mail" jdbcType="VARCHAR" />
 		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
@@ -25,11 +25,11 @@
 		<result column="rs" property="rs" jdbcType="VARCHAR" />
 	</resultMap>
 	<select id="selectUser" resultMap="BaseResultMap" parameterType="com.ele.project.sysmanager.user.pojo.UserDTO">
-		select * from ele_s_user where username = #{username} and user_pwd=#{user_pwd}
+		select * from ele_s_user where login_name = #{login_name} and user_pwd=#{user_pwd}
 	</select>
 	
 	<select id="getUserDTOByName" resultMap="BaseResultMap">
-		select * from ele_s_user where username = #{username}
+		select * from ele_s_user where login_name = #{login_name}
 	</select>
 	<!-- 
 	<select id="selectMenuState" resultType="java.lang.String" parameterType="com.newhero.urbanconstruction.sysmanager.user.pojo.UserDTO">

@@ -27,7 +27,7 @@
 
         .el-tabs {
             height: 100%;
-            background: url(${ctx}/image/blank_bg.jpg);
+            background: ;/* url(${ctx}/image/blank_bg.jpg); */
             background-size: cover;
             border: none;
         }
@@ -100,7 +100,7 @@
         <el-col :span="12"
                 style="text-align: left; color:#fff; font-family: 'Microsoft YaHei UI'; font-size: 18pt; text-indent: 0.5em;position: relative; z-index: 999;text-shadow: 2px 3px 2px #333;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
             <%-- <img src="${ctx}/image/logo_icon.png"> --%>
-            <span>OA办公权限管理平台</span>
+            <span>OA办公管理平台</span>
             <!-- <span style="padding-left:0.5em;font-size:17pt;font-weight:bold">信息中心ERP</span> -->
         </el-col>
         <el-col :span="12" style="text-align: right">
@@ -286,6 +286,7 @@
                 var key = evt.$vnode.key;
                 var text = evt.$el.innerText;
                 var uri = evt.$el.attributes["uri"].value;
+                alert(uri);
                 var arg = "?token=" + this.token;
                 var has = this.tabs.some(function (p) {
                     if (p.key === key) return true

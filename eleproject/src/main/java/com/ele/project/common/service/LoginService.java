@@ -7,5 +7,5 @@ import com.ele.project.sysmanager.user.pojo.UserDTO;
 public interface LoginService {
 
 	public UserDTO selectUser(UserDTO user);
-	public List<UserDTO> getUserDTOByName(String username);
+	public List<UserDTO> getUserDTOByName(String login_name);
 }

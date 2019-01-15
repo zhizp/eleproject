@@ -11,7 +11,7 @@ public class UserDTO {
 
     private String userid;//
 	private String username;//用户名
-	private String logon_name;//登录名
+	private String login_name;//登录名
 	private String user_pwd;//密码
 	private String e_mail;//邮箱
 	private String enabled;//停用启用:0-启用、1-停用
@@ -45,11 +45,11 @@ public class UserDTO {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	public String getLogon_name() {
-		return logon_name;
+	public String getLogin_name() {
+		return login_name;
 	}
-	public void setLogon_name(String logon_name) {
-		this.logon_name = logon_name;
+	public void setLogin_name(String login_name) {
+		this.login_name = login_name;
 	}
 	public String getUser_pwd() {
 		return user_pwd;

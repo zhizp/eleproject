@@ -16,10 +16,33 @@ public class MenuService implements IMenuService {
 	@Autowired
     private MenuDao menuDao;
 	
-	public List<Map<String, Object>> getMenuListByUserId(String userId, String parentId){
+	public List<Map<String, Object>> getMenuListByUserId(String login_name, String parentId){
 		Map<String, Object> map=new HashMap<String, Object>();
-		map.put("logon_name", userId);
+		map.put("login_name", login_name);
 		map.put("parentid", parentId);
 		return menuDao.getMenuListByUserId(map);
 	}
+	
+	public List<Map<String, Object>> getAllMenuList(){
+		return menuDao.getAllMenuList();
+	}
+	
+    public List<Map<String, Object>> getMenuList(String menu_id, String parentid) {
+    	Map<String, Object> map=new HashMap<String, Object>();
+		map.put("menu_id", menu_id);
+		map.put("parentid", parentid);
+        return menuDao.getMenuList(map);
+    }
+    
+    public List<Map<String, Object>> getMenuPage(Map<String, Object> params){
+    	return menuDao.getMenuPage(params);
+    }
+    
+    public int getMenuPageCount(Map<String, Object> params) {
+    	return menuDao.getMenuPageCount(params);
+    }
+    
+    public int addMenu(Map<String, Object> params) {
+        return menuDao.addMenu(params);
+    }
 }

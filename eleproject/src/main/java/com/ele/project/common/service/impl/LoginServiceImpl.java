@@ -20,7 +20,7 @@ public class LoginServiceImpl implements LoginService {
 	public UserDTO selectUser(UserDTO user) {
 		return loginDao.selectUser(user);
 	}
-	public List<UserDTO> getUserDTOByName(String username){
-		return loginDao.getUserDTOByName(username);
+	public List<UserDTO> getUserDTOByName(String login_name){
+		return loginDao.getUserDTOByName(login_name);
 	}
 }
