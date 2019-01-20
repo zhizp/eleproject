@@ -46,7 +46,7 @@
 		<filter-class>com.ele.project.common.LoginFilter</filter-class>
 		<init-param>
 			<param-name>excludedPages</param-name>
-			<param-value>/login,/logout,/toLogin,/main,/resources</param-value>
+			<param-value>/login,/logout,/toLogin,/resource</param-value>
 		</init-param>
 	</filter>
 	<filter-mapping>

@@ -9,4 +9,5 @@ public interface UserToRoleDao {
 	public List<Map<String, Object>> getRoleById(String userid);
 	public int addUserToRole(UserToRoleDTO uRole);
 	public int deleteUserToRole(String userid);
+	public List<Map<String, Object>> selectUserToRole(String userid);
 }

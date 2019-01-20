@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="/static/static.jsp"></jsp:include>
+<jsp:include page="/resource/static/static.jsp"></jsp:include>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,16 +9,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="renderer" content="webkit">
     <title>欢迎登录</title>
-    <link rel="stylesheet" href="${ctx}/common/font-awesome.css"/>
-    <link rel="stylesheet" href="${ctx}/common/element.css"/>
-    <link rel="stylesheet" href="${ctx}/css/base.css"/>
-    <script src="${ctx}/common/vue.js"></script>
-    <script src="${ctx}/common/vue-resource.min.js"></script>
-    <script src="${ctx}/common/element.js"></script>
-    <script src="${ctx}/common/store.modern.min.js"></script>
-    <script src="${ctx}/js/base.js"></script>
-    <link rel="stylesheet" href="${ctx}/layui/css/layui.css"/>
-    <script src="${ctx}/layui/layui.all.js"></script>
+    <link rel="stylesheet" href="${ctx}/resource/common/font-awesome.css"/>
+    <link rel="stylesheet" href="${ctx}/resource/common/element.css"/>
+    <link rel="stylesheet" href="${ctx}/resource/css/base.css"/>
+    <script src="${ctx}/resource/common/vue.js"></script>
+    <script src="${ctx}/resource/common/vue-resource.min.js"></script>
+    <script src="${ctx}/resource/common/element.js"></script>
+    <script src="${ctx}/resource/common/store.modern.min.js"></script>
+    <script src="${ctx}/resource/js/base.js"></script>
+    <link rel="stylesheet" href="${ctx}/resource/layui/css/layui.css"/>
+    <script src="${ctx}/resource/layui/layui.all.js"></script>
 
     <style>
         body {
@@ -70,10 +70,10 @@
 <div id="app" class="v__addAnimationBg" style="margin: 0">
     <div class="pad" id="login_top" style="height: 80px;padding-top: 15px">
         <span style="font-size: 20pt;"><img style="vertical-align: middle;"
-                                            src="${ctx}/image/logo_icon.png"/> 管理系统 - 欢迎登录 </span>
+                                            src="${ctx}/resource/image/logo_icon.png"/> 管理系统 - 欢迎登录 </span>
     </div>
     <div class="pad" id="login_main"
-         style="position:relative;height: 460px;border: 1px solid #999;background:url(${ctx}/image/login_bg.jpg) no-repeat center top #2E71C2;">
+         style="position:relative;height: 460px;border: 1px solid #999;background:url(${ctx}/resource/image/login_bg.jpg) no-repeat center top #2E71C2;">
         <div style="width: 350px; height: 320px; float:right; position:relative; top:70px;">
             <el-tabs type="border-card" style="height: 100%">
                 <el-tab-pane label="账户登录">

@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="/static/static.jsp"></jsp:include>
+<jsp:include page="/resource/static/static.jsp"></jsp:include>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,14 +9,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="renderer" content="webkit">
     <title>修改密码</title>
-    <link rel="stylesheet" href="${ctx}/common/font-awesome.css"/>
-    <link rel="stylesheet" href="${ctx}/common/element.css"/>
-    <link rel="stylesheet" href="${ctx}/css/base.css"/>
-    <script src="${ctx}/common/vue.js"></script>
-    <script src="${ctx}/common/vue-resource.min.js"></script>
-    <script src="${ctx}/common/element.js"></script>
-    <script src="${ctx}/common/store.modern.min.js"></script>
-    <script src="${ctx}/js/base.js"></script>
+    <link rel="stylesheet" href="${ctx}/resource/common/font-awesome.css"/>
+    <link rel="stylesheet" href="${ctx}/resource/common/element.css"/>
+    <link rel="stylesheet" href="${ctx}/resource/css/base.css"/>
+    <script src="${ctx}/resource/common/vue.js"></script>
+    <script src="${ctx}/resource/common/vue-resource.min.js"></script>
+    <script src="${ctx}/resource/common/element.js"></script>
+    <script src="${ctx}/resource/common/store.modern.min.js"></script>
+    <script src="${ctx}/resource/js/base.js"></script>
     <style type="text/css">
  		.el-dialog__body{
  			padding:10px 20px 10px 10px;

@@ -6,7 +6,7 @@ public class UserToRoleDTO implements Serializable{
 	private static final long serialVersionUID = -6697548710283393785L;
 	private String ur_id;
 	private String userid;
-	private String roleid;
+	private String role_id;
 	public String getUr_id() {
 		return ur_id;
 	}
@@ -19,11 +19,11 @@ public class UserToRoleDTO implements Serializable{
 	public void setUserid(String userid) {
 		this.userid = userid;
 	}
-	public String getRoleid() {
-		return roleid;
+	public String getRole_id() {
+		return role_id;
 	}
-	public void setRoleid(String roleid) {
-		this.roleid = roleid;
+	public void setRole_id(String role_id) {
+		this.role_id = role_id;
 	}
 	 
 }

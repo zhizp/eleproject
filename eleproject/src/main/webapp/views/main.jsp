@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" %>
-<jsp:include page="/static/static.jsp"></jsp:include>
+<jsp:include page="/resource/static/static.jsp"></jsp:include>
 <!DOCTYPE html>
 <html>
 
@@ -8,17 +8,17 @@
     <meta charset="utf-8">
     <title>OA管理系统</title>
     <%--<link rel="stylesheet" href="${ctx}/common/bootstrap-3.3.7.min.css">--%>
-    <link rel="stylesheet" href="${ctx}/common/font-awesome.css">
-    <link rel="stylesheet" href="${ctx}/common/element.css">
-    <link rel="stylesheet" href="${ctx}/css/base.css">
-    <script src="${ctx}/common/vue.js"></script>
-    <script src="${ctx}/common/vue-resource.min.js"></script>
-    <script src="${ctx}/common/element.js"></script>
-    <script src="${ctx}/common/array.js"></script>
-    <script src="${ctx}/common/store.modern.min.js"></script>
-    <script src="${ctx}/common/jquery-1.12.4.min.js"></script>
-    <script src="${ctx}/js/base.js"></script>
-    <script src="${ctx}/common/store.modern.min.js"></script>
+    <link rel="stylesheet" href="${ctx}/resource/common/font-awesome.css">
+    <link rel="stylesheet" href="${ctx}/resource/common/element.css">
+    <link rel="stylesheet" href="${ctx}/resource/css/base.css">
+    <script src="${ctx}/resource/common/vue.js"></script>
+    <script src="${ctx}/resource/common/vue-resource.min.js"></script>
+    <script src="${ctx}/resource/common/element.js"></script>
+    <script src="${ctx}/resource/common/array.js"></script>
+    <script src="${ctx}/resource/common/store.modern.min.js"></script>
+    <script src="${ctx}/resource/common/jquery-1.12.4.min.js"></script>
+    <script src="${ctx}/resource/js/base.js"></script>
+    <script src="${ctx}/resource/common/store.modern.min.js"></script>
     <style>
         body {
             padding: 0;
@@ -27,7 +27,7 @@
 
         .el-tabs {
             height: 100%;
-            background: ;/* url(${ctx}/image/blank_bg.jpg); */
+            background: ;/* url(${ctx}/resource/image/blank_bg.jpg); */
             background-size: cover;
             border: none;
         }
@@ -99,12 +99,12 @@
     <el-row style="line-height: 60px; background-color: #0171C3">
         <el-col :span="12"
                 style="text-align: left; color:#fff; font-family: 'Microsoft YaHei UI'; font-size: 18pt; text-indent: 0.5em;position: relative; z-index: 999;text-shadow: 2px 3px 2px #333;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
-            <%-- <img src="${ctx}/image/logo_icon.png"> --%>
+            <%-- <img src="${ctx}/resource/image/logo_icon.png"> --%>
             <span>OA办公管理平台</span>
             <!-- <span style="padding-left:0.5em;font-size:17pt;font-weight:bold">信息中心ERP</span> -->
         </el-col>
         <el-col :span="12" style="text-align: right">
-            <img src="${ctx}/image/logo_bg.png" style="position: absolute; left: 360px;">
+            <img src="${ctx}/resource/image/logo_bg.png" style="position: absolute; left: 360px;">
             <el-button-group style="margin-right: 1em">
                 <el-button type="text" title="" style="color:#fff;font-size:12pt" @click="updatePwd">
                     <i class="fa fa-key" style="font-size:14pt"></i> 修改密码

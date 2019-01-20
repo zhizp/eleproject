@@ -1,172 +1,164 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="/static/static.jsp"></jsp:include>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<jsp:include page="/resource/static/static.jsp"></jsp:include>
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=2.0, minimum-scale=0.5">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-    <meta name="renderer" content="webkit">
-    <title>菜单</title>
-    <link rel="stylesheet" href="${ctx}/common/font-awesome.css"/>
-    <link rel="stylesheet" href="${ctx}/common/element.css"/>
-    <link rel="stylesheet" href="${ctx}/css/base.css"/>
-    <script src="${ctx}/common/vue.js"></script>
-    <script src="${ctx}/common/vue-resource.min.js"></script>
-    <script src="${ctx}/common/element.js"></script>
-    <script src="${ctx}/common/store.modern.min.js"></script>
-    <script src="${ctx}/js/base.js"></script>
- 
-    <style>
- 
-		.avatar-uploader .el-upload {
-		    border: 1px dashed #d9d9d9;
-		    border-radius: 6px;
-		    cursor: pointer;
-		    position: relative;
-		    overflow: hidden;
-		  }
-		  .avatar-uploader .el-upload:hover {
-		    border-color: #20a0ff;
-		  }
-		  .avatar-uploader-icon {
-		    font-size: 28px;
-		    color: #8c939d;
-		    width: 78px;
-		    height: 78px;
-		    line-height: 78px;
-		    text-align: center;
-		  }
-		  .avatar {
-		    width: 78px;
-		    height: 78px;
-		    display: block;
-		  }
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=2.0, minimum-scale=0.5">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta name="renderer" content="webkit">
+<title>菜单</title>
+<link rel="stylesheet" href="${ctx}/resource/common/font-awesome.css" />
+<link rel="stylesheet" href="${ctx}/resource/common/element.css" />
+<link rel="stylesheet" href="${ctx}/resource/css/base.css" />
+<script src="${ctx}/resource/common/vue.js"></script>
+<script src="${ctx}/resource/common/vue-resource.min.js"></script>
+<script src="${ctx}/resource/common/element.js"></script>
+<script src="${ctx}/resource/common/store.modern.min.js"></script>
+<script src="${ctx}/resource/js/base.js"></script>
+
+<style>
+.avatar-uploader .el-upload {
+	border: 1px dashed #d9d9d9;
+	border-radius: 6px;
+	cursor: pointer;
+	position: relative;
+	overflow: hidden;
+}
+
+.avatar-uploader .el-upload:hover {
+	border-color: #20a0ff;
+}
+
+.avatar-uploader-icon {
+	font-size: 28px;
+	color: #8c939d;
+	width: 78px;
+	height: 78px;
+	line-height: 78px;
+	text-align: center;
+}
+
+.avatar {
+	width: 78px;
+	height: 78px;
+	display: block;
+}
 </style>
 </head>
-<body style="overflow:hidden;">
-<div id="app"  class="vo v__addAnimationBg">
-    <el-row style="padding-bottom:5px;">
-        <el-col :span="24">
-		   		<el-button  type="primary" size="small" icon="el-icon-plus" @click="HandleAdd"  >新增</el-button>
-		   		<el-button  type="primary" size="small" icon="el-icon-edit" @click="handleEdit" >编辑</el-button>
-		   		<el-button  type="primary" size="small" icon="el-icon-delete" @click="handleDelete" >删除</el-button>
-        </el-col>
-    </el-row>
-    <el-row style="position: absolute;top: 35px;bottom: 0;width: 100%">
-        
-        <!-- 树形菜单 begin -->
-        <el-col :span="6" style="height: 100%; padding-right: 10px; border: 1px solid #eee;">
-            <el-tree :data="treeData"  node-key="id" ref="tree" highlight-current  v-loading.fullscreen.lock="fullscreenLoading"
-                     :props="defaultProps" style="height: 100%; overflow: auto" @node-click="handleNodeClick">
-            </el-tree>
-        </el-col>
-        <!-- 树形菜单end -->
-        
-        <!-- 列表 begin -->
-         <el-col :span="18" style="height: 100%; position: relative;">
-	   		<el-row class="v__tableDock" style="position: absolute;top: 0px;bottom: 30px;width: 100%">
-		        <el-col :span="24">
-		            <el-table :data="tableData" :height="v__tableDockHeight" stripe border style="width: 100%;" 
-		            	v-loading.fullscreen.lock="tableLoading"  highlight-current-row 
-				              @row-click="handleCurrentRow">
-		                  <el-table-column  type="index" label="序号" width="80" align="center"></el-table-column>
-						  <el-table-column prop="name" label="菜单名称" min-width="200"> </el-table-column>
-						  <el-table-column prop="url" label="URL" min-width="200"> </el-table-column>
-						  <el-table-column prop="pname" label="父级菜单" min-width="200"> </el-table-column>
-						  <el-table-column prop="remarks" label="菜单描述" min-width="300"> </el-table-column>
-		            </el-table>
-		        </el-col>
-		    </el-row>
-		    <el-row style="position: absolute;bottom: 0;">
-		        <el-col :span="24">
-					<el-pagination
-				       @size-change="handleSizeChange"
-		       		   @current-change="handleCurrentChange"
-				      :page-sizes="[20, 50, 100]"
-				      :page-size="page.pagesize"
-				      layout="total, sizes, prev, pager, next, jumper"
-				      :total="page.total" style="margin-top:10px;">
-				    </el-pagination>
-		        </el-col>
-		    </el-row>
-        </el-col> 
-          <!-- 列表end -->	  
-			<!-- 修改 begin -->
-			    <el-dialog ref="dlgEdit" title="编辑菜单" size="small" :visible.sync="dialogEditFormVisible" 
-					:modal-append-to-body="false" :close-on-click-modal="false">
-					<el-form :model="editForm" :rules="rules" ref="editForm" >
-					   	<el-form-item label="菜单名称" :label-width="formLabelWidth" prop="name" style="margin-bottom:15px;">
-					      <el-input size="small" v-model="editForm.name" auto-complete="off" ></el-input>
-					    </el-form-item>
-					    <el-form-item label="URL" :label-width="formLabelWidth" prop="url">
-					      <el-input size="small" v-model="editForm.url" auto-complete="off"></el-input>
-					    </el-form-item>
-					    <el-form-item label="父级菜单" :label-width="formLabelWidth" >
-					      <el-input size="small" v-model="editForm.parentname" disabled  >
-					       <el-input v-model="editForm.parentid" v-show="false" >
-					      </el-input>
-					    </el-form-item>
-					    <el-form-item label="排序号" :label-width="formLabelWidth" prop="displayorder"  style="margin-bottom:15px;">
-					      <el-input size="small" v-model="editForm.displayorder" auto-complete="off"></el-input>
-					    </el-form-item>
-					    <el-form-item label="菜单描述" :label-width="formLabelWidth"  prop="remarks">
-					      <el-input  size="small" type="textarea"  :rows="3" v-model="editForm.remarks" auto-complete="off"></el-input>
-					    </el-form-item>
-						<%--<el-form-item label="菜单图标" :label-width="formLabelWidth"  prop="MENUICON">--%>
-						<%--<el-upload v-model="editForm.MENUICON" class="avatar-uploader" :action="action" name="file" ref="file"--%>
-						<%--:show-file-list="false" :on-success="handleAvatarSuccessUpdate" :before-upload="beforeAvatarUpload" >--%>
-						<%--<img v-if="imageUrlUpdate" :src="imgpath+imageUrlUpdate" class="avatar" >--%>
-						<%--<i v-else class="el-icon-plus avatar-uploader-icon"></i>--%>
-						<%--</el-upload>--%>
-						<%--</el-form-item>--%>
-			
-					  </el-form>
-					  <div slot="footer" class="dialog-footer" style="margin-left: 36%;" >
-					    <el-button size="small" @click="dialogEditFormVisible = false">取 消</el-button>
-					    <el-button type="primary"size="small"  @click="updateMenu('editForm')">确认</el-button>
-					  </div>
-				  </el-dialog>
-            <!-- 修改end -->	
-            
-            <!-- 新增 begin -->	  
-		  <el-dialog ref="dlgAdd" title="新增菜单" size="small" :visible.sync="dialogAddFormVisible" :modal-append-to-body="false" :close-on-click-modal="false">
-		  <el-form :model="form" :rules="rules" ref="form" >
-		    <el-form-item label="菜单名称" :label-width="formLabelWidth" prop="name" style="margin-bottom:15px;">
-		      <el-input  size="small" v-model="form.name" auto-complete="off" ></el-input>
-		    </el-form-item>
-		    <el-form-item label="URL" :label-width="formLabelWidth" prop="url" >
-		      <el-input  size="small" v-model="form.url" auto-complete="off"></el-input>
-		    </el-form-item>
-		    <el-form-item label="父级菜单" :label-width="formLabelWidth" >
-		      <el-input  size="small" v-model="form.parentname" disabled  >
-		       <el-input v-model="form.parentid" v-show="false" >
-		      </el-input>
-		    </el-form-item>
-		    <el-form-item label="排序号" :label-width="formLabelWidth" prop="displayorder"  style="margin-bottom:15px;">
-		      <el-input  size="small" v-model.number="form.displayorder" auto-complete="off"></el-input>
-		    </el-form-item>
-		    <el-form-item label="菜单描述" :label-width="formLabelWidth"  prop="remarks" >
-		      <el-input  type="textarea"  :rows="3" v-model="form.remarks" auto-complete="off" ></el-input>
-		    </el-form-item>
-			  <%--<el-form-item label="菜单图标" :label-width="formLabelWidth"  prop="MENUICON">--%>
-			  <%--<el-upload v-model="form.MENUICON" class="avatar-uploader" :action="action" name="file" ref="file"--%>
-			  <%--:show-file-list="false" :on-success="handleAvatarSuccessAdd" :before-upload="beforeAvatarUpload" >--%>
-			  <%--<img v-if="imageUrlAdd" :src="imgpath+imageUrlAdd" class="avatar" >--%>
-			  <%--<i v-else class="el-icon-plus avatar-uploader-icon"></i>--%>
-			  <%--</el-upload>--%>
-			  <%--</el-form-item>--%>
-		  </el-form>
-		  <div slot="footer" class="dialog-footer" >
-		    <el-button size="small" @click="dialogAddFormVisible = false">取 消</el-button>
-		    <el-button type="primary" size="small" @click="HandleSave('form')">确认</el-button>
-		  </div>
-		</el-dialog>
-	<!-- 新增 end -->	
-
-    </el-row>
-</div>
+<body style="overflow: hidden;">
+	<div id="app" class="vo v__addAnimationBg">
+	<el-row style="padding-bottom:5px;"> 
+		<el-col :span="24">
+			<el-button type="primary" size="small" icon="el-icon-plus"   @click="HandleAdd">新增</el-button>
+			<el-button type="primary" size="small" icon="el-icon-edit"   @click="handleEdit">编辑</el-button>
+			<el-button type="primary" size="small" icon="el-icon-delete" @click="handleDelete">删除</el-button> 
+		</el-col> 
+	</el-row>
+		<el-row style="position: absolute;top: 35px;bottom: 0;width: 100%">
+		<!-- 树形菜单 begin -->
+		 <el-col :span="6" style="height: 100%; padding-right: 10px; border: 1px solid #eee;">
+			<el-tree :data="treeData" node-key="id" ref="tree" highlight-current v-loading.fullscreen.lock="fullscreenLoading" :props="defaultProps"
+				style="height: 100%; overflow: auto" @node-click="handleNodeClick">
+			</el-tree> 
+		</el-col>
+		<!-- 树形菜单end -->
+		<!-- 列表 begin --> 
+		<el-col :span="18" style="height: 100%; position: relative;"> 
+			<el-row class="v__tableDock" style="position: absolute;top: 0px;bottom: 30px;width: 100%">
+				<el-col :span="24"> 
+					<el-table :data="tableData":height="v__tableDockHeight" stripe border style="width: 100%;" v-loading.fullscreen.lock="tableLoading"
+					highlight-current-row   @row-click="handleCurrentRow">
+						<el-table-column type="index" label="序号" width="80" align="center"></el-table-column>
+						<el-table-column prop="name" label="菜单名称" min-width="180"></el-table-column> 
+						<el-table-column prop="url" label="URL" min-width="220"></el-table-column>
+						<el-table-column prop="pName" label="父级菜单" min-width="200"></el-table-column> 
+						<el-table-column prop="remarks" label="菜单描述" min-width="300"></el-table-column> 
+					</el-table> 
+				</el-col> 
+			</el-row> 
+			<el-row style="position: absolute;bottom: 0;"> 
+				<el-col :span="24"> 
+					<el-pagination @size-change="handleSizeChange" 
+						@current-change="handleCurrentChange" 
+						:page-sizes="[20, 50, 100]"
+						:page-size="page.pagesize"
+						layout="total, sizes, prev, pager, next, jumper" 
+						:total="page.total" style="margin-top:10px;"> 
+					</el-pagination> 
+				</el-col> 
+			</el-row> 
+		</el-col> 
+		<!-- 列表end --> 
+		<!-- 修改 begin -->
+		<el-dialog ref="dlgEdit" title="编辑菜单" size="small" :visible.sync="dialogEditFormVisible" 
+			:modal-append-to-body="false" :close-on-click-modal="false"> 
+			<el-form :model="editForm" :rules="rules" ref="editForm"> 
+				<el-form-item label="菜单名称":label-width="formLabelWidth" prop="name" style="margin-bottom:15px;">
+					<el-input size="small" v-model="editForm.name" auto-complete="off"></el-input>
+				</el-form-item> 
+				<el-form-item label="URL" :label-width="formLabelWidth" prop="url">
+					<el-input size="small" v-model="editForm.url" auto-complete="off"></el-input>
+				</el-form-item> 
+				<el-form-item label="父级菜单" :label-width="formLabelWidth">
+					<el-input size="small" v-model="editForm.parentname" disabled>
+				<el-input v-model="editForm.parentid" v-show="false"> </el-input>
+				</el-form-item> 
+				<el-form-item label="排序号" :label-width="formLabelWidth" prop="displayorder"style="margin-bottom:15px;"> 
+					<el-input size="small" v-model="editForm.displayorder" auto-complete="off"></el-input> 
+				</el-form-item> 
+				<el-form-item label="菜单描述" :label-width="formLabelWidth" prop="remarks">
+					<el-input size="small" type="textarea" :rows="3" v-model="editForm.remarks" auto-complete="off"></el-input> 
+				</el-form-item> 
+				<%--<el-form-item label="菜单图标" :label-width="formLabelWidth"  prop="MENUICON">--%>
+				<%--<el-upload v-model="editForm.MENUICON" class="avatar-uploader" :action="action" name="file" ref="file"--%>
+				<%--:show-file-list="false" :on-success="handleAvatarSuccessUpdate" :before-upload="beforeAvatarUpload" >--%>
+				<%--<img v-if="imageUrlUpdate" :src="imgpath+imageUrlUpdate" class="avatar" >--%>
+				<%--<i v-else class="el-icon-plus avatar-uploader-icon"></i>--%> <%--</el-upload>--%>
+				<%--</el-form-item>--%> 
+			</el-form>
+		<div slot="footer" class="dialog-footer" style="margin-left: 36%;">
+			<el-button size="small" @click="dialogEditFormVisible = false">取消</el-button>
+			<el-button type="primary" size="small" @click="updateMenu('editForm')">确认</el-button>
+		</div>
+		</el-dialog> 
+		<!-- 修改end --> 
+		<!-- 新增 begin --> 
+		<el-dialog ref="dlgAdd" title="新增菜单" size="small" :visible.sync="dialogAddFormVisible"
+			:modal-append-to-body="false" :close-on-click-modal="false">
+		<el-form :model="form" :rules="rules" ref="form"> 
+			<el-form-item label="菜单名称" :label-width="formLabelWidth" prop="name" style="margin-bottom:15px;"> 
+				<el-input size="small" v-model="form.name" auto-complete="off"></el-input> 
+			</el-form-item> 
+			<el-form-item label="URL" :label-width="formLabelWidth" prop="url">
+				<el-input size="small" v-model="form.url" auto-complete="off"></el-input>
+			</el-form-item> 
+			<el-form-item label="父级菜单" :label-width="formLabelWidth">
+				<el-input size="small" v-model="form.parentname" disabled>
+				<el-input v-model="form.parentid" v-show="false"> </el-input>
+			</el-form-item> 
+			<el-form-item label="排序号" :label-width="formLabelWidth" prop="displayorder" style="margin-bottom:15px;"> 
+				<el-input size="small" v-model.number="form.displayorder" auto-complete="off"></el-input> 
+			</el-form-item> 
+			<el-form-item label="菜单描述" :label-width="formLabelWidth" prop="remarks">
+				<el-input type="textarea" :rows="3" v-model="form.remarks" auto-complete="off"></el-input> 
+			</el-form-item> 
+				<%--<el-form-item label="菜单图标" :label-width="formLabelWidth"  prop="MENUICON">--%>
+				<%--<el-upload v-model="form.MENUICON" class="avatar-uploader" :action="action" name="file" ref="file"--%>
+				<%--:show-file-list="false" :on-success="handleAvatarSuccessAdd" :before-upload="beforeAvatarUpload" >--%>
+				<%--<img v-if="imageUrlAdd" :src="imgpath+imageUrlAdd" class="avatar" >--%>
+				<%--<i v-else class="el-icon-plus avatar-uploader-icon"></i>--%> <%--</el-upload>--%>
+				<%--</el-form-item>--%> 
+		</el-form>
+		<div slot="footer" class="dialog-footer">
+			<el-button size="small" @click="dialogAddFormVisible = false">取消</el-button>
+			<el-button type="primary" size="small" @click="HandleSave('form')">确认</el-button>
+		</div>
+		</el-dialog> 
+		<!-- 新增 end --> 
+		</el-row>
+	</div>
 </body>
 <script>
     Vue.http.options.emulateJSON = true;
@@ -349,14 +341,14 @@
 			 if( vo.judeCurrentRowIsNull('编辑')){
 			 	 vo.dialogEditFormVisible = true;
 				 vo.$http.get("${ctx}/menuController/getOneMenuList",
-						 {   params: { "token":vo.token,"menu_id":vo.currentRowId}
+						 {   params: { /* "token":vo.token, */"menu_id":vo.currentRowId}
 					    }).then(function(res){  
 					    	vo.editForm=res.body;
 					    	vo.imageUrlUpdate =res.body.menuicon;
 					    	if(res.body.parentid=="0"){
 						    	  vo.editForm.parentid="0";
 						    	  vo.editForm.parentname="无";
-						    	  //vo.editForm.DISPLAYORDER=parseInt(res.body.DISPLAYORDER);
+						    	  vo.editForm.displayorder=parseInt(res.body.displayorder);
 					    	}
 					    	
 					
@@ -373,7 +365,7 @@
 						var url="${ctx}/menuController/updateMenu";
 					  	vo.$http.post(url,formData ).then(function(res){  
 					   
-					  		if(res.ok){
+					  		if(res.body.rt){
 					  			 vo.$message({
 						              message: '修改成功！',
 						              duration:1000,
@@ -391,7 +383,7 @@
 					  			vo.$message({
 						              message: '修改失败！',
 						              duration:1000,
-						              type: 'success',
+						              type: 'error',
 						            });
 					  		}
 							    	 
@@ -406,7 +398,7 @@
 				  if( vo.judeCurrentRowIsNull('删除')){
 		    	  //判断是否有子菜单，若有则先删除子菜单
 		    	   vo.$http.get("${ctx}/menuController/getMenuList",
-								 {   params: { "token":vo.token,"PARENTID":vo.currentRowId }
+								 {   params: { /* "token":vo.token, */"parentid":vo.currentRowId }
 				        }).then(function(res){ 
 				        	 
 							  	  	if(res.body.length>0){
@@ -423,10 +415,10 @@
 								              type: 'warning'
 								            }).then(function(){
 								            	 vo.$http.get("${ctx}/menuController/deleteMenu",
-														 {   params: { "token":vo.token,"menu_id":vo.currentRowId }
+														 {   params: { /* "token":vo.token, */"menu_id":vo.currentRowId }
 										        }).then(function(res){ 
 										        	
-													  		if(res.ok){
+													  		if(res.body.rt){
 													  			 vo.$message({
 														              message: '删除成功！',
 														              duration:1000,
@@ -442,14 +434,15 @@
 													  			
 													  		}else{
 													  			vo.$message({
-														              message: '删除失败！',
+														              message: res.body.rtflag,
 														              duration:1000,
-														              type: 'success' 
+														              type: 'error' 
 														            });
 													  		}
 												});  
 										        
 								            }).catch(function() {
+								            	
 								            });
 							  		} 
 							  		
@@ -458,11 +451,11 @@
 		       
 		      },
 		      handleAvatarSuccessAdd:function(res, file) {//菜单图片添加成功
-			    	 vo.form.MENUICON=res.fileName;
+			    	 vo.form.menuicon=res.fileName;
 			         vo.imageUrlAdd =res.fileName;
 			        },
 		      handleAvatarSuccessUpdate:function(res, file) {//菜单图片修改成功
-		    	 vo.editForm.MENUICON=res.fileName; 
+		    	 vo.editForm.menuicon=res.fileName; 
 		         vo.imageUrlUpdate =res.fileName;
 		        },
 	        beforeAvatarUpload:function(file) {//上传图片验证

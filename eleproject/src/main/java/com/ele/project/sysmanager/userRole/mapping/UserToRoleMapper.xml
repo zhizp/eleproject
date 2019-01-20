@@ -3,22 +3,26 @@
 <mapper namespace="com.ele.project.sysmanager.userRole.dao.UserToRoleDao">
 	
 	<select id="getRoleById" resultType="Map" parameterType="java.lang.String">
-		select a.*,b.name from ERP_S_USERROLE a 
-		left join ERP_S_ROLE b on a.role_id=b.role_id
+		select a.*,b.name from ele_s_userrole a 
+		left join ele_s_role b on a.role_id=b.role_id
 		 where a.userid=#{userid} 
 	</select>
 	<insert id="addUserToRole" parameterType="com.ele.project.sysmanager.userRole.pojo.UserToRoleDTO">
 		insert into ele_s_userrole(
 		ur_id,
 		userid,
-		roleid
+		role_id
 		)values(
 		#{ur_id},
 		#{userid},
-		#{roleid}
+		#{role_id}
 		)
 	</insert>
+	<select id="selectUserToRole" parameterType="java.lang.String" resultType="Map">
+		select * from ele_s_userrole where userid=#{userid}
+	</select>
 	<delete id="deleteUserToRole" parameterType="java.lang.String">
 	delete from ele_s_userrole where userid=#{userid}
 	</delete>
+	
 </mapper>

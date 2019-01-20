@@ -7,20 +7,20 @@
 	</update>
 
 	<select id="queryUserList" resultType="Map" parameterType="Map">
-		select * from ele_s_user where rs="1" 
-		<if test="username !=null">
+		select * from ele_s_user where rs='1' 
+		<if test="username !=null and username !=''">
 			and username=#{username}
 		</if>
-		<if test="login_name !=null">
+		<if test="login_name !=null and login_name !=''">
 			and login_name=#{login_name}
 		</if>
 	</select>
-	<select id="queryUserListCount" parameterType="Map">
-		select  count(*) from ele_s_user where rs="1" 
-		<if test="username !=null">
+	<select id="queryUserListCount" parameterType="Map" resultType="java.lang.Integer">
+		select  count(*) from ele_s_user where rs='1' 
+		<if test="username !=null and username !=''">
 			and username=#{username}
 		</if>
-		<if test="login_name !=null">
+		<if test="login_name !=null and login_name !=''">
 			and login_name=#{login_name}
 		</if>
 	</select>
@@ -73,4 +73,48 @@
 				,'1'
 		)
 	</insert>
+	<update id="updateUser" parameterType="Map">
+		update ele_s_user set 
+		 username
+		,login_name
+		,user_pwd
+		,e_mail
+		,enabled
+		,mobile
+		,orgid
+		,officephone
+		,deptid
+		,sex
+		,nation
+		,nativeplace
+		,education
+		,university
+		,major
+		,remarks
+		,ts
+		,rs
+		values(
+		 #{username}
+		,#{login_name}
+		,#{user_pwd}
+		,#{e_mail}
+		,#{enabled}
+		,#{mobile}
+		,#{orgid}
+		,#{officephone}
+		,#{deptid}
+		,#{sex}
+		,#{nation}
+		,#{nativeplace}
+		,#{education}
+		,#{university}
+		,#{major}
+		,#{remarks}
+		,now()
+		,#{rs}
+		) where userid=#{userid}	
+	</update>
+	<update id="ele_s_user" parameterType="Map">
+		update ele_s_user set rs='0' where userid=#{userid}	
+	</update>
 </mapper>

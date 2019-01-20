@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ele.project.sysmanager.roleMenu.dao.RoleToMenuDao">
+
+	<select id="getRoleToMenuList" parameterType="Map" resultType="Map">
+		select * from ele_s_roletomenu  where role_id = #{role_id}
+	</select>
+	<delete id="deleteRoleToMenu" parameterType="Map">
+		delete from ele_s_roletomenu  where role_id = #{role_id}
+	</delete>
+	<insert id="addBatchRoleToMenu" parameterType="java.util.List" >
+		insert into ele_s_roletomenu 
+				(rtf_id, role_id, menu_id, is_leaf) 
+		values
+		<foreach collection ="list" item="param" index= "index" separator =",">
+			(#{param.rtf_id}, #{param.role_id}, #{param.menu_id}, #{param.is_leaf})
+		</foreach>
+	</insert>
+</mapper>

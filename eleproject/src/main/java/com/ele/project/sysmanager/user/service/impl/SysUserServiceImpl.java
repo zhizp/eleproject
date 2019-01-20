@@ -34,4 +34,10 @@ public class SysUserServiceImpl implements SysUserService {
 	public int saveUser(Map<String, Object> params) {
 		return sysUserDao.saveUser(params);
 	}
+	public int updateUser(Map<String, Object> params) {
+		return sysUserDao.updateUser(params);
+	}
+	public int deleteUser(Map<String, Object> params) {
+		return sysUserDao.deleteUser(params);
+	}
 }

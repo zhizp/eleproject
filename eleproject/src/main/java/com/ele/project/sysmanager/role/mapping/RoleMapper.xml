@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ele.project.sysmanager.role.dao.RoleDao">
-	<select id="getRolesList" parameterType="Map">
+	<select id="getRolesList" parameterType="Map" resultType="Map">
 		select role_id ,name ,code_name ,description ,isadmin ,createtime ,modify_time ,admin_level ,idx ,rs ,ts 
 		from ele_s_role where rs='1'
 		<if test='name!=null and name !=""'>
 			and name like "%"#{name}"%"
 		</if>
 	</select>
-	<select id="getRolesListCount" parameterType="Map">
+	<select id="getRolesListCount" parameterType="Map" resultType="java.lang.Integer">
 		select count(1)
 		from ele_s_role where rs='1'
 		<if test='name!=null and name !=""'>
@@ -42,4 +42,43 @@
 		,now()
 	)
 	</insert>
+	<select id="getRoleById" parameterType="Map" resultType="Map">
+		select role_id ,name ,code_name ,description ,isadmin ,createtime ,modify_time ,admin_level ,idx ,rs ,ts 
+		from ele_s_role
+		where rs='1' and role_id=#{role_id}
+	</select>
+	<update id="updateRole" parameterType="Map">
+		update ele_s_role set
+		name=#{name}
+		,code_name=#{code_name}
+		,description=#{description}
+		,isadmin=#{isadmin}
+		,modify_time=now()
+		,idx=#{idx}
+		,ts=now()
+		,rs=#{rs}
+		where role_id=#{role_id}
+	</update>
+	<delete id="deleteRoles" parameterType="Map">
+		delete from ele_s_role where role_id=#{role_id}
+	</delete>
+	<select id="getUserRoles" parameterType="Map" resultType="java.lang.Integer">
+		select count(1) from ele_s_userrole where role_id=#{role_id}
+	</select>
+	<delete id="deleteUserRoles" parameterType="Map">
+		delete from ele_s_userrole where role_id=#{role_id}
+	</delete>
+	<select id="getMenuRoles" parameterType="Map" resultType="java.lang.Integer">
+		select count(1) from ele_s_roletomenu where role_id=#{role_id}
+	</select>
+	<delete id="deleteMenuRoles" parameterType="Map">
+		delete from ele_s_roletomenu where role_id=#{role_id}
+	</delete>
+	<select id="getRoleLists" parameterType="Map" resultType="Map">
+		select role_id ,name ,code_name ,description ,isadmin ,createtime ,modify_time ,admin_level ,idx ,rs ,ts 
+		from ele_s_role where rs='1'
+	</select>
+	<select id="getRoleIdsByUserId" parameterType="java.lang.String" resultType="java.lang.String">
+		select GROUP_CONCAT(role_id) roleIds from ele_s_userrole where userid = #{userid}
+	</select>
 </mapper>

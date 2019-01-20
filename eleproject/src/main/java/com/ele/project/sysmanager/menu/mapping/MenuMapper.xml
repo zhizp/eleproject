@@ -91,4 +91,32 @@
 			,#{idx}
 		)
 	</insert>
+	<update id="updateMenu" parameterType="Map">
+	update ELE_S_MENU set
+	name=#{name}
+	,url=#{url}
+	,parentid=#{parentid}
+	,displayorder=#{displayorder}
+	,menuicon=#{menuicon}
+	,operator_organization=#{operator_organization}
+	,operator_department=#{operator_department}
+	,operator=#{operator}
+	,operate_date=now()
+	,ts=now()
+	,rs=#{rs}
+	,remarks=#{remarks}
+	,idx=#{idx}
+	where menu_id=#{menu_id}
+		
+	</update>
+	
+	<delete id="deleteMenu" parameterType="Map">
+		delete from ELE_S_MENU where menu_id = #{menu_id}
+	</delete>
+	<select id="getMenuRole" parameterType="Map" resultType="Map">
+		select * from ele_s_roletomenu where menu_id = #{menu_id}
+	</select>
+	<delete id="deleteMenuRole" parameterType="Map">
+		delete from ele_s_roletomenu where menu_id = #{menu_id}
+	</delete>
 </mapper>

@@ -28,5 +28,8 @@ public class UserToRoleServiceImpl implements UserToRoleService {
 	public int deleteUserToRole(String userid) {
 		return userToRoleDao.deleteUserToRole(userid);
 	}
+	public List<Map<String, Object>> selectUserToRole(String userid){
+		return userToRoleDao.selectUserToRole(userid);
+	}
 
 }

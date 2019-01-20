@@ -21,4 +21,8 @@ public interface IMenuService {
     public List<Map<String, Object>> getMenuPage(Map<String, Object> params);
     public int getMenuPageCount(Map<String, Object> params);
     public int addMenu(Map<String, Object> params);
+    public int updateMenu(Map<String, Object> params);
+    public int deleteMenu(Map<String, Object> params);
+    public int deleteMenuRole(Map<String, Object> params);
+    public List<Map<String, Object>> getMenuRole(Map<String, Object> params);
 }

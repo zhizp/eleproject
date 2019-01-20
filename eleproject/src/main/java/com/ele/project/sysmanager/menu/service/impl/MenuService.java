@@ -45,4 +45,17 @@ public class MenuService implements IMenuService {
     public int addMenu(Map<String, Object> params) {
         return menuDao.addMenu(params);
     }
+    
+    public int updateMenu(Map<String, Object> params) {
+        return menuDao.updateMenu(params);
+    }
+    public int deleteMenu(Map<String, Object> params) {
+        return menuDao.deleteMenu(params);
+    }
+    public int deleteMenuRole(Map<String, Object> params) {
+    	return menuDao.deleteMenuRole(params);
+    }
+    public List<Map<String, Object>> getMenuRole(Map<String, Object> params){
+    	return menuDao.getMenuRole(params);
+    }
 }

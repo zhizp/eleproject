@@ -24,4 +24,31 @@ public class RoleServiceImpl implements RoleService {
 	public int addRole(Map<String, Object> params) {
 		return roleDao.addRole(params);
 	}
+	public Map<String,Object> getRoleById(Map<String, Object> params){
+		return roleDao.getRoleById(params);
+	}
+	public int updateRole(Map<String, Object> params) {
+		return roleDao.updateRole(params);
+	}
+	public int deleteRoles(Map<String, Object> params) {
+		return roleDao.deleteRoles(params);
+	}
+	public int getUserRoles(Map<String, Object> params) {
+		return roleDao.getUserRoles(params);
+	}
+	public int deleteUserRoles(Map<String, Object> params) {
+		return roleDao.deleteUserRoles(params);
+	}
+	public int getMenuRoles(Map<String, Object> params) {
+		return roleDao.getMenuRoles(params);
+	}
+	public int deleteMenuRoles(Map<String, Object> params) {
+		return roleDao.deleteMenuRoles(params);
+	}
+	public List<Map<String, Object>> getRoleLists(Map<String, Object> params) {
+		return roleDao.getRoleLists(params);
+	}
+	public String getRoleIdsByUserId(String userid) {
+		return roleDao.getRoleIdsByUserId(userid);
+	}
 }
